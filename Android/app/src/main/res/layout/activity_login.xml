@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_login"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="info.nexrave.nexrave.LoginActivity"
+    android:theme="@style/AppTheme"
+    android:background="@drawable/splashscreen">
+
+    <Button
+        android:text="Login"
+        android:textColor="@color/white"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:background="@drawable/buttonbackground"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="42dp"
+        android:id="@+id/finalLoginButton"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="submitLoginMethod"/>
+
+    <EditText
+        android:hint="Username or email"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:background="@drawable/roundededittext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/username_emailEditText"
+        android:layout_alignBottom="@+id/passwordEditText"
+        android:layout_marginBottom="104dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:hint="Password"
+        android:textColorHint="@color/white"
+        android:inputType="textPassword"
+        android:background="@drawable/roundededittext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/passwordEditText"
+        android:layout_marginBottom="71dp"
+        android:layout_above="@+id/finalLoginButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@mipmap/app_icon"
+        android:id="@+id/imageView"
+        android:layout_marginTop="140dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/finalLoginButton"
+        android:layout_alignStart="@+id/finalLoginButton"
+        android:layout_marginLeft="29dp"
+        android:layout_marginStart="29dp" />
+
+    <TextView
+        android:text="Forgot Password?"
+        android:textColor="@color/light_blue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="17dp"
+        android:id="@+id/forgotPassword"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:text="Nexrave"
+        android:textColor="@color/white"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView4"
+        android:layout_marginLeft="74dp"
+        android:layout_marginStart="74dp"
+        android:layout_marginBottom="57dp"
+        android:layout_alignBottom="@+id/imageView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+</RelativeLayout>
