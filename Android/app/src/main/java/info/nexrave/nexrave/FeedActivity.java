@@ -59,14 +59,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import info.nexrave.nexrave.R;
-import info.nexrave.nexrave.newsfeedfragments.HomeFragment;
-import info.nexrave.nexrave.newsfeedfragments.MoviesFragment;
-import info.nexrave.nexrave.newsfeedfragments.NotificationsFragment;
-import info.nexrave.nexrave.newsfeedfragments.PhotosFragment;
-import info.nexrave.nexrave.newsfeedfragments.SettingsFragment;
-import info.nexrave.nexrave.newsfeedfragments.extra.CircleTransform;
+import info.nexrave.nexrave.systemtools.NexraveActionStatusBar;
 
-public class FeedActivity extends AppCompatActivity {
+public class FeedActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private ListView listView;
     private FeedListAdapter listAdapter;
@@ -77,14 +72,21 @@ public class FeedActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_feed);
+        setContentView(R.layout.activity_feedwithnav);
 
-        ActionBar actionBar = getSupportActionBar();
-//        int red = Color.RED;
-//        setActionbarTextColor(actionBar, red);
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        actionBar.setCustomView(R.layout.abs_layout);
+//        ActionBar actionBar = getSupportActionBar();
+//        NexraveActionStatusBar.setActionBarCustomLayout(actionBar, R.layout.abs_layout);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
         listView = (ListView) findViewById(R.id.list);
 
@@ -134,15 +136,6 @@ public class FeedActivity extends AppCompatActivity {
         }
 
     }
-    //Method to change action bar text color
-    private void setActionbarTextColor(ActionBar actBar, int color) {
-
-        String title = actBar.getTitle().toString();
-        Spannable spannablerTitle = new SpannableString(title);
-        spannablerTitle.setSpan(new ForegroundColorSpan(color), 0, spannablerTitle.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        actBar.setTitle(spannablerTitle);
-
-    }
 
     /**
      * Parsing json reponse and passing the data to feed view list adapter
@@ -156,22 +149,23 @@ public class FeedActivity extends AppCompatActivity {
 
                 FeedItem item = new FeedItem();
                 item.setId(feedObj.getInt("id"));
-                item.setName(feedObj.getString("name"));
+//                item.setName(feedObj.getString("name"));
 
                 // Image might be null sometimes
                 String image = feedObj.isNull("image") ? null : feedObj
                         .getString("image");
                 item.setImge(image);
-                item.setStatus(feedObj.getString("status"));
-                item.setProfilePic(feedObj.getString("profilePic"));
-                item.setTimeStamp(feedObj.getString("timeStamp"));
+//                item.setStatus(feedObj.getString("status"));
+//                item.setProfilePic(feedObj.getString("profilePic"));
+//                item.setTimeStamp(feedObj.getString("timeStamp"));
 
                 // url might be null sometimes
-                String feedUrl = feedObj.isNull("url") ? null : feedObj
-                        .getString("url");
-                item.setUrl(feedUrl);
-
-                feedItems.add(item);
+//                String feedUrl = feedObj.isNull("url") ? null : feedObj
+//                        .getString("url");
+//                item.setUrl(feedUrl);
+                if (image != null) {
+                    feedItems.add(item);
+                }
             }
 
             // notify data changes to list adapater
@@ -179,5 +173,66 @@ public class FeedActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    //Back button method
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    //Creates menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main2, menu);
+        return true;
+    }
+
+    //When a menu is clicked
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    //When menu item is clicke
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_camera) {
+            // Handle the camera action
+        } else if (id == R.id.nav_gallery) {
+
+        } else if (id == R.id.nav_slideshow) {
+
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 }

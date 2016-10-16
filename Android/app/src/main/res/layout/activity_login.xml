@@ -58,18 +58,6 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@mipmap/app_icon"
-        android:id="@+id/imageView"
-        android:layout_marginTop="140dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignLeft="@+id/finalLoginButton"
-        android:layout_alignStart="@+id/finalLoginButton"
-        android:layout_marginLeft="29dp"
-        android:layout_marginStart="29dp" />
-
     <TextView
         android:text="Forgot Password?"
         android:textColor="@color/light_blue"
@@ -93,4 +81,17 @@
         android:layout_alignBottom="@+id/imageView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@mipmap/nexraveappicon"
+        android:layout_marginTop="74dp"
+        android:id="@+id/imageView3"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/forgotPassword"
+        android:layout_alignStart="@+id/forgotPassword"
+        android:layout_marginLeft="22dp"
+        android:layout_marginStart="22dp" />
+
 </RelativeLayout>

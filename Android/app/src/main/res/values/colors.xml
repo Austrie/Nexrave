@@ -7,6 +7,8 @@
     <color name="black_overlay">#66000000</color>
     <color name="white">#ffffff</color>
     <color name="light_blue">#ADD8E6</color>
+    <color name="dark_blue">#0000A0</color>
+    <color name="blue">#0000FF</color>
 
     <!-- NewsFeed realated colors -->
     <color name="feed_bg">#d3d6db</color>

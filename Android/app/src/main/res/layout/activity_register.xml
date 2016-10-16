@@ -10,33 +10,6 @@
     android:background="@drawable/splashscreen"
     tools:context="info.nexrave.nexrave.RegisterActivity">
 
-    <Button
-        android:text="Login"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:background="@drawable/buttonbackground"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/loginButton"
-        android:layout_alignParentBottom="true"
-        android:layout_alignLeft="@+id/submitButton"
-        android:layout_alignStart="@+id/submitButton"
-        android:layout_marginBottom="21dp"
-        android:onClick="loginMethod"/>
-
-    <Button
-        android:text="Submit"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:background="@drawable/buttonbackground"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/submitButton"
-        android:layout_above="@+id/loginButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="29dp"
-        android:onClick="submitRegistrationMethod"/>
-
     <EditText
         android:background="@drawable/roundededittext"
         android:layout_width="wrap_content"
@@ -154,6 +127,31 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
+    <TextView
+        android:text="Already a member? Login"
+        android:textColor="@color/light_blue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/loginButton"
+        android:layout_marginBottom="32dp"
+        android:clickable="true"
+        android:onClick="loginMethod"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="Submit"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:background="@drawable/buttonbackground"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/submitButton"
+        android:layout_marginBottom="12dp"
+        android:onClick="submitRegistrationMethod"
+        android:layout_above="@+id/loginButton"
+        android:layout_centerHorizontal="true" />
+
     <EditText
         android:background="@drawable/roundededittext"
         android:layout_width="wrap_content"
@@ -164,10 +162,10 @@
         android:textColorHint="@color/white"
         android:ems="10"
         android:id="@+id/firstNameEditText"
+        android:layout_marginBottom="23dp"
         android:layout_above="@+id/lastNameEditText"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="41dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 

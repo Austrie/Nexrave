@@ -26,7 +26,7 @@ public class RegisterActivity extends AppCompatActivity {
         AsyncTask asyncTask = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] params) {
-                intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                intent = new Intent(RegisterActivity.this, AlternativeLoginActivity.class);
                 startActivity(intent);
                 return null;
             }
