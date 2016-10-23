@@ -1,7 +1,6 @@
 package info.nexrave.nexrave.systemtools;
 
 import android.support.v7.app.ActionBar;
-import android.support.v7.widget.ActionBarOverlayLayout;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;

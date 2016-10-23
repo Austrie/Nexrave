@@ -5,18 +5,68 @@
     android:id="@+id/content_event_info"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="info.nexrave.nexrave.EventInfoActivity"
-    tools:showIn="@layout/app_bar_event_info">
+    tools:context="info.nexrave.nexrave.newsfeedparts.FeedImageView"
+    tools:showIn="@layout/app_bar_event_info"
+    android:orientation="vertical"
+    android:weightSum="1">
 
-    <ImageView
+    <TextView
+        android:text="Username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/eventUsername"
+        android:paddingBottom="50dp"/>
+
+    <info.nexrave.nexrave.newsfeedparts.FeedImageView
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:id="@+id/eventFlier"/>
+        android:src="@drawable/sampleeventflier"
+        android:scaleType="fitXY"
+        android:id="@+id/eventFlier"
+        android:visibility="visible"
+        android:paddingBottom="50dp"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="Time"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/eventTime"
+            android:paddingBottom="25dp"
+            android:layout_alignParentRight="true"/>
+
+        <TextView
+            android:text="Date"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/eventDate"
+            android:paddingBottom="25dp"
+            android:layout_alignParentLeft="true"/>
+
+        <TextView
+            android:text="Location"
+            android:textSize="18sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/eventLocation"
+            android:clickable="true"
+            android:paddingTop="25dp"
+            android:paddingBottom="25dp"
+            android:layout_below="@+id/eventTime"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="15dp" />
+
+    </RelativeLayout>
 
 
 </LinearLayout>

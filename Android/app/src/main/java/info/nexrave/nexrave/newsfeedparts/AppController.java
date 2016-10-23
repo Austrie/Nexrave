@@ -4,7 +4,6 @@ package info.nexrave.nexrave.newsfeedparts;
  * Created by Shane Austrie on 10/9/2016.
  */
 
-import info.nexrave.nexrave.newsfeedparts.LruBitmapCache;
 import android.app.Application;
 import android.text.TextUtils;
 

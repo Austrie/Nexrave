@@ -11,11 +11,6 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- To auto-complete the email text field in the login form with the user's emails -->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.READ_PROFILE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
-
     <application
         android:name=".newsfeedparts.AppController"
         android:allowBackup="true"
@@ -41,28 +36,22 @@
         <activity
             android:name=".RegisterActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeStatusandAction" />
+            android:theme="@style/AppThemeStatus"
+            android:label="Register"/>
         <activity
             android:name=".LoginActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+            android:label="@string/title_activity_alternative_login"
+            android:theme="@style/AppThemeStatus" />
         <activity
             android:name=".FeedActivity"
             android:theme="@style/AppTheme" />
         <activity android:name=".AboutUsActivity" />
         <activity android:name=".PrivacyPolicyActivity" />
         <activity
-            android:name=".AlternativeLoginActivity"
-            android:label="@string/title_activity_alternative_login"
-            android:theme="@style/AppThemeStatus" />
-        <activity
-            android:name=".systemtools.Main2Activity"
-            android:label="@string/title_activity_main2"
-            android:theme="@style/AppTheme" />
-        <activity
             android:name=".EventInfoActivity"
             android:label="@string/title_activity_event_info"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

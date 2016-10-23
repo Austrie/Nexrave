@@ -4,27 +4,18 @@ package info.nexrave.nexrave.newsfeedparts;
  * Created by Shane Austrie on 10/10/2016.
  */
 
-import info.nexrave.nexrave.R;
-import info.nexrave.nexrave.newsfeedparts.FeedImageView;
-import info.nexrave.nexrave.newsfeedparts.AppController;
-import info.nexrave.nexrave.newsfeedparts.FeedItem;
-
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Context;
-import android.text.Html;
-import android.text.TextUtils;
-import android.text.format.DateUtils;
-import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
+
+import java.util.List;
+
+import info.nexrave.nexrave.R;
 
 public class FeedListAdapter extends BaseAdapter {
     private Activity activity;

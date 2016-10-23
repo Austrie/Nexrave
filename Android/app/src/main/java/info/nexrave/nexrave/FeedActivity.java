@@ -1,30 +1,18 @@
 package info.nexrave.nexrave;
 
-import android.content.Intent;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-
-
-import info.nexrave.nexrave.newsfeedparts.FeedListAdapter;
-import info.nexrave.nexrave.newsfeedparts.AppController;
-import info.nexrave.nexrave.newsfeedparts.FeedItem;
-
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.annotation.SuppressLint;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
-import android.widget.ArrayAdapter;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.android.volley.Cache;
@@ -35,38 +23,29 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+
+import info.nexrave.nexrave.newsfeedparts.AppController;
+import info.nexrave.nexrave.newsfeedparts.FeedImageView;
+import info.nexrave.nexrave.newsfeedparts.FeedItem;
+import info.nexrave.nexrave.newsfeedparts.FeedListAdapter;
+
 //Fragment related imports
-import android.os.Bundle;
-import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-
-import info.nexrave.nexrave.R;
-import info.nexrave.nexrave.systemtools.NexraveActionStatusBar;
 
 public class FeedActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener {
-    private static final String TAG = MainActivity.class.getSimpleName();
+   private FeedImageView imageView;
+    private static final String TAG = FeedActivity.class.getSimpleName();
     private ListView listView;
     private FeedListAdapter listAdapter;
     private List<FeedItem> feedItems;
     private String URL_FEED = "http://api.androidhive.info/feed/feed.json";
+    Intent intent;
 
     @SuppressLint("NewApi")
     @Override
@@ -94,6 +73,14 @@ public class FeedActivity extends AppCompatActivity  implements NavigationView.O
 
         listAdapter = new FeedListAdapter(this, feedItems);
         listView.setAdapter(listAdapter);
+        listView.setOnItemClickListener(new ListView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                intent = new Intent(FeedActivity.this, EventInfoActivity.class);
+                intent.putExtra("id",position);
+                startActivity(intent);
+            }
+        });
 
         // We first check for cached request
         Cache cache = AppController.getInstance().getRequestQueue().getCache();
@@ -134,11 +121,10 @@ public class FeedActivity extends AppCompatActivity  implements NavigationView.O
             // Adding request to volley request queue
             AppController.getInstance().addToRequestQueue(jsonReq);
         }
-
     }
 
     /**
-     * Parsing json reponse and passing the data to feed view list adapter
+     * Parsing json response and passing the data to feed view list adapter
      * */
     private void parseJsonFeed(JSONObject response) {
         try {
@@ -146,7 +132,6 @@ public class FeedActivity extends AppCompatActivity  implements NavigationView.O
 
             for (int i = 0; i < feedArray.length(); i++) {
                 JSONObject feedObj = (JSONObject) feedArray.get(i);
-
                 FeedItem item = new FeedItem();
                 item.setId(feedObj.getInt("id"));
 //                item.setName(feedObj.getString("name"));

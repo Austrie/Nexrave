@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "592489729650",
+    "firebase_url": "https://nexrave-e1c12.firebaseio.com",
+    "project_id": "nexrave-e1c12",
+    "storage_bucket": "nexrave-e1c12.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:592489729650:android:860ba6670e571865",
+        "android_client_info": {
+          "package_name": "info.nexrave.nexrave"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "592489729650-htj3l05don369426fv1pg478o4cphuec.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "info.nexrave.nexrave",
+            "certificate_hash": "0D9C354F76188CB5537E1E694E0E09A96A95EE6D"
+          }
+        },
+        {
+          "client_id": "592489729650-p4ud0nscr2p5mlqjumblaamo0etih2e0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYuaBJb86s2CRb7FWBZyTvjrcv_aa8dIU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "592489729650-mcmat692n062221ld6albqibcuohk0k3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.319.NexRave"
+              }
+            },
+            {
+              "client_id": "592489729650-p4ud0nscr2p5mlqjumblaamo0etih2e0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

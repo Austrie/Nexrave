@@ -1,172 +1,217 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_register"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:background="@drawable/splashscreen"
-    tools:context="info.nexrave.nexrave.RegisterActivity">
+    tools:context="info.nexrave.nexrave.RegisterActivity"
+    android:background="@color/colorPrimaryDark">
 
-    <EditText
-        android:background="@drawable/roundededittext"
+    <!-- Login progress -->
+    <ScrollView
+        android:id="@+id/register_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/email_register_form"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/logo5"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/enterFirstNameLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColorHint="@color/white"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true">
+
+                <EditText
+                    android:id="@+id/enterFirstName"
+                    android:layout_width="119dp"
+                    android:layout_height="wrap_content"
+                    android:hint="First Name"
+                    android:textColor="@color/white"
+                    android:imeOptions="actionNext"
+                    android:maxLines="1" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColorHint="@color/white"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true">
+
+                <EditText
+                    android:id="@+id/enterLastName"
+                    android:layout_width="209dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Last Name"
+                    android:textColor="@color/white"
+                    android:imeOptions="actionNext"
+                    android:maxLines="1" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            </RelativeLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColorHint="@color/white">
+
+                <EditText
+                    android:id="@+id/enterUsername"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Username"
+                    android:textColor="@color/white"
+                    android:imeOptions="actionNext"
+                    android:maxLines="1" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColorHint="@color/white">
+
+                <EditText
+                    android:id="@+id/enterPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/prompt_password"
+                    android:textColor="@color/white"
+                    android:imeOptions="actionNext"
+                    android:inputType="textPassword"
+                    android:maxLines="1" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColorHint="@color/white">
+
+                <EditText
+                    android:id="@+id/enterPassword2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Password (again)"
+                    android:textColor="@color/white"
+                    android:imeOptions="actionNext"
+                    android:inputType="textPassword"
+                    android:maxLines="1" />
+
+            </android.support.design.widget.TextInputLayout>
+
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColorHint="@color/white">
+
+                <AutoCompleteTextView
+                    android:id="@+id/enterEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Georgia Tech Email Address"
+                    android:inputType="textEmailAddress"
+                    android:textColor="@color/white"
+                    android:imeOptions="actionNext"
+                    android:maxLines="1" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColorHint="@color/white"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true">
+
+                    <EditText
+                        android:id="@+id/enterCity"
+                        android:layout_width="119dp"
+                        android:layout_height="wrap_content"
+                        android:hint="City"
+                        android:textColor="@color/white"
+                        android:imeOptions="actionNext"
+                        android:maxLines="1" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColorHint="@color/white"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true">
+
+                    <EditText
+                        android:id="@+id/enterState"
+                        android:layout_width="209dp"
+                        android:layout_height="wrap_content"
+                        android:hint="State"
+                        android:textColor="@color/white"
+                        android:imeOptions="actionDone"
+                        android:maxLines="1" />
+
+                </android.support.design.widget.TextInputLayout>
+
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/email_register_button"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/action_sign_in_short"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:background="@drawable/buttonbackground"/>
+
+            <TextView
+                android:id="@+id/alreadyMember"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Already a member? Login"
+                android:textColor="@color/light_blue"
+                android:textSize="14sp"
+                android:clickable="true"
+                android:textAlignment="center"/>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/register_progress"
+        style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:ems="10"
-        android:id="@+id/verifyPasswordEditText"
-        android:hint="Verify Password"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:layout_above="@+id/submitButton"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="24dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_marginBottom="8dp"
+        android:visibility="gone" />
 
-    <EditText
-        android:background="@drawable/roundededittext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:ems="10"
-        android:id="@+id/passwordEditText"
-        android:hint="Password"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:layout_above="@+id/verifyPasswordEditText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="25dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <EditText
-        android:background="@drawable/roundededittext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:hint="State"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:ems="10"
-        android:id="@+id/stateEditText"
-        android:layout_alignBaseline="@+id/cityEditText"
-        android:layout_alignBottom="@+id/cityEditText"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_toRightOf="@+id/cityEditText"
-        android:layout_toEndOf="@+id/cityEditText" />
-
-    <EditText
-        android:background="@drawable/roundededittext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:hint="City"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:ems="10"
-        android:id="@+id/cityEditText"
-        android:layout_marginBottom="24dp"
-        android:layout_above="@+id/passwordEditText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <EditText
-        android:background="@drawable/roundededittext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
-        android:ems="10"
-        android:id="@+id/emailEditText"
-        android:hint="Gatech Email"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:layout_above="@+id/stateEditText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="18dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <EditText
-        android:background="@drawable/roundededittext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:hint="Username"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:ems="10"
-        android:id="@+id/usernameEditText"
-        android:layout_above="@+id/emailEditText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="23dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <EditText
-        android:background="@drawable/roundededittext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:hint="Last Name"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:ems="10"
-        android:id="@+id/lastNameEditText"
-        android:layout_marginBottom="25dp"
-        android:layout_above="@+id/usernameEditText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <TextView
-        android:text="Already a member? Login"
-        android:textColor="@color/light_blue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/loginButton"
-        android:layout_marginBottom="32dp"
-        android:clickable="true"
-        android:onClick="loginMethod"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
-
-    <Button
-        android:text="Submit"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:background="@drawable/buttonbackground"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/submitButton"
-        android:layout_marginBottom="12dp"
-        android:onClick="submitRegistrationMethod"
-        android:layout_above="@+id/loginButton"
-        android:layout_centerHorizontal="true" />
-
-    <EditText
-        android:background="@drawable/roundededittext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:hint="First Name"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:ems="10"
-        android:id="@+id/firstNameEditText"
-        android:layout_marginBottom="23dp"
-        android:layout_above="@+id/lastNameEditText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-</RelativeLayout>
+</LinearLayout>
