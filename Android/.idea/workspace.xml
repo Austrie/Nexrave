@@ -21,187 +21,8 @@
     <bookmark url="file://$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/SplashActivity.java" line="222" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e614778f-41fa-4508-8d5e-1deb91a58560" name="Default" comment="Newest push as of Jan 12, 2017">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/facebook_login_button.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/facebook_login_button_3.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/facebook_logo.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/splash_logo.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/facebook_login_button.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/facebook_login_button_3.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/facebook_logo.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/splash_logo.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/facebook_login_button.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/facebook_login_button_3.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/facebook_logo.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/splash_logo.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/facebook_login_button.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/facebook_login_button_3.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/facebook_logo.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/splash_logo.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxxhdpi/facebook_login_button.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxxhdpi/facebook_login_button_3.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxxhdpi/facebook_logo.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xxxhdpi/splash_logo.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/raw/video_footage.mp4" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/androidasync_2_1_9.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/animated_vector_drawable_25_1_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/appcompat_v7_25_1_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/bolts_android_1_4_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/bolts_applinks_1_4_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/bolts_tasks_1_4_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/cardview_v7_25_0_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/commons_io_2_5.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/customtabs_25_0_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/design_25_1_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/facebook_android_sdk_4_18_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/firebase_analytics_10_0_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/firebase_analytics_impl_10_0_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/firebase_common_10_0_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/firebase_core_10_0_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/firebase_database_connection_10_0_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/firebase_storage_10_0_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/firebase_storage_common_10_0_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/gson_2_3.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/ion_2_1_9.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/play_services_basement_10_0_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/recyclerview_v7_25_1_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/support_annotations_25_1_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/support_compat_25_1_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/support_core_utils_25_1_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/support_fragment_25_1_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/support_media_compat_25_1_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/support_vector_drawable_25_1_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/transition_25_1_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/HostActivity.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/HostAddEventActivity.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/HostListViewActivity.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/bot/CopyEventActivity.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/bot/CreateEventActivity.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/bot/GetEventsActivity.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/bot/GetFriendsActivity.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/bot/GetListsActivity.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/bot/MyWebView.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/models/Event.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/models/Guest.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/models/Host.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/models/InviteList.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/models/User.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/security/EnterPhoneNumber.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/systemtools/FireDatabase.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/systemtools/FireStorage.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/systemtools/GraphUser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/systemtools/localdatabase/EventsDB.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/systemtools/localdatabase/UserDB.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_bot.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_enter_auth_code.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_enter_phone_number.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_host.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_host_add.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_host_main.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/layout/invite_list_item.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/layout/video_background.xml" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/android_android_23.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/animated_vector_drawable_23_4_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/appcompat_v7_23_4_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/design_23_4_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/play_services_base_9_0_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/play_services_basement_9_0_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/support_annotations_23_4_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/support_v4_23_4_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/support_vector_drawable_23_4_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/MainActivity.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/RegisterActivity.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/systemtools/RegisterLogin.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-hdpi/ic_home_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-hdpi/ic_local_movies_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-hdpi/ic_notifications_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-hdpi/ic_photo_library_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-hdpi/ic_settings_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-mdpi/ic_home_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-mdpi/ic_local_movies_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-mdpi/ic_notifications_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-mdpi/ic_photo_library_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-mdpi/ic_settings_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-xhdpi/ic_home_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-xhdpi/ic_local_movies_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-xhdpi/ic_notifications_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-xhdpi/ic_photo_library_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-xhdpi/ic_settings_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-xxhdpi/ic_home_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-xxhdpi/ic_local_movies_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-xxhdpi/ic_notifications_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-xxhdpi/ic_photo_library_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-xxhdpi/ic_settings_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-xxxhdpi/ic_home_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-xxxhdpi/ic_local_movies_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-xxxhdpi/ic_notifications_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-xxxhdpi/ic_photo_library_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/drawable-xxxhdpi/ic_settings_black_24dp.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_register.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/res/menu/main2.xml" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/firebase_analytics_9_0_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/firebase_database_10_0_1.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/firebase_analytics_impl_9_0_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/play_services_tasks_10_0_1.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/firebase_common_9_0_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/firebase_auth_10_0_1.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/firebase_core_9_0_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/firebase_iid_10_0_1.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/firebase_iid_9_0_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/support_v4_25_1_0.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/play_services_tasks_9_0_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/play_services_base_10_0_1.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/recyclerview_v7_23_4_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/support_core_ui_25_1_0.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/AboutUsActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/bot/FBLoginActivity.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/PrivacyPolicyActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/security/EnterAuthCode.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/res/layout/abs_layout.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/toolbar_base.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_about_us.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_fblogin.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_feedwithnav.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_feed.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_privacy_policy.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_host_invite_lists.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/res/layout/app_bar_event_info.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/toolbar_event_info.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/res/layout/app_bar_feed.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/toolbar_feed.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/res/menu/event_info.xml" afterPath="$PROJECT_DIR$/app/src/main/res/menu/menu_host.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/gradle.xml" afterPath="$PROJECT_DIR$/.idea/gradle.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/espresso_core_2_2_2.xml" afterPath="$PROJECT_DIR$/.idea/libraries/espresso_core_2_2_2.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/espresso_idling_resource_2_2_2.xml" afterPath="$PROJECT_DIR$/.idea/libraries/espresso_idling_resource_2_2_2.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/exposed_instrumentation_api_publish_0_5.xml" afterPath="$PROJECT_DIR$/.idea/libraries/exposed_instrumentation_api_publish_0_5.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/hamcrest_integration_1_3.xml" afterPath="$PROJECT_DIR$/.idea/libraries/hamcrest_integration_1_3.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/hamcrest_library_1_3.xml" afterPath="$PROJECT_DIR$/.idea/libraries/hamcrest_library_1_3.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/javawriter_2_1_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/javawriter_2_1_1.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/javax_annotation_api_1_2.xml" afterPath="$PROJECT_DIR$/.idea/libraries/javax_annotation_api_1_2.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/javax_inject_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/javax_inject_1.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/rules_0_5.xml" afterPath="$PROJECT_DIR$/.idea/libraries/rules_0_5.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/runner_0_5.xml" afterPath="$PROJECT_DIR$/.idea/libraries/runner_0_5.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/runConfigurations.xml" afterPath="$PROJECT_DIR$/.idea/runConfigurations.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
+    <list default="true" id="e614778f-41fa-4508-8d5e-1deb91a58560" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build.gradle" afterPath="$PROJECT_DIR$/app/build.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/google-services.json" afterPath="$PROJECT_DIR$/app/google-services.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/EventInfoActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/EventInfoActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/FeedActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/FeedActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/LoginActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/LoginActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/SplashActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/SplashActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/newsfeedparts/FeedImageView.java" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/newsfeedparts/FeedImageView.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/systemtools/NexraveActionStatusBar.java" afterPath="$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/systemtools/NexraveActionStatusBar.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/roundededittext2.xml" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/roundededittext2.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/bg_circle.xml" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/bg_circle.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/bg_parent_rounded_corner.xml" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/bg_parent_rounded_corner.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/roundededittext.xml" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/roundededittext.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/roundededittext3.xml" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/roundededittext3.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_event_info.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_event_info.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_login.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_login.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_splash.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_splash.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/content_event_info.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/content_event_info.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/content_feed.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/content_feed.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/feed_item.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/feed_item.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/nav_header_event_info.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/nav_header_event_info.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/nav_header_main2.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/nav_header_main2.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/toolbar_background.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/toolbar_background.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/menu/activity_event_info_drawer.xml" afterPath="$PROJECT_DIR$/app/src/main/res/menu/activity_event_info_drawer.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/menu/activity_main2_drawer.xml" afterPath="$PROJECT_DIR$/app/src/main/res/menu/activity_main2_drawer.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/values/dimens.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values/dimens.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
     </list>
     <ignored path="Android.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -238,8 +59,8 @@
       <file leaf-file-name="FeedImageView.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/newsfeedparts/FeedImageView.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="22">
-              <caret line="77" column="0" selection-start-line="77" selection-start-column="0" selection-end-line="79" selection-end-column="38" />
+            <state relative-caret-position="110">
+              <caret line="81" column="76" selection-start-line="81" selection-start-column="76" selection-end-line="81" selection-end-column="76" />
               <folding />
             </state>
           </provider>
@@ -3054,6 +2875,14 @@
       <option name="presentableId" value="Default" />
       <updated>1482015102322</updated>
     </task>
+    <task id="LOCAL-00001" summary="Newest push as of Jan 12, 2017">
+      <created>1484278317618</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1484278317618</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TodoView">
@@ -3603,8 +3432,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/info/nexrave/nexrave/newsfeedparts/FeedImageView.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="22">
-          <caret line="77" column="0" selection-start-line="77" selection-start-column="0" selection-end-line="79" selection-end-column="38" />
+        <state relative-caret-position="110">
+          <caret line="81" column="76" selection-start-line="81" selection-start-column="76" selection-end-line="81" selection-end-column="76" />
           <folding />
         </state>
       </provider>
