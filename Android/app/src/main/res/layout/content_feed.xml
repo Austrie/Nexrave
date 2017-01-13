@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="info.nexrave.nexrave.FeedActivity"
-    tools:showIn="@layout/app_bar_feed"
+    tools:showIn="@layout/toolbar_feed"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
     android:clipToPadding="true">

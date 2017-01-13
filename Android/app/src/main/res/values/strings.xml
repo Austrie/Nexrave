@@ -1,12 +1,16 @@
 <resources>
     <string name="app_name">Nexrave</string>
 
+    <string name="facebook_app_id">174648863008638</string>
+    <string name="fb_login_protocol_scheme">fb174648863008638</string>
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_alternative_login">Sign in</string>
 
     <!-- Strings related to layouts_login.layout -->
+    <string name="fb_login_prompt">Do you have, or plan to have, a Facebook page for your event?</string>
+    <string name="fb_agreement">By logging in you agree to be relogged in anytime your event is edited. No login information is stored outside of this device.</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in or register</string>
@@ -25,4 +29,6 @@
 
     <string name="action_settings">Settings</string>
     <string name="title_activity_event_info">EventInfoActivity</string>
+    <string name="title_activity_host">HostActivity</string>
+    <string name="section_format">Event %1$d Goes Here</string>
 </resources>

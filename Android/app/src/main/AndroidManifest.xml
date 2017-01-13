@@ -7,22 +7,25 @@
         android:largeScreens="true"
         android:normalScreens="true"
         android:smallScreens="false"
-        android:xlargeScreens="false" />
+        android:xlargeScreens="true" />
 
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".newsfeedparts.AppController"
         android:allowBackup="true"
-        android:hardwareAccelerated="false"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/nexraveappicon"
         android:label="@string/app_name"
-        android:largeHeap="true"
-        android:supportsRtl="true">
+        android:largeHeap="true">
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
         <activity
             android:name=".SplashActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
+            android:theme="@style/Theme.AppCompat">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,27 +33,70 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+            android:name="com.facebook.CustomTabActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="@string/fb_login_protocol_scheme" />
+            </intent-filter>
+        </activity>
         <activity
-            android:name=".RegisterActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppThemeStatus"
-            android:label="Register"/>
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name" />
         <activity
             android:name=".LoginActivity"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_alternative_login"
+            android:screenOrientation="portrait"
             android:theme="@style/AppThemeStatus" />
         <activity
             android:name=".FeedActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".AboutUsActivity" />
-        <activity android:name=".PrivacyPolicyActivity" />
         <activity
             android:name=".EventInfoActivity"
             android:label="@string/title_activity_event_info"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".security.EnterPhoneNumber"
+            android:theme="@style/Theme.AppCompat" />
+        <activity android:name=".security.EnterAuthCode" />
+        <activity
+            android:name=".HostActivity"
+            android:label="@string/title_activity_host"
+            android:parentActivityName=".FeedActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="info.nexrave.nexrave.FeedActivity" />
+        </activity>
+        <activity
+            android:name=".HostAddEventActivity"
+            android:label="@string/title_activity_host"
+            android:parentActivityName=".FeedActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="info.nexrave.nexrave.HostActivity" />
+        </activity>
+        <activity
+            android:name=".bot.GetListsActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".bot.CreateEventActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".bot.CopyEventActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".bot.FBLoginActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".HostListViewActivity"
             android:theme="@style/AppTheme" />
     </application>
 

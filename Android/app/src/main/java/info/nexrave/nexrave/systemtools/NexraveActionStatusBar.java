@@ -16,7 +16,7 @@ public class NexraveActionStatusBar {
     public static void setActionBarCustomLayout(ActionBar actBar, int id) {
         actBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         actBar.setCustomView(id);
-}
+    }
 
 
     //Method to change ActionBar text color

@@ -10,7 +10,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="info.nexrave.nexrave.newsfeedparts.FeedImageView"
-    tools:showIn="@layout/app_bar_event_info"
+    tools:showIn="@layout/toolbar_event_info"
     android:orientation="vertical"
     android:weightSum="1">
 
@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/eventUsername"
-        android:paddingBottom="50dp"/>
+        android:paddingBottom="50dp" />
 
     <info.nexrave.nexrave.newsfeedparts.FeedImageView
         android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
         android:scaleType="fitXY"
         android:id="@+id/eventFlier"
         android:visibility="visible"
-        android:paddingBottom="50dp"/>
+        android:paddingBottom="50dp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/eventTime"
             android:paddingBottom="25dp"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="true" />
 
         <TextView
             android:text="Date"
@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/eventDate"
             android:paddingBottom="25dp"
-            android:layout_alignParentLeft="true"/>
+            android:layout_alignParentLeft="true" />
 
         <TextView
             android:text="Location"

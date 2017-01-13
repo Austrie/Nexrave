@@ -5,6 +5,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="info.nexrave.nexrave.SplashActivity"
-    android:background="@drawable/splashscreen">
+    android:background="#29000000">
+
+    <include layout="@layout/video_background" />
+
+    <!--<ImageView-->
+    <!--android:id="@+id/iv_splash_logo"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentTop="true"-->
+    <!--android:layout_centerHorizontal="true"-->
+    <!--android:layout_marginTop="100dp"-->
+    <!--android:src="@drawable/splash_logo"-->
+    <!--android:visibility="invisible"/>-->
+
+    <!--<ImageButton-->
+    <!--android:src="@drawable/facebook_login_button"-->
+    <!--android:background="#0000"-->
+    <!--android:id="@+id/login_button"-->
+    <!--android:layout_below="@id/iv_splash_logo"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="50dp"-->
+    <!--android:layout_marginBottom="30dp"-->
+    <!--android:onClick="login"-->
+    <!--android:visibility="invisible"-->
+    <!--android:layout_centerHorizontal="true" />-->
+
 
 </RelativeLayout>
