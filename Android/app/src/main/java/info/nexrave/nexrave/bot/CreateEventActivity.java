@@ -181,7 +181,7 @@ public class CreateEventActivity extends AppCompatActivity {
 
     protected void chooseList(int choice) {
         choosenList = choice;
-        webView.loadUrl("https://www.facebook.com/lists/" + inviteLists.get(choice).getListId());
+        webView.loadUrl("https://www.facebook.com/lists/" + inviteLists.get(choice).getFBListId());
 
     }
 }

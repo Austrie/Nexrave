@@ -15,6 +15,8 @@ import info.nexrave.nexrave.R;
 
 public class FBLoginActivity extends AppCompatActivity {
 
+    //TODO: What if the password is wrong or they have two step verification
+
     private Intent intent;
     WebView webView;
     String ua = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) "

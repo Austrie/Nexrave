@@ -11,6 +11,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import info.nexrave.nexrave.HostListViewActivity;
 import info.nexrave.nexrave.R;
@@ -22,15 +24,17 @@ import info.nexrave.nexrave.models.Event;
 
 public class GetEventsActivity {
 
+    private HostListViewActivity activity;
     private String js;
-    private ArrayList<Event> listOfEvents;
+    private Set<Event> listOfEvents;
     private WebView webView;
     private String ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
             + "Chrome/55.0.2883.87 Safari/537.36";
 
-    public GetEventsActivity(WebView wv) {
+    public GetEventsActivity(WebView wv, HostListViewActivity hlwAct) {
+        this.activity = hlwAct;
         this.webView = wv;
-      setupWebView();
+        setupWebView();
     }
 
     private void setupWebView() {
@@ -45,7 +49,7 @@ public class GetEventsActivity {
         webView.getSettings().setUserAgentString(ua);
         //Login
         webView.loadUrl("https://www.facebook.com/events/hosting");
-        listOfEvents = new ArrayList<Event>();
+        listOfEvents = new LinkedHashSet<>();
     }
 
     @JavascriptInterface
@@ -58,7 +62,8 @@ public class GetEventsActivity {
 //        ArrayList<String> startTimeOfDay = new ArrayList<>();
 
         listOfEvents.add(new Event(name));
-        listOfEvents.get(listOfEvents.size() - 1).facebook_url = "https://www.facebook.com/events/"
+        Object objArr[] = listOfEvents.toArray();
+        ((Event)objArr[(listOfEvents.size() - 1)]).facebook_url = "https://www.facebook.com/events/"
             + url.replace("dashboard_item_", "");
 
 //        timedate = timedate.replace("<span>", "");
@@ -124,6 +129,12 @@ public class GetEventsActivity {
     public void listOfEventsReady() {
         Log.d("GetEventsActivity", "Events ready");
         HostListViewActivity.setListOfEvents(listOfEvents);
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                activity.kill(webView);
+            }
+        });
     }
 
     private void setupJavascript() {
@@ -162,6 +173,15 @@ public class GetEventsActivity {
                     view.loadUrl(js);
             }
         }
+    }
+
+    public static void kill(WebView webView) {
+        webView.loadUrl("about:blank");
+        webView.stopLoading();
+        webView.setWebChromeClient(null);
+        webView.setWebViewClient(null);
+        webView.destroy();
+        webView = null;
     }
 
 }

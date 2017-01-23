@@ -16,41 +16,59 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import info.nexrave.nexrave.bot.CopyEventActivity;
 import info.nexrave.nexrave.bot.GetEventsActivity;
 import info.nexrave.nexrave.bot.GetFriendsActivity;
 import info.nexrave.nexrave.models.Event;
+import info.nexrave.nexrave.models.Host;
 import info.nexrave.nexrave.models.InviteList;
+import info.nexrave.nexrave.systemtools.FireDatabase;
 
 public class HostListViewActivity extends AppCompatActivity {
 
     private Intent intent;
-    private ArrayList<InviteList> inviteLists;
+    //We use set instead of ArrayList to prevent duplicates, since Facebook tends to load the page twice
+    private Set<InviteList> inviteLists;
     private List<String> list;
-    private ListView listView;
     private ListAdapter adapter;
     private WebView backgroundWebView1, backgroundWebView2, backgroundWebView3;
     private boolean isFriendsListScreen = true;
-
-    private static ArrayList<Event> listOfEvents;
+    private static EditText editText;
+    private static ListView listView;
+    private static Button submitButton;
+    private static FirebaseUser user;
+    private static FirebaseAuth mAuth;
+    private static HostListViewActivity activity;
+    private static AlertDialog.Builder builder;
+    private static AlertDialog dialog;
+    private static Set<Event> listOfEvents;
     private static InviteList invitedList;
     private static boolean isInvitedListReady = false;
     private static boolean isListOfEventsReady = false;
     private static boolean isCopyEventReady = false;
     private static boolean isProgressShowing = false;
     private static int positionClicked = -1;
+    private static ProgressDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        list = new ArrayList<String>();
         setContentView(R.layout.activity_host_invite_lists);
+        builder = new AlertDialog.Builder(HostListViewActivity.this);
+        list = new ArrayList<String>();
         listView = (ListView) findViewById(R.id.listOfCFL);
         backgroundWebView1 = new WebView(this);
         backgroundWebView2 = new WebView(this);
@@ -59,7 +77,7 @@ public class HostListViewActivity extends AppCompatActivity {
         Thread getEvents = new Thread() {
             @Override
             public void run() {
-                GetEventsActivity gea = new GetEventsActivity(backgroundWebView1);
+                GetEventsActivity gea = new GetEventsActivity(backgroundWebView1, HostListViewActivity.this);
 
             }
         };
@@ -71,8 +89,9 @@ public class HostListViewActivity extends AppCompatActivity {
         if (inviteLists.size() != 0) {
             //For some reason the size of the array is double
             //Possibly because the webpage loads twice (so it adds twice)
-            for (int i = 0; i < (inviteLists.size() / 2); i++) {
-                list.add(inviteLists.get(i).list_name);
+            Object objArr[] = inviteLists.toArray();
+            for (int i = 0; i < (inviteLists.size()); i++) {
+                list.add(((InviteList) objArr[i]).list_name);
             }
         }
 
@@ -104,41 +123,64 @@ public class HostListViewActivity extends AppCompatActivity {
                         });
             }
         });
+
+
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
     }
 
-    public static void setListOfEvents(ArrayList<Event> arrEvents) {
+    public static void setListOfEvents(Set<Event> arrEvents) {
         listOfEvents = arrEvents;
         isListOfEventsReady = true;
 //        if ((positionClicked != -1) && (isProgressShowing)) {
 //            self.onFriendsListsItemClick(positionClicked);
 //        }
-        Log.d("HostListViewActivity", "List of events ready");
+        Log.d("HostListViewActivity", " List of events ready");
     }
 
     public static void setFriends(InviteList list) {
         invitedList = list;
         isInvitedListReady = true;
-        Log.d("HostListViewActivity", "List of events ready");
+        Log.d("HostListViewActivity", " Invited List ready");
     }
 
-    public static void setEventInfo(Event event) {
-        //TODO Do something with event variable
+    public void setEventInfo(final Event event) {
         event.add_guest_from_invite_list(invitedList);
         isCopyEventReady = true;
         Log.d("HostListViewActivity", "Event info copied");
         Log.d("HostListViewActivity", event.toString());
+//        listView.setVisibility(View.GONE);
+//        editText.setVisibility(View.VISIBLE);
+//        listView.setVisibility(View.INVISIBLE);
+        setContentView(R.layout.enter_time);
+        editText = (EditText) findViewById(R.id.enterFBTimeET);
+        submitButton = (Button) findViewById(R.id.submitFBTimeButton);
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!(editText.getText().toString() == "")) {
+                    event.startTime = editText.getText().toString();
+                    Log.d("HostListViewActivity", "About to upload FB Event");
+                    FireDatabase.uploadFBEvent(user, event);
+                    intent = new Intent(HostListViewActivity.this, FeedActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+        progress.dismiss();
     }
 
     private void pullEventInfo(final int choice) {
-        Thread getFriends = new Thread() {
+        Thread getInfo = new Thread() {
             @Override
             public void run() {
+                Object objArr[] = listOfEvents.toArray();
                 CopyEventActivity cea = new CopyEventActivity(backgroundWebView3
-                        , listOfEvents.get(choice));
+                        , ((Event) objArr[choice]), HostListViewActivity.this);
 
             }
         };
-        getFriends.run();
+        getInfo.run();
         Log.d("HostListViewActivity", "getting friends");
     }
 
@@ -146,8 +188,9 @@ public class HostListViewActivity extends AppCompatActivity {
         Thread getFriends = new Thread() {
             @Override
             public void run() {
-                GetFriendsActivity gea = new GetFriendsActivity(backgroundWebView2
-                        , inviteLists.get(choice));
+                Object objArr[] = inviteLists.toArray();
+                GetFriendsActivity gea = new GetFriendsActivity(user, backgroundWebView2
+                        , ((InviteList) objArr[choice]), HostListViewActivity.this);
 
             }
         };
@@ -157,20 +200,19 @@ public class HostListViewActivity extends AppCompatActivity {
 
     private void getExtra(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
-            ArrayList<InviteList> extra = (ArrayList<InviteList>) getIntent().getSerializableExtra("INVITE_LISTS");
+            Set<InviteList> extra = (LinkedHashSet<InviteList>) getIntent().getSerializableExtra("INVITE_LISTS");
             if (extra == null) {
-                inviteLists = new ArrayList<InviteList>();
+                inviteLists = new LinkedHashSet<>();
             } else {
                 inviteLists = extra;
             }
         } else {
-            inviteLists = (ArrayList<InviteList>) savedInstanceState.getSerializable("INVITE_LISTS");
+            inviteLists = (LinkedHashSet<InviteList>) savedInstanceState.getSerializable("INVITE_LISTS");
         }
     }
 
     private void checkInviteLists() {
         if (inviteLists.size() == 0) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(HostListViewActivity.this);
 
             builder.setMessage("We found no pre-made invite lists (custom friends list) on Facebook."
                     + " Would you like continue without an invite list?")
@@ -194,7 +236,7 @@ public class HostListViewActivity extends AppCompatActivity {
             });
 
             // Create the AlertDialog
-            final AlertDialog dialog = builder.create();
+            dialog = builder.create();
             dialog.setOnShowListener(new DialogInterface.OnShowListener() {
                 @Override
                 public void onShow(DialogInterface arg0) {
@@ -248,10 +290,13 @@ public class HostListViewActivity extends AppCompatActivity {
         if (isListOfEventsReady) {
             if (listOfEvents.size() != 0) {
                 list = new ArrayList<String>();
+                Object objArr[] = listOfEvents.toArray();
                 //For some reason the size of the array is double
                 //Possibly because the webpage loads twice (so it adds twice)
-                for (int i = 0; i < (listOfEvents.size() / 2); i++) {
-                    list.add(listOfEvents.get(i).event_name);
+                for (int i = 0; i < (listOfEvents.size()); i++) {
+                    if (!(list.contains(((Event) objArr[i]).event_name))) {
+                        list.add(((Event) objArr[i]).event_name);
+                    }
                 }
             }
             adapter = new ListAdapter(HostListViewActivity.this, R.id.inviteListItemTV, list);
@@ -286,7 +331,7 @@ public class HostListViewActivity extends AppCompatActivity {
     private void onEventsListsItemClick(int position) {
         pullEventInfo(position);
         Log.d("HostListView", "Starting CopyEventActivity");
-        ProgressDialog progress = new ProgressDialog(HostListViewActivity.this);
+        progress = new ProgressDialog(HostListViewActivity.this);
         if (isCopyEventReady) {
 
             if (progress.isShowing()) {
@@ -312,5 +357,14 @@ public class HostListViewActivity extends AppCompatActivity {
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    public static void kill(WebView webView) {
+        webView.loadUrl("about:blank");
+        webView.stopLoading();
+        webView.setWebChromeClient(null);
+        webView.setWebViewClient(null);
+        webView.destroy();
+        webView = null;
     }
 }

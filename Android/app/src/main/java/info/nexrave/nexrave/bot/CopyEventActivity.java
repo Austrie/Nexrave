@@ -1,11 +1,9 @@
 package info.nexrave.nexrave.bot;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Build;
-import android.os.Bundle;
-import android.support.test.espresso.core.deps.guava.base.Splitter;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsResult;
 import android.webkit.ValueCallback;
@@ -16,29 +14,30 @@ import android.webkit.WebViewClient;
 import java.util.ArrayList;
 
 import info.nexrave.nexrave.HostListViewActivity;
-import info.nexrave.nexrave.R;
 import info.nexrave.nexrave.models.Event;
 import info.nexrave.nexrave.models.InviteList;
 
 public class CopyEventActivity {
 
-    WebView webView;
-    String js;
-    Event event;
-    String eventName = "Test Event";
-    String eventLocation = "Atlanta, Georgia";
-    String eventDate = "01/30/2017";
-    String eventTime = "4:30";
-    String eventTime2 = "PM";
-    String eventDescription = "Random event info goes here!";
-    String eventLink = "https://www.facebook.com/events/1829816323953687/";
-    String ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+    private HostListViewActivity activity;
+    private WebView webView;
+    private String js;
+    private Event event;
+    private String eventName = "Test Event";
+    private String eventLocation = "Atlanta, Georgia";
+    private String eventDate = "01/30/2017";
+    private String eventTime = "4:30";
+    private String eventTime2 = "PM";
+    private String eventDescription = "Random event info goes here!";
+    private String eventLink = "https://www.facebook.com/events/1829816323953687/";
+    private String ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
                     + "Chrome/55.0.2883.87 Safari/537.36";
     int webpageCounter = 1;
     int choosenList;
     ArrayList<InviteList> inviteLists = new ArrayList<InviteList>();
 
-    public CopyEventActivity(WebView webView, Event event) {
+    public CopyEventActivity(WebView webView, Event event, HostListViewActivity hlwAct) {
+        this.activity = hlwAct;
         this.webView = webView;
         this.event = event;
         this.eventName = event.event_name;
@@ -60,7 +59,7 @@ public class CopyEventActivity {
 
         //Get list of custom friends lists
         webView.loadUrl(eventLink);
-        Log.d("CopyEventActivity", "started");
+        Log.d("CopyEventActivity", "started" + eventLink);
     }
 
 
@@ -77,16 +76,20 @@ public class CopyEventActivity {
         //.. do something with the data
         event.description = description;
         Log.d("CopyEventActivity", "onData: " + description);
-
     }
 
     @JavascriptInterface
     public void setEventCoverPic(String coverPic) {
         //.. do something with the data
         event.facebook_cover_pic = coverPic;
-        Log.d("CopyEventActivity", "onData: " + coverPic    );
-        HostListViewActivity.setEventInfo(event);
-
+        Log.d("CopyEventActivity", "onData: " + coverPic);
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                activity.setEventInfo(event);
+//                activity.kill(webView);
+            }
+        });
     }
 
 
@@ -104,7 +107,6 @@ public class CopyEventActivity {
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
-            Log.d("CopyEventActivity", String.valueOf(webpageCounter));
             if (Build.VERSION.SDK_INT >= 19) {
                     view.evaluateJavascript(js, new ValueCallback<String>() {
                         @Override
@@ -124,29 +126,36 @@ public class CopyEventActivity {
     }
 
     private void setupJavascript() {
-        js = "javascript: "
-                + "if (document.querySelectorAll('div[class=\"_5xhp fsm fwn fcg\"]')[1].innerHTML == '') {"
+        js = "javascript: " +
+                "if (document.querySelector('span[class=\"_5xhk\"]') == null) {"
                 + " android.setEventLocation(document.querySelector('a[class=\"_5xhk\"]').innerHTML); }"
-                + "else { android.setEventLocation(document.querySelectorAll('div[class=\"_5xhp fsm fwn fcg\"]')[1].innerHTML); } "
+                + "else { android.setEventLocation(document.querySelectorAll('span[class=\"_5xhk\"]')[1].innerHTML); } "
                 + "android.setEventDescription(document.querySelector('div[class=\"_1w2q\"]').children[0].innerHTML);"
                 + "android.setEventCoverPic(document.querySelector('img[class=\"coverPhotoImg photo img\"]').src);"
 //                + "if (dateTime.innerHTML.includes(' PM') || dateTime.innerHTML.includes(' AM')) {"
 //                + " checkDT(); "
-//                + "} else { alert('not in it'); }" +
+//                + "} else { alert('not in it'); }"+
 //                "function checkDT() { if (document.querySelector('span[itemprop=\"startDate\"]').content == 'undefined') {setTimeout(checkDT, 100);}else{ alert(document.querySelector('span[itemprop=\"startDate\"]').content); }; }"
                 + "";
     }
 
     public void pasteLink(String s) {
-
         eventLink = s;
-
     }
 
     public void chooseList(int choice) {
         choosenList = choice;
-        webView.loadUrl("https://www.facebook.com/lists/" + inviteLists.get(choice).getListId());
+        webView.loadUrl("https://www.facebook.com/lists/" + inviteLists.get(choice).getFBListId());
 
+    }
+
+    public static void kill(WebView webView) {
+        webView.loadUrl("about:blank");
+        webView.stopLoading();
+        webView.setWebChromeClient(null);
+        webView.setWebViewClient(null);
+        webView.destroy();
+        webView = null;
     }
 }
 

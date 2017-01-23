@@ -13,21 +13,31 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import info.nexrave.nexrave.HostActivity;
 import info.nexrave.nexrave.HostListViewActivity;
 import info.nexrave.nexrave.R;
 import info.nexrave.nexrave.models.InviteList;
+import info.nexrave.nexrave.systemtools.FireDatabase;
 
 public class GetListsActivity extends AppCompatActivity {
 
-    WebView webView;
-    String js;
-    String ua = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                    + "Chrome/54.0.2840.99 Safari/537.36";
-    ArrayList<InviteList> inviteLists = new ArrayList<InviteList>();
-    Intent intent;
+    private WebView webView;
+    private String js;
+    private String ua = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) "
+            + "Chrome/54.0.2840.99 Safari/537.36";
+    private LinkedHashSet<InviteList> inviteLists = new LinkedHashSet<>();
+    private Intent intent;
+    private FirebaseAuth mAuth;
+    private FirebaseUser user;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,23 +55,36 @@ public class GetListsActivity extends AppCompatActivity {
         webView.getSettings().setUserAgentString(ua);
 
         webView.loadUrl("https://www.facebook.com/bookmarks/lists");
-
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
     }
 
     @JavascriptInterface
-    public void showList() {
+    public void showLists() {
         Log.d("GetListsActivity", "Starting HostInviteActivity");
         intent = new Intent(GetListsActivity.this, HostListViewActivity.class);
         intent.putExtra("INVITE_LISTS", inviteLists);
         startActivity(intent);
+        if (inviteLists.size() != 0) {
+            if (user != null) {
+                Thread thread = new Thread() {
+                    @Override
+                    public void run() {
+                        Log.d("GetListsActivity", "About to upload list to user account");
+                        FireDatabase.updateFBInviteListsUserAccount(user, inviteLists);
+                    }
+                };
+            } else {
+                Log.d("GetListsActivity", "user is null");
+            }
 
+        }
     }
 
     @JavascriptInterface
     public void pullListInfo(String name, String id) {
         inviteLists.add(new InviteList(name, Long.valueOf(id.substring(7))));
         Log.d("GetListsActivity", "onData: " + name + id);
-
     }
 
     final class MyWebChromeClient extends WebChromeClient {
@@ -112,7 +135,16 @@ public class GetListsActivity extends AppCompatActivity {
                 + "var list = prelist.getElementsByTagName('li'); alert(list.length);"
                 + "for (i = 0; i < list.length; i++) {"
                 + "android.pullListInfo(list[i].getElementsByTagName('a')[1].getAttribute('title'), "
-                + "list[i].getElementsByTagName('a')[1].getAttribute('href'));} android.showList();";
+                + "list[i].getElementsByTagName('a')[1].getAttribute('href'));} android.showLists();";
+    }
+
+    public static void kill(WebView webView) {
+        webView.loadUrl("about:blank");
+        webView.stopLoading();
+        webView.setWebChromeClient(null);
+        webView.setWebViewClient(null);
+        webView.destroy();
+        webView = null;
     }
 }
 

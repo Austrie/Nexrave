@@ -89,9 +89,6 @@
             android:name=".bot.CreateEventActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".bot.CopyEventActivity"
-            android:theme="@style/AppTheme" />
-        <activity
             android:name=".bot.FBLoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
