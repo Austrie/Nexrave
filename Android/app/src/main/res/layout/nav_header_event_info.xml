@@ -12,25 +12,21 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <ImageView
-        android:id="@+id/nav_user_profile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <com.android.volley.toolbox.NetworkImageView
+        android:id="@+id/nav_user_profile2"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        app:srcCompat="@android:drawable/sym_def_app_icon" />
+        android:scaleType="fitCenter"
+        app:srcCompat="@mipmap/app_icon" >
+    </com.android.volley.toolbox.NetworkImageView>
 
     <TextView
-        android:id="@+id/nav_user_name_display"
+        android:id="@+id/nav_user_name_display2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text="Android Studio"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-
-    <TextView
-        android:id="@+id/nav_user_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="android.studio@android.com" />
 
 </LinearLayout>

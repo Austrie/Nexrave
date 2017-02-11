@@ -32,13 +32,4 @@
 
     <include layout="@layout/content_event_info" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:tint="@color/colorPrimary"
-        app:srcCompat="@android:drawable/ic_dialog_dialer"
-        app:backgroundTint="?attr/colorPrimaryDark" />
 </android.support.design.widget.CoordinatorLayout>

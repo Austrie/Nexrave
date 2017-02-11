@@ -63,6 +63,8 @@ public class HostListViewActivity extends AppCompatActivity {
     private static int positionClicked = -1;
     private static ProgressDialog progress;
 
+    //TODO: Set all variables for Host (facebook id, firebase id, name, pic) , Event (Main Host), Guest (Main Host)
+    //TODO: Make sure bot still works
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -159,7 +161,8 @@ public class HostListViewActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (!(editText.getText().toString() == "")) {
-                    event.startTime = editText.getText().toString();
+                    //Fix date_time
+                    event.date_time += editText.getText().toString();
                     Log.d("HostListViewActivity", "About to upload FB Event");
                     FireDatabase.uploadFBEvent(user, event);
                     intent = new Intent(HostListViewActivity.this, FeedActivity.class);

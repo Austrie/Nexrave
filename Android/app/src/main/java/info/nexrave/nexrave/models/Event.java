@@ -1,5 +1,14 @@
 package info.nexrave.nexrave.models;
 
+import android.util.Log;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -9,9 +18,10 @@ import java.util.Map;
  * Created by yoyor on 12/21/2016.
  */
 
-public class Event {
+public class Event implements Serializable {
 
     // public *** qr_codes;
+    public int id;
     public String event_id;
     public String facebook_id;
     public String facebook_cover_pic;
@@ -19,13 +29,10 @@ public class Event {
     public String event_name;
     public String description;
     public String image_uri; //On Firebase Storage
-    public String startTime;
-    public String endTime;
-    public String startDate;
-    public String endDate;
+    public String date_time;
     public String location;
     public Integer party_code;
-    public Host mainHost;
+    public Host main_host;
     public Map<String, Host> hosts = new LinkedHashMap<>();
     public Map<String, Guest> guests = new LinkedHashMap<>();
 
@@ -37,13 +44,11 @@ public class Event {
         this.event_name = event_name;
     }
 
-    public Event(String event_name, String description, String image_uri
-            , String time, String date, String location) {
+    public Event(String event_name, String description, String image_uri, String date_time, String location) {
         this.event_name = event_name;
         this.description = description;
         this.image_uri = image_uri;
-        this.startTime = time;
-        this.startDate = date;
+        this.date_time = date_time;
         this.location = location;
     }
 
@@ -61,7 +66,7 @@ public class Event {
 
     public String toString() {
         return "Name: " + event_name + " /n "
-                + "Number Invited: " + guests.size();
+                + "Number Invited: " + guests.size() + " By " + main_host.toString();
     }
 
     //Gives error when creating FB event
@@ -84,4 +89,41 @@ public class Event {
         return this.event_id.compareTo(other.event_id);
     }
 
+    public static byte[] serializeObject(Event o) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+        try {
+            ObjectOutput out = new ObjectOutputStream(bos);
+            out.writeObject(o);
+            out.close();
+
+            // Get the bytes of the serialized object
+            byte[] buf = bos.toByteArray();
+
+            return buf;
+        } catch(IOException ioe) {
+            Log.e("serializeObject", "error", ioe);
+
+            return null;
+        }
+    }
+
+    public static Event deserializeObject(byte[] b) {
+        try {
+            ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(b));
+            Event object = (Event) in.readObject();
+            in.close();
+
+            return object;
+        } catch(ClassNotFoundException cnfe) {
+            Log.e("deserializeObject", "class not found error", cnfe);
+
+            return null;
+        } catch(IOException ioe) {
+            Log.e("deserializeObject", "io error", ioe);
+
+            return null;
+        }
+    }
 }
+

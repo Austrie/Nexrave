@@ -1,0 +1,59 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
+    tools:context="info.nexrave.nexrave.fragments.EventChatFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.9"
+            android:orientation="vertical">
+
+            <ListView
+                android:id="@+id/eventChat_listView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:stackFromBottom="true"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_weight="0.7"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/eventChat_editText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.2"
+                android:ems="10"
+                android:inputType="textMultiLine"
+                android:hint="Type Here..."
+                android:imeOptions="actionSend" />
+
+            <LinearLayout
+                android:paddingTop="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.9">
+
+                <ImageButton
+                    android:id="@+id/eventChat_sendButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:src="@android:drawable/btn_star" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

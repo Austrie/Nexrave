@@ -73,10 +73,10 @@ public class FeedImageView extends ImageView {
      * Sets URL of the image that should be loaded into this view. Note that
      * calling this will immediately either set the cached image (if available)
      * or the default image specified by
-     * {@link VolleyImageView#setDefaultImageResId(int)} on the view.
+     * { VolleyImageView.setDefaultImageResId(int)} on the view.
      * <p>
-     * NOTE: If applicable, {@link VolleyImageView#setDefaultImageResId(int)}
-     * and {@link VolleyImageView#setErrorImageResId(int)} should be called
+     * NOTE: If applicable, {VolleyImageView.setDefaultImageResId(int)}
+     * and {VolleyImageView.setErrorImageResId(int)} should be called
      * prior to calling this function.
      *
      * @param url         The URL that should be loaded into this ImageView.
@@ -113,6 +113,7 @@ public class FeedImageView extends ImageView {
     private void loadImageIfNecessary(final boolean isInLayoutPass) {
         final int width = getWidth();
         int height = getHeight();
+        String[] s = new String[10];
 
         boolean isFullyWrapContent = getLayoutParams() != null
                 && getLayoutParams().height == LayoutParams.WRAP_CONTENT

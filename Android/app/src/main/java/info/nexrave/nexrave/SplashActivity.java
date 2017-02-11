@@ -29,6 +29,7 @@ import com.facebook.FacebookSdk;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.appevents.AppEventsLogger;
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -39,6 +40,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.gson.Gson;
 
 import java.security.MessageDigest;
 import java.util.Arrays;
@@ -50,18 +53,19 @@ public class SplashActivity extends AppCompatActivity {
     private Intent intent;
     private final long SPLASH_TIME = 3000;
     private VideoView videoHolder;
-    private ImageButton loginButton;
+    private LoginButton loginButton;
     private ImageView iv;
     private static final String TAG = SplashActivity.class.getSimpleName();
 
     //Facebook Variables
     private AccessTokenTracker accessTokenTracker;
-    private AccessToken ac;
+    private AccessToken accessToken;
     CallbackManager mCallbackManager;
     Profile profile;
     private ProfileTracker mProfileTracker;
 
     //Firebase variables
+    private FirebaseUser user;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -69,33 +73,12 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Initializing Facebook sdk and Firebase sdk
-//        FacebookSdk.sdkInitialize(getApplicationContext());
-//        accessTokenTracker = new AccessTokenTracker() {
-//            @Override
-//            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken newAccessToken) {
-//                ac = newAccessToken;
-//            }
-//        };
-//        accessTokenTracker.startTracking();
-//        mAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.activity_splash);
-//        //Getting hash key when developing for facebook
-//        try {
-//            PackageInfo info = getPackageManager().getPackageInfo(
-//                    "info.nexrave.nexrave",
-//                    PackageManager.GET_SIGNATURES);
-//            for (Signature signature : info.signatures) {
-//                MessageDigest md = MessageDigest.getInstance("SHA");
-//                md.update(signature.toByteArray());
-//                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
-//            }
-//        } catch (Exception e) {
-//
-//        }
+        iv = (ImageView) findViewById(R.id.iv_splash_logo);
+        loginButton = (LoginButton) findViewById(R.id.login_button);
 
-        Log.d(TAG, "Video about to be called");
         //Video settings
+        Log.d(TAG, "Video about to be called");
         videoHolder = (VideoView) findViewById(R.id.videoView);
         Uri video = Uri.parse("android.resource://" + getPackageName() + "/"
                 + R.raw.video_footage);
@@ -108,82 +91,123 @@ public class SplashActivity extends AppCompatActivity {
         });
         videoHolder.start();
 
-        Thread myThread = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    FacebookSdk.sdkInitialize(getApplicationContext());
-                    Intent i = new Intent(SplashActivity.this, FeedActivity.class);
-                    startActivity(i);
-                    finish();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        myThread.start();
 
-
-        //Firebase check to see if user is logged in
-//        mAuthListener = new FirebaseAuth.AuthStateListener() {
-//            @Override
-//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-//                FirebaseUser user = firebaseAuth.getCurrentUser();
-//                if (user != null) {
-//                    // User is signed in
-//                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-//                    intent = new Intent(SplashActivity.this, FeedActivity.class);
-//                    startActivity(intent);
-//                } else {
-//                    // User is signed out
-//                    Log.d(TAG, "onAuthStateChanged:signed_out");
-//                    //Initializing Variable
-//                    mCallbackManager = CallbackManager.Factory.create();
-//                    iv = (ImageView) findViewById(R.id.iv_splash_logo);
-//                    loginButton = (ImageButton) findViewById(R.id.login_button);
-//                    display();
-//                }
-//                // ...
-//            }
-//        };
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        new PrefetchData().execute();
 
     }
-//
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        // Pass the activity result back to the Facebook SDK
-//        mCallbackManager.onActivityResult(requestCode, resultCode, data);
-//    }
-//
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        mAuth.addAuthStateListener(mAuthListener);
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        if (mAuthListener != null) {
-//            mAuth.removeAuthStateListener(mAuthListener);
-//        }
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        finish();
-//    }
-//
-//    private void makeVisible() {
-//        iv.setVisibility(View.VISIBLE);
-//        iv.bringToFront();
-//        loginButton.setVisibility(View.VISIBLE);
-//        loginButton.bringToFront();
-//    }
-//
+
+    /**
+     * Async Task to make http call
+     */
+    private class PrefetchData extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // before making http calls
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            //Facebook Settings
+            mCallbackManager = CallbackManager.Factory.create();
+            Fresco.initialize(SplashActivity.this);
+            FacebookSdk.sdkInitialize(getApplicationContext());
+            accessToken = AccessToken.getCurrentAccessToken();
+//            Log.d("SplashActivity", accessToken.getUserId()); Comes back as null
+
+            // If the access token is available already assign it.
+            mAuth = FirebaseAuth.getInstance();
+
+            //Firebase check to see if user is logged in
+            mAuthListener = new FirebaseAuth.AuthStateListener() {
+                @Override
+                public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                    user = firebaseAuth.getCurrentUser();
+//                    Log.d("SplashActivity", accessToken.getUserId());
+                    if (user != null) {
+                        // User is signed in
+                        Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                        intent = new Intent(SplashActivity.this, FeedActivity.class);
+                        startActivity(intent);
+                    } else {
+                        // User is signed out
+                        Log.d(TAG, "onAuthStateChanged:signed_out");
+                        //Initializing Variable
+//                        mCallbackManager = CallbackManager.Factory.create();
+//                        makeVisible();
+                        checkAccessToken();
+
+                    }
+                    // ...
+                }
+            };
+            mAuth.addAuthStateListener(mAuthListener);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+        }
+
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // Pass the activity result back to the Facebook SDK
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
+    }
+
+    private void makeVisible() {
+        loginButton.setVisibility(View.VISIBLE);
+        loginButton.bringToFront();
+        loginButton.setReadPermissions("public_profile", "email");
+        loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                // App code
+                System.out.println("Login Activity access token:" + loginResult.getAccessToken().getUserId());
+                handleFacebookAccessToken(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() {
+                // App code
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                // App code
+            }
+        });
+    }
+
+    //
 //    private void display() {
 //        new Handler().postDelayed(new Runnable() {
 //                @Override
@@ -224,28 +248,42 @@ public class SplashActivity extends AppCompatActivity {
 ////        System.out.println(ac.getUserId());
 //    }
 //
-//    private void handleFacebookAccessToken(AccessToken token) {
-//        Log.d(TAG, "handleFacebookAccessToken:" + token);
+    private void handleFacebookAccessToken(AccessToken token) {
+        Log.d(TAG, "handleFacebookAccessToken:" + token);
+
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(SplashActivity.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "signInWithCredential", task.getException());
+                            Toast.makeText(SplashActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
 //
-//        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-//        mAuth.signInWithCredential(credential)
-//                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<AuthResult> task) {
-//                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-//
-//                        // If sign in fails, display a message to the user. If sign in succeeds
-//                        // the auth state listener will be notified and logic to handle the
-//                        // signed in user can be handled in the listener.
-//                        if (!task.isSuccessful()) {
-//                            Log.w(TAG, "signInWithCredential", task.getException());
-//                            Toast.makeText(SplashActivity.this, "Authentication failed.",
-//                                    Toast.LENGTH_SHORT).show();
-//                        } else {
-//                            intent = new Intent(SplashActivity.this, EnterPhoneNumber.class);
-//                            startActivity(intent);
-//                        }
-//                    }
-//                });
-//    }
+                        }
+                    }
+                });
+    }
+
+    private void checkAccessToken() {
+        if (accessToken == null) {
+            mCallbackManager = CallbackManager.Factory.create();
+            (SplashActivity.this).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    makeVisible();
+                }
+            });
+        } else {
+            System.out.println("access token:" + accessToken.getUserId());
+            handleFacebookAccessToken(accessToken);
+        }
+    }
 }

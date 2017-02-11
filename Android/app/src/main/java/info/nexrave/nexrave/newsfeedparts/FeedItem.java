@@ -1,5 +1,7 @@
 package info.nexrave.nexrave.newsfeedparts;
 
+import info.nexrave.nexrave.models.Event;
+
 public class FeedItem {
     private int id;
     private String name, status, image, profilePic, timeStamp, url;
@@ -17,6 +19,18 @@ public class FeedItem {
         this.profilePic = profilePic;
         this.timeStamp = timeStamp;
         this.url = url;
+    }
+
+    public FeedItem(Event event) {
+        super();
+
+//        this.id = event.event_id;
+        this.name = "Main Host";
+        this.image = event.image_uri;
+        this.status = event.description;
+//        this.profilePic =
+        this.timeStamp = event.date_time;
+//        this.url =
     }
 
     public int getId() {

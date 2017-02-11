@@ -1,6 +1,7 @@
 package info.nexrave.nexrave;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -27,10 +28,15 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.NetworkImageView;
+import com.bumptech.glide.Glide;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.ProfileTracker;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -38,6 +44,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,15 +58,22 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import info.nexrave.nexrave.bot.CopyEventActivity;
 import info.nexrave.nexrave.bot.CreateEventActivity;
 import info.nexrave.nexrave.bot.GetListsActivity;
+import info.nexrave.nexrave.models.Event;
 import info.nexrave.nexrave.newsfeedparts.AppController;
 import info.nexrave.nexrave.newsfeedparts.FeedImageView;
 import info.nexrave.nexrave.newsfeedparts.FeedItem;
 import info.nexrave.nexrave.newsfeedparts.FeedListAdapter;
+import info.nexrave.nexrave.systemtools.ArrayListEvents;
+import info.nexrave.nexrave.systemtools.FireDatabase;
 import info.nexrave.nexrave.systemtools.GraphUser;
 
 //Fragment related imports
@@ -63,20 +83,22 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
     private static final String TAG = FeedActivity.class.getSimpleName();
     private ListView listView;
     private FeedListAdapter listAdapter;
-    private List<FeedItem> feedItems;
-    private String URL_FEED = "http://api.androidhive.info/feed/feed.json";
+    private static ArrayListEvents<Event> feedItems;
+    private String URL_FEED = "https://nexrave-e1c12.firebaseio.com/events/cej9NdOP3uRSi1qBo6aZy6tzyoP2event1.json";
     Intent intent;
 
-    Intent i;
     CallbackManager callbackManager;
     AccessTokenTracker accessTokenTracker;
     ProfileTracker profileTracker;
     AccessToken accessToken;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseUser user;
+    private Map<String, Object> map;
+    private int feedCount = 0;
 
-    TextView nav_displayName, nav_atName;
-    ImageView iv;
+    TextView nav_displayName;
+    NetworkImageView iv;
 
 
     @SuppressLint("NewApi")
@@ -85,78 +107,70 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
 
-//        ActionBar actionBar = getSupportActionBar();
-//        NexraveActionStatusBar.setActionBarCustomLayout(actionBar, R.layout.toolbar_base);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout1);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
 
         nav_displayName = (TextView) findViewById(R.id.nav_user_name_display1);
-        nav_atName = (TextView) findViewById(R.id.nav_user_name1);
-        iv = (ImageView) findViewById(R.id.nav_user_profile1);
+        iv = (NetworkImageView) findViewById(R.id.nav_user_profile1);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view1);
+        navigationView.setNavigationItemSelectedListener(this);
+        int width = getResources().getDisplayMetrics().widthPixels / 2;
+        DrawerLayout.LayoutParams params = (android.support.v4.widget.DrawerLayout.LayoutParams) navigationView.getLayoutParams();
+        params.width = width;
+        navigationView.setLayoutParams(params);
 
         // If the access token is available already assign it.
         mAuth = FirebaseAuth.getInstance();
         accessToken = AccessToken.getCurrentAccessToken();
-        if (accessToken == null) {
-            Intent i = new Intent(FeedActivity.this, LoginActivity.class);
-            startActivity(i);
-            finish();
-        } else {
-            System.out.println("access token:" + accessToken.getUserId());
-            handleFacebookAccessToken(accessToken);
-        }
-        final boolean justLoggingIn = getIntent().getBooleanExtra("LOGIN", false);
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull final FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
+                user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    // User is signed in
-//                    if (justLoggingIn) {
+
+                    //Did this because onAuthStateChanged is called multiple times
+                    //Cause duplicating feed items on feed
+                    if (feedCount == 0) {
+                        feedCount++;
+                        loadFeed();
+
+                        // User is signed in
                         //Seems like timing is off, so I reset variables or else they'll be null
                         nav_displayName = (TextView) findViewById(R.id.nav_user_name_display1);
-                        nav_atName = (TextView) findViewById(R.id.nav_user_name1);
-                        iv = (ImageView) findViewById(R.id.nav_user_profile1);
+                        iv = (NetworkImageView) findViewById(R.id.nav_user_profile1);
                         Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                         //TODO Make async task
+
                         Thread myThread = new Thread() {
                             @Override
                             public void run() {
                                 try {
-                                    FirebaseUser user2 = firebaseAuth.getCurrentUser();
-                                    Log.d("FeedActivity", nav_displayName.getText().toString() + " " + nav_atName.getText().toString());
-                                    GraphUser.setFacebookData(accessToken, FeedActivity.this, user2, nav_displayName, nav_atName, iv);
-                                    GraphUser.updateRealtimeDatabase(user2, accessToken);
+                                    nav_displayName = (TextView) findViewById(R.id.nav_user_name_display1);
+                                    iv = (NetworkImageView) findViewById(R.id.nav_user_profile1);
+                                    GraphUser.setFacebookData(accessToken, FeedActivity.this, user, nav_displayName, iv);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
                         };
                         myThread.start();
-//                    }
-
+                    }
 
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
                 }
-                // ...
             }
         };
 
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
         listView = (ListView) findViewById(R.id.list);
 
-        feedItems = new ArrayList<FeedItem>();
+        feedItems = new ArrayListEvents<Event>();
 
         listAdapter = new FeedListAdapter(this, feedItems);
         listView.setAdapter(listAdapter);
@@ -164,49 +178,12 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 intent = new Intent(FeedActivity.this, EventInfoActivity.class);
-                intent.putExtra("id", position);
+                Event selectedEvent = (Event) listView.getAdapter().getItem(position);
+                intent.putExtra("SELECTED_EVENT", selectedEvent);
+//                intent.putExtra("CURRENT_USER", user);
                 startActivity(intent);
             }
         });
-
-        // We first check for cached request
-        Cache cache = AppController.getInstance().getRequestQueue().getCache();
-        Entry entry = cache.get(URL_FEED);
-        if (entry != null) {
-            // fetch the data from cache
-            try {
-                String data = new String(entry.data, "UTF-8");
-                try {
-                    parseJsonFeed(new JSONObject(data));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-
-        } else {
-            // making fresh volley request and getting json
-            JsonObjectRequest jsonReq = new JsonObjectRequest(Method.GET,
-                    URL_FEED, null, new Response.Listener<JSONObject>() {
-
-                @Override
-                public void onResponse(JSONObject response) {
-                    VolleyLog.d(TAG, "Response: " + response.toString());
-                    if (response != null) {
-                        parseJsonFeed(response);
-                    }
-                }
-            }, new Response.ErrorListener() {
-
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    VolleyLog.d(TAG, "Error: " + error.getMessage());
-                }
-            });
-            // Adding request to volley request queue
-            AppController.getInstance().addToRequestQueue(jsonReq);
-        }
     }
 
     @Override
@@ -236,70 +213,17 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void handleFacebookAccessToken(AccessToken token) {
-        Log.d(TAG, "handleFacebookAccessToken:" + token);
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
 
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "signInWithCredential", task.getException());
-                            Toast.makeText(FeedActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-
-                        // ...
-                    }
-                });
+    private void loadFeed() {
+        //TODO: Change this to only load accepted events
+        FireDatabase.loadPendingEvents(user, accessToken, feedItems, listAdapter);
     }
 
-    /**
-     * Parsing json response and passing the data to feed view list adapter
-     */
-    private void parseJsonFeed(JSONObject response) {
-        try {
-            JSONArray feedArray = response.getJSONArray("feed");
-
-            for (int i = 0; i < feedArray.length(); i++) {
-                JSONObject feedObj = (JSONObject) feedArray.get(i);
-                FeedItem item = new FeedItem();
-                item.setId(feedObj.getInt("id"));
-//                item.setName(feedObj.getString("name"));
-
-                // Image might be null sometimes
-                String image = feedObj.isNull("image") ? null : feedObj
-                        .getString("image");
-                item.setImge(image);
-//                item.setStatus(feedObj.getString("status"));
-//                item.setProfilePic(feedObj.getString("profilePic"));
-//                item.setTimeStamp(feedObj.getString("timeStamp"));
-
-                // url might be null sometimes
-//                String feedUrl = feedObj.isNull("url") ? null : feedObj
-//                        .getString("url");
-//                item.setUrl(feedUrl);
-                if (image != null) {
-                    feedItems.add(item);
-                }
-            }
-
-            // notify data changes to list adapater
-            listAdapter.notifyDataSetChanged();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 
     //Back button method
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout1);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -331,7 +255,7 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
         return super.onOptionsItemSelected(item);
     }
 
-    //When menu item is clicke
+    //When menu item is clicked
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -356,7 +280,7 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout1);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

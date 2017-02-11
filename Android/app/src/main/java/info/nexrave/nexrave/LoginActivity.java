@@ -48,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
                 // App code
                 System.out.println("Login Activity access token:" + loginResult.getAccessToken().getUserId());
                 Intent i = new Intent(LoginActivity.this, FeedActivity.class);
-                i.putExtra("LOGIN", "true");
+                i.putExtra("LOGIN", true);
                 startActivity(i);
             }
 

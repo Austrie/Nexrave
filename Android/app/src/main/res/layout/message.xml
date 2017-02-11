@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorPrimaryDark">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <com.android.volley.toolbox.NetworkImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:srcCompat="@mipmap/app_icon"
+            android:id="@+id/eventChat_user_profile_pic"
+            android:layout_weight="0.11" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.00">
+
+            <TextView
+                android:text="Anonymous User"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/eventChat_user_name"
+                android:textSize="14sp"
+                android:textColor="@color/white"
+                android:textStyle="normal|bold" />
+
+            <TextView
+                android:text="Hidden Message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/eventChat_user_message"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+</LinearLayout>

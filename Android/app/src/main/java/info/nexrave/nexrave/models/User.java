@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class User implements Comparable<User> {
 
-    public Long id;
+    public String firebase_id;
     public Long facebook_id;
     public String facebook_link;
     public String name;
@@ -35,6 +35,10 @@ public class User implements Comparable<User> {
 
     public User() {
 
+    }
+
+    public User(String firebase_id) {
+        this.firebase_id = firebase_id;
     }
 
     public User(String facebook_link, String name, String at_name, String gender

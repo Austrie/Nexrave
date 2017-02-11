@@ -27,6 +27,7 @@ public class InviteList implements Serializable {
     public Boolean isEmpty = true;
     public Long facebook_list_id;
 //    private ArrayList<Long> facebook_ids2 = new ArrayList<>();
+    public Map<String, Long> firebase_ids = new LinkedHashMap<>();
     public Map<String, Long> facebook_ids = new LinkedHashMap<>();
 
     public InviteList() {
