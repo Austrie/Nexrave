@@ -150,7 +150,12 @@ public class HostListViewActivity extends AppCompatActivity {
         event.add_guest_from_invite_list(invitedList);
         isCopyEventReady = true;
         Log.d("HostListViewActivity", "Event info copied");
-        Log.d("HostListViewActivity", event.toString());
+        try {
+            Log.d("HostListViewActivity", event.toString());
+        } catch (Exception e) {
+            Log.d("HostListViewActivity", e.toString());
+        }
+
 //        listView.setVisibility(View.GONE);
 //        editText.setVisibility(View.VISIBLE);
 //        listView.setVisibility(View.INVISIBLE);
@@ -162,7 +167,7 @@ public class HostListViewActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (!(editText.getText().toString() == "")) {
                     //Fix date_time
-                    event.date_time += editText.getText().toString();
+                    event.date_time = editText.getText().toString();
                     Log.d("HostListViewActivity", "About to upload FB Event");
                     FireDatabase.uploadFBEvent(user, event);
                     intent = new Intent(HostListViewActivity.this, FeedActivity.class);
@@ -170,7 +175,7 @@ public class HostListViewActivity extends AppCompatActivity {
                 }
             }
         });
-        progress.dismiss();
+//        progress.dismiss();
     }
 
     private void pullEventInfo(final int choice) {
@@ -316,7 +321,7 @@ public class HostListViewActivity extends AppCompatActivity {
             progress.setTitle("Loading");
             progress.setMessage("Wait while getting list of events from Facebook...");
             progress.setCancelable(false);
-            progress.show();
+//            progress.show();
 //            Thread recursiveWaiting = new Thread() {
 //                @Override
 //                public void run() {
@@ -346,7 +351,7 @@ public class HostListViewActivity extends AppCompatActivity {
             progress.setTitle("Loading");
             progress.setMessage("Wait while getting list of events from Facebook...");
             progress.setCancelable(false);
-            progress.show();
+//            progress.show();
             isProgressShowing = true;
         }
     }

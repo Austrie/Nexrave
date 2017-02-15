@@ -20,12 +20,13 @@ import java.util.Set;
 public class Guest implements Serializable {
 
     //TODO pull profile picture and name
-    public Long id;
+    public String firebase_id;
     public String guest_name;
     public Integer can_invite = 0;
     public Long facebook_id;
     public Long guest_id;
     public Host invited_by;
+    public String event_id;
     public ArrayList<Guest> invited_extra_guests = new ArrayList<>();
 
     public Guest() {
@@ -38,10 +39,17 @@ public class Guest implements Serializable {
     }
 
     public int hashCode() {
-        int result = 17;
-        result = 31 * result + facebook_id.hashCode();
-        System.out.println("result = " + result);
-        return result;
+        if (facebook_id != null) {
+            int result = 17;
+            result = 31 * result + facebook_id.hashCode();
+            System.out.println("result = " + result);
+            return result;
+        } else {
+            int result = 17;
+            result = 31 * result + firebase_id.hashCode();
+            System.out.println("result = " + result);
+            return result;
+        }
     }
 
     public boolean equals(Object object) {

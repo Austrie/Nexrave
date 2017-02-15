@@ -25,7 +25,7 @@
                 android:id="@+id/abs_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/logo5"
+                android:src="@drawable/logo"
                 android:textAppearance="@style/TextAppearance.AppCompat"
                 android:onClick="backToFeed" />
         </android.support.v7.widget.Toolbar>

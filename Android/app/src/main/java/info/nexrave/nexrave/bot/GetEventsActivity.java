@@ -30,6 +30,7 @@ public class GetEventsActivity {
     private WebView webView;
     private String ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
             + "Chrome/55.0.2883.87 Safari/537.36";
+    private boolean killed = false;
 
     public GetEventsActivity(WebView wv, HostListViewActivity hlwAct) {
         this.activity = hlwAct;
@@ -129,12 +130,10 @@ public class GetEventsActivity {
     public void listOfEventsReady() {
         Log.d("GetEventsActivity", "Events ready");
         HostListViewActivity.setListOfEvents(listOfEvents);
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                activity.kill(webView);
-            }
-        });
+        if(killed == false) {
+            KillWebView.kill(webView, activity);
+            killed = true;
+        }
     }
 
     private void setupJavascript() {
@@ -173,15 +172,6 @@ public class GetEventsActivity {
                     view.loadUrl(js);
             }
         }
-    }
-
-    public static void kill(WebView webView) {
-        webView.loadUrl("about:blank");
-        webView.stopLoading();
-        webView.setWebChromeClient(null);
-        webView.setWebViewClient(null);
-        webView.destroy();
-        webView = null;
     }
 
 }

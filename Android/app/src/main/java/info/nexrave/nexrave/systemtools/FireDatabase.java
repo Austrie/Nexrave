@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -38,10 +39,22 @@ import info.nexrave.nexrave.newsfeedparts.FeedListAdapter;
 
 public class FireDatabase {
 
-    private static Integer eventNumber = new Integer(0);
-    private static DatabaseReference mRootReference = FirebaseDatabase.getInstance().getReference();
+    public static AccessToken backupAccessToken;
+    public static FirebaseUser backupFirebaseUser;
+    private static int eventNumber = 0;
+    private static FirebaseDatabase instance;
+    private static LinkedHashSet<Guest> usersToAddToFacebook = new LinkedHashSet<>();
+    private static DatabaseReference mRootReference = FireDatabase.getInstance().getReference();
 
     public FireDatabase() {
+    }
+
+    public static FirebaseDatabase getInstance() {
+        if (instance == null) {
+            instance = FirebaseDatabase.getInstance();
+//            instance.setPersistenceEnabled(true);
+        }
+        return instance;
     }
 
     /**
@@ -59,11 +72,11 @@ public class FireDatabase {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    eventNumber = dataSnapshot.getValue(Integer.class);
-                    Log.d("FireDatabase: event ", eventNumber.toString());
+                    eventNumber = ((Integer) dataSnapshot.getValue(Integer.class)).intValue();
+                    Log.d("FireDatabase: event ", String.valueOf(eventNumber));
                 } else {
                     userRef.setValue(0);
-                    eventNumber = new Integer(0);
+                    eventNumber = 0;
                     Log.d("FireDatabase: event ", userRef.toString());
                 }
             }
@@ -76,12 +89,12 @@ public class FireDatabase {
 
         //Increment the event number in order to create a unique event id, we make an event id by
         // combining the user's unique id with the event number
-        eventNumber = new Integer(eventNumber + 1);
+        eventNumber = (eventNumber + 1);
 
         userRef.setValue(eventNumber);
         //ToDo fix timedate
         final Event event = new Event(event_name, description, "_null_", time + date, location);
-        event.setEventId(user.getUid() + "event" + eventNumber.toString());
+        event.setEventId(user.getUid() + "event" + eventNumber);
         final DatabaseReference ref = mRootReference.child("events").child(event.event_id);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -119,10 +132,10 @@ public class FireDatabase {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     eventNumber = dataSnapshot.getValue(Integer.class);
-                    Log.d("FireDatabase: event ", eventNumber.toString());
+                    Log.d("FireDatabase: event ", String.valueOf(eventNumber));
                 } else {
                     userRef.setValue(0);
-                    eventNumber = new Integer(0);
+                    eventNumber = 0;
                     Log.d("FireDatabase: event ", userRef.toString());
                 }
             }
@@ -135,9 +148,9 @@ public class FireDatabase {
 
         //Increment the event number in order to create a unique event id, we make an event id by
         // combining the user's unique id with the event number
-        eventNumber = new Integer(eventNumber + 1);
+        eventNumber = (eventNumber + 1);
         userRef.setValue(eventNumber);
-        event.setEventId(user.getUid() + "event" + eventNumber.toString());
+        event.setEventId(user.getUid() + "event" + String.valueOf(eventNumber));
         final DatabaseReference ref = mRootReference.child("events").child(event.event_id);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -154,10 +167,10 @@ public class FireDatabase {
                     FireStorage.uploadFBEventCoverPic(event.event_id, event.facebook_cover_pic, picRef);
 
                     ArrayList<Guest> list = new ArrayList<Guest>(event.guests.values());
-                    addHostingEventToUserAccount(user, event, event.event_id);
+                    addHostingEventToUserAccount(user, event.event_id);
                     for (int i = 0; i > event.guests.size(); i++) {
 //                        addEventToUserAccount(, event, event.event_id);
-                        addToPendingFacebookUser(list.get(i).facebook_id, event, event.event_id);
+                        addToPendingFacebookUser(list.get(i).facebook_id, event.event_id);
                     }
 
 
@@ -221,20 +234,27 @@ public class FireDatabase {
         userRef.removeValue();
     }
 
-    public static void addHostingEventToUserAccount(FirebaseUser user, Event event, String event_id) {
+    public static void addHostingEventToUserAccount(final FirebaseUser user, final String event_id) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put(event_id, event_id);
         final DatabaseReference userRef2 = mRootReference.child("users").child(user.getUid())
                 .child("hosting_events");
-        event.hosts.put(user.getUid(), new Host("Main Host"));
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put(event_id, event);
+        userRef2.updateChildren(map);
+
+        final DatabaseReference hostRef = mRootReference.child("events").child(event_id).child("hosts")
+                .child(user.getUid());
+        hostRef.child("firebase_id").setValue(user.getUid());
+        if (backupAccessToken != null) {
+            hostRef.child("facebook_id").setValue(backupAccessToken.getUserId());
+        }
+
     }
 
-    public static void addHostedEventToUserAccount(FirebaseUser user, Event event, String event_id) {
+    public static void addHostedEventToUserAccount(FirebaseUser user, String event_id) {
         final DatabaseReference userRef2 = mRootReference.child("users").child(user.getUid())
                 .child("hosted_events");
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put(event_id, event);
-
+        map.put(event_id, event_id);
         userRef2.updateChildren(map);
 
         final DatabaseReference userRef = mRootReference.child("users").child(user.getUid())
@@ -242,20 +262,43 @@ public class FireDatabase {
         userRef.removeValue();
     }
 
-    public static void addToPendingUser(String uid, Event event, String event_id) {
-        final DatabaseReference userRef = mRootReference.child("pending_user_invites").child("=firebase")
+    public static void addToPendingUser(String uid, String event_id) {
+        final DatabaseReference userRef = mRootReference.child("pending_user_invites").child("firebase")
                 .child(uid);
         Map<String, Object> map = new HashMap<>();
-        map.put(event_id, event);
+        map.put(event_id, event_id);
         userRef.updateChildren(map);
     }
 
-    public static void addToPendingFacebookUser(Long facebook_id, Event event, String event_id) {
+    public static void addToPendingFacebookUser(Long facebook_id, String event_id) {
         final DatabaseReference userRef = mRootReference.child("pending_user_invites").child("facebook")
                 .child(facebook_id.toString());
         Map<String, Object> map = new HashMap<>();
-        map.put(event_id, event);
+        map.put(event_id, event_id);
         userRef.updateChildren(map);
+    }
+
+    public static void addToListOfUsersToBeAddedToFacebook(Host host, String event_id
+                                                          , String user_firebase_id) {
+        Guest guest = new Guest();
+        guest.firebase_id = user_firebase_id;
+        guest.invited_by = host;
+        guest.event_id = event_id;
+        usersToAddToFacebook.add(guest);
+    }
+
+    public static void removeFromListOfUsersToBeAddedToFacebook(Guest guest) {
+        usersToAddToFacebook.remove(guest);
+    }
+
+    public static Guest getFromListOfUsersToBeAddedToFacebook() {
+        Object[] guests = usersToAddToFacebook.toArray();
+        for (int i = 0; i < guests.length; i++) {
+            if (guests[i] != null) {
+                return (Guest) guests[i];
+            }
+        }
+        return null;
     }
 
     public static void pullEventsFromPendingFacebook(Long facebook_id) {
@@ -339,7 +382,7 @@ public class FireDatabase {
                                          final ArrayListEvents<Event> feedItems,
                                          final FeedListAdapter listAdapter) {
 
-        DatabaseReference mRootReference = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mRootReference = FireDatabase.getInstance().getReference();
         DatabaseReference userRef = mRootReference.child("pending_invites").child("facebook")
                 .child(String.valueOf(accessToken.getUserId()));
         final DatabaseReference eventsRef = mRootReference.child("events");

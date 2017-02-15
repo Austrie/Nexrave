@@ -47,6 +47,7 @@ import java.security.MessageDigest;
 import java.util.Arrays;
 
 import info.nexrave.nexrave.security.EnterPhoneNumber;
+import info.nexrave.nexrave.systemtools.FireDatabase;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -92,7 +93,7 @@ public class SplashActivity extends AppCompatActivity {
         videoHolder.start();
 
 
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        FireDatabase.getInstance();
         new PrefetchData().execute();
 
     }
@@ -106,15 +107,13 @@ public class SplashActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             // before making http calls
-
+            mCallbackManager = CallbackManager.Factory.create();
+            Fresco.initialize(SplashActivity.this);
         }
 
         @Override
         protected Void doInBackground(Void... arg0) {
             //Facebook Settings
-            mCallbackManager = CallbackManager.Factory.create();
-            Fresco.initialize(SplashActivity.this);
-            FacebookSdk.sdkInitialize(getApplicationContext());
             accessToken = AccessToken.getCurrentAccessToken();
 //            Log.d("SplashActivity", accessToken.getUserId()); Comes back as null
 
@@ -126,6 +125,8 @@ public class SplashActivity extends AppCompatActivity {
                 @Override
                 public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                     user = firebaseAuth.getCurrentUser();
+                    FireDatabase.backupFirebaseUser = user;
+                    FireDatabase.backupAccessToken = accessToken;
 //                    Log.d("SplashActivity", accessToken.getUserId());
                     if (user != null) {
                         // User is signed in
@@ -145,7 +146,6 @@ public class SplashActivity extends AppCompatActivity {
                 }
             };
             mAuth.addAuthStateListener(mAuthListener);
-
             return null;
         }
 
@@ -161,6 +161,7 @@ public class SplashActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // Pass the activity result back to the Facebook SDK
+        Log.d("SplashActivity", "called");
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -191,6 +192,7 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // App code
+                Log.d("SplashActivity", "Login button success");
                 System.out.println("Login Activity access token:" + loginResult.getAccessToken().getUserId());
                 handleFacebookAccessToken(loginResult.getAccessToken());
             }
@@ -198,11 +200,13 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void onCancel() {
                 // App code
+                Log.d("SplashActivity", "Login button cancel");
             }
 
             @Override
             public void onError(FacebookException exception) {
                 // App code
+                Log.d("SplashActivity", "Login button error");
             }
         });
     }
@@ -256,6 +260,7 @@ public class SplashActivity extends AppCompatActivity {
                 .addOnCompleteListener(SplashActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d("SplashActivity", "hanle access token");
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
 
                         // If sign in fails, display a message to the user. If sign in succeeds
@@ -274,6 +279,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private void checkAccessToken() {
         if (accessToken == null) {
+            Log.d("SplashActivity", "Check access token: null");
             mCallbackManager = CallbackManager.Factory.create();
             (SplashActivity.this).runOnUiThread(new Runnable() {
                 @Override
@@ -282,6 +288,7 @@ public class SplashActivity extends AppCompatActivity {
                 }
             });
         } else {
+            Log.d("SplashActivity", "Check access token: not null");
             System.out.println("access token:" + accessToken.getUserId());
             handleFacebookAccessToken(accessToken);
         }

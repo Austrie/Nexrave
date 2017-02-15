@@ -11,11 +11,19 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 
 import info.nexrave.nexrave.HostListViewActivity;
 import info.nexrave.nexrave.models.Event;
+import info.nexrave.nexrave.models.Host;
 import info.nexrave.nexrave.models.InviteList;
+import info.nexrave.nexrave.systemtools.FireDatabase;
 
 public class CopyEventActivity {
 
@@ -34,6 +42,7 @@ public class CopyEventActivity {
                     + "Chrome/55.0.2883.87 Safari/537.36";
     int webpageCounter = 1;
     int choosenList;
+    private boolean killed = false;
     ArrayList<InviteList> inviteLists = new ArrayList<InviteList>();
 
     public CopyEventActivity(WebView webView, Event event, HostListViewActivity hlwAct) {
@@ -83,13 +92,19 @@ public class CopyEventActivity {
         //.. do something with the data
         event.facebook_cover_pic = coverPic;
         Log.d("CopyEventActivity", "onData: " + coverPic);
+        if (FireDatabase.backupFirebaseUser != null) {
+            event.main_host = new Host(FireDatabase.backupFirebaseUser.getUid());
+        }
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 activity.setEventInfo(event);
-//                activity.kill(webView);
             }
         });
+        if(killed == false) {
+            KillWebView.kill(webView, activity);
+            killed = true;
+        }
     }
 
 
@@ -127,10 +142,13 @@ public class CopyEventActivity {
 
     private void setupJavascript() {
         js = "javascript: " +
+
                 "if (document.querySelector('span[class=\"_5xhk\"]') == null) {"
-                + " android.setEventLocation(document.querySelector('a[class=\"_5xhk\"]').innerHTML); }"
-                + "else { android.setEventLocation(document.querySelectorAll('span[class=\"_5xhk\"]')[1].innerHTML); } "
+                + " android.setEventLocation(document.querySelector('a[class=\"_5xhk\"]').innerHTML);"
+                + "} else { android.setEventLocation(document.querySelectorAll('span[class=\"_5xhk\"]')[1].innerHTML); } "
+
                 + "android.setEventDescription(document.querySelector('div[class=\"_1w2q\"]').children[0].innerHTML);"
+
                 + "android.setEventCoverPic(document.querySelector('img[class=\"coverPhotoImg photo img\"]').src);"
 //                + "if (dateTime.innerHTML.includes(' PM') || dateTime.innerHTML.includes(' AM')) {"
 //                + " checkDT(); "
@@ -147,15 +165,6 @@ public class CopyEventActivity {
         choosenList = choice;
         webView.loadUrl("https://www.facebook.com/lists/" + inviteLists.get(choice).getFBListId());
 
-    }
-
-    public static void kill(WebView webView) {
-        webView.loadUrl("about:blank");
-        webView.stopLoading();
-        webView.setWebChromeClient(null);
-        webView.setWebViewClient(null);
-        webView.destroy();
-        webView = null;
     }
 }
 

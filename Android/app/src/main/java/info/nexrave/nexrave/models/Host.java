@@ -30,17 +30,12 @@ public class Host implements Serializable{
 
     }
 
-    public Host(String name) {
-        host_name = name;
-    }
-
     public Host(String name, Long id) {
         host_name = name;
         facebook_id = id;
     }
 
-    public Host(String name, String uid) {
-        host_name = name;
+    public Host(String uid) {
         this.firebase_id = uid;
     }
 
@@ -60,7 +55,7 @@ public class Host implements Serializable{
     }
 
     public String toString() {
-        return host_name + " " +  host_image;
+        return "Host: " + firebase_id;
     }
 
     public int compareTo(Host other) {

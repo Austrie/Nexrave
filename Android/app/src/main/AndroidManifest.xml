@@ -11,6 +11,12 @@
         android:xlargeScreens="true" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
         android:name=".newsfeedparts.AppController"
@@ -48,11 +54,9 @@
         </activity>
         <activity
             android:name="com.facebook.FacebookActivity"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:label="@string/app_name" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" />
         <activity
             android:name=".LoginActivity"
-            android:label="@string/title_activity_alternative_login"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeStatus" />
         <activity
@@ -60,7 +64,6 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".EventInfoActivity"
-            android:label="@string/title_activity_event_info"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".security.EnterPhoneNumber"
@@ -68,7 +71,6 @@
         <activity android:name=".security.EnterAuthCode" />
         <activity
             android:name=".HostActivity"
-            android:label="@string/title_activity_host"
             android:parentActivityName=".FeedActivity"
             android:theme="@style/AppTheme">
             <meta-data
@@ -77,7 +79,6 @@
         </activity>
         <activity
             android:name=".HostAddEventActivity"
-            android:label="@string/title_activity_host"
             android:parentActivityName=".FeedActivity"
             android:theme="@style/AppTheme">
             <meta-data
@@ -96,6 +97,9 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".HostListViewActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".bot.InviteByTextActivity"
             android:theme="@style/AppTheme" />
     </application>
 

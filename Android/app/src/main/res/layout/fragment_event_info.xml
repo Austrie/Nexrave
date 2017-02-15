@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="220dp"
-        android:paddingTop="10dp">
+        android:paddingTop="64dp">
 
         <TextView
             android:id="@+id/eventInfo_date_time"

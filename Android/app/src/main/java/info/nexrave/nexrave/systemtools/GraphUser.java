@@ -57,7 +57,7 @@ public class GraphUser {
     private static Map<String, Integer> ageRange;
     private static Uri picURI;
     ArrayList<String[]> fList = new ArrayList<String[]>();
-    private static DatabaseReference mRootReference = FirebaseDatabase.getInstance().getReference();
+    private static DatabaseReference mRootReference = FireDatabase.getInstance().getReference();
 
 //    public static String getEmail(AccessToken ac, String type) {
 //        return setFacebookData(ac, type);

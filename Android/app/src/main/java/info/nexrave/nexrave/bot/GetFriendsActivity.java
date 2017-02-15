@@ -27,6 +27,7 @@ public class GetFriendsActivity {
     private InviteList inviteList;
     private String url;
     private FirebaseUser user;
+    private boolean killed = false;
 
     public GetFriendsActivity(FirebaseUser user, WebView wv, InviteList inviteList
             , HostListViewActivity hlwAct) {
@@ -65,18 +66,16 @@ public class GetFriendsActivity {
             Log.e("GetFriendsActivity", "Error = " + e.toString());
         }
 
+
         HostListViewActivity.setFriends(inviteList);
         Log.d("GetFriendsActivity", "Friends list length = " + ids);
         Log.d("GetFriendsActivity", "Friends list length = " + Splitter.on(",").trimResults().split(ids));
         Log.d("GetFriendsActivity", "Friends list length = " + String.valueOf(list.length));
         FireDatabase.updateFBInviteListUserAccount(user, inviteList);
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                activity.kill(webView);
-            }
-        });
-
+        if(killed == false) {
+            KillWebView.kill(webView, activity);
+            killed = true;
+        }
     }
 
     final class MyWebChromeClient extends WebChromeClient {
@@ -124,15 +123,6 @@ public class GetFriendsActivity {
                 + "var end = string.indexOf('],enabledLocalCache:'); "
                 + "android.pullFriendsFromList(string.substring((start + 12), end));"
                 + "alert(scripts.length);";
-    }
-
-    public static void kill(WebView webView) {
-        webView.loadUrl("about:blank");
-        webView.stopLoading();
-        webView.setWebChromeClient(null);
-        webView.setWebViewClient(null);
-        webView.destroy();
-        webView = null;
     }
 
 }

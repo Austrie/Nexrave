@@ -37,6 +37,7 @@ public class GetListsActivity extends AppCompatActivity {
     private Intent intent;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
+    private boolean killed = false;
 
 
     @Override
@@ -70,6 +71,10 @@ public class GetListsActivity extends AppCompatActivity {
                 Thread thread = new Thread() {
                     @Override
                     public void run() {
+                        if (killed == false) {
+                            KillWebView.kill(webView, GetListsActivity.this);
+                            killed = true;
+                        }
                         Log.d("GetListsActivity", "About to upload list to user account");
                         FireDatabase.updateFBInviteListsUserAccount(user, inviteLists);
                     }
@@ -136,15 +141,6 @@ public class GetListsActivity extends AppCompatActivity {
                 + "for (i = 0; i < list.length; i++) {"
                 + "android.pullListInfo(list[i].getElementsByTagName('a')[1].getAttribute('title'), "
                 + "list[i].getElementsByTagName('a')[1].getAttribute('href'));} android.showLists();";
-    }
-
-    public static void kill(WebView webView) {
-        webView.loadUrl("about:blank");
-        webView.stopLoading();
-        webView.setWebChromeClient(null);
-        webView.setWebViewClient(null);
-        webView.destroy();
-        webView = null;
     }
 }
 

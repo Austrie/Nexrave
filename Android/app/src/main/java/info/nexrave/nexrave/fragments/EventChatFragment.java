@@ -2,7 +2,10 @@ package info.nexrave.nexrave.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -14,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
@@ -29,10 +33,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import info.nexrave.nexrave.EventInfoActivity;
 import info.nexrave.nexrave.R;
 import info.nexrave.nexrave.models.EventChatMessage;
 import info.nexrave.nexrave.models.User;
 import info.nexrave.nexrave.newsfeedparts.AppController;
+import info.nexrave.nexrave.systemtools.FireDatabase;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -99,7 +105,7 @@ public class EventChatFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        DatabaseReference mRootReference = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mRootReference = FireDatabase.getInstance().getReference();
         final DatabaseReference usersRef = mRootReference.child("users");
         final DatabaseReference eventRef = mRootReference.child("event_messages").child(event_id);
 
@@ -158,6 +164,13 @@ public class EventChatFragment extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+
 
     @Override
     public void onAttach(Context context) {

@@ -149,7 +149,7 @@ public class VerticalViewPagerFragment extends Fragment {
                     return EventChatFragment.newInstance(user, context, event.event_id);
                 case (1):
                     Log.d("EventInfo", "Camera");
-                    return EventChatFragment.newInstance(user, context, event.event_id);
+                    return CameraFragment.newInstance(context, event.event_id);
             }
             Log.d("EventInfo", "Non-selected");
             return EventChatFragment.newInstance(user, context, event.event_id);

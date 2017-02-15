@@ -1,7 +1,9 @@
 package info.nexrave.nexrave;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
@@ -44,9 +47,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import info.nexrave.nexrave.fragments.CameraFragment;
 import info.nexrave.nexrave.fragments.EventChatFragment;
 import info.nexrave.nexrave.fragments.EventInfoFragment;
 import info.nexrave.nexrave.fragments.EventUserFragment;
@@ -57,13 +62,17 @@ import info.nexrave.nexrave.newsfeedparts.AppController;
 import info.nexrave.nexrave.newsfeedparts.FeedImageView;
 import info.nexrave.nexrave.newsfeedparts.FeedItem;
 import info.nexrave.nexrave.newsfeedparts.FeedListAdapter;
+import info.nexrave.nexrave.systemtools.CameraPreview;
 import info.nexrave.nexrave.systemtools.GraphUser;
+import info.nexrave.nexrave.systemtools.VerticalViewPager;
 
 public class EventInfoActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         EventInfoFragment.OnFragmentInteractionListener,
         EventChatFragment.OnFragmentInteractionListener,
-        EventUserFragment.OnFragmentInteractionListener {
+        EventUserFragment.OnFragmentInteractionListener,
+        VerticalViewPagerFragment.OnFragmentInteractionListener,
+        CameraFragment.OnFragmentInteractionListener {
 
     private Event selectedEvent;
     int position;
@@ -81,6 +90,9 @@ public class EventInfoActivity extends AppCompatActivity
     private FirebaseUser user;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private NavigationView navigationView;
+
+    private static int page;
 
 
     @Override
@@ -90,16 +102,19 @@ public class EventInfoActivity extends AppCompatActivity
         setContentView(R.layout.activity_event_info);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout2);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
+//        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         toggle.syncState();
 
         nav_displayName2 = (TextView) findViewById(R.id.nav_user_name_display2);
         iv2 = (NetworkImageView) findViewById(R.id.nav_user_profile2);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view2);
+        navigationView = (NavigationView) findViewById(R.id.nav_view2);
         navigationView.setNavigationItemSelectedListener(this);
 
         mAuth = FirebaseAuth.getInstance();
@@ -114,8 +129,9 @@ public class EventInfoActivity extends AppCompatActivity
                         @Override
                         public void run() {
                             try {
-                                nav_displayName2 = (TextView) findViewById(R.id.nav_user_name_display2);
-                                iv2 = (NetworkImageView) findViewById(R.id.nav_user_profile2);
+                                View v = (View) navigationView.getHeaderView(0);
+                                nav_displayName2 = (TextView) v.findViewById(R.id.nav_user_name_display2);
+                                iv2 = (NetworkImageView) v.findViewById(R.id.nav_user_profile2);
                                 Log.d("FeedActivity", nav_displayName2.getText().toString());
                                 GraphUser.setFacebookData(accessToken,
                                         EventInfoActivity.this, user, nav_displayName2, iv2);
@@ -189,14 +205,20 @@ public class EventInfoActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout2);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+//        } else
+//        if (page > 0) {
+//            mViewPager.setCurrentItem(page - 1, true);
         } else {
+            Log.i("MainActivity", "nothing on backstack, calling super");
             super.onBackPressed();
         }
+
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu; this adds items to the action br if it is present.
 //                    getMenuInflater().inflate(R.menu.event_info, menu);
         return true;
     }
@@ -254,6 +276,7 @@ public class EventInfoActivity extends AppCompatActivity
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a HostMainFragment (defined as a static inner class below).
+            page = position;
             switch (position) {
                 case (0):
                     return EventInfoFragment.newInstance(selectedEvent);
@@ -293,6 +316,19 @@ public class EventInfoActivity extends AppCompatActivity
 //            }
 
             return "Event Info";
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == 1) {
+//            if (grantResults.length != 1 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+//                ErrorDialog.newInstance(getString(R.string.request_permission))
+//                        .show(getChildFragmentManager(), FRAGMENT_DIALOG);
+//            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 

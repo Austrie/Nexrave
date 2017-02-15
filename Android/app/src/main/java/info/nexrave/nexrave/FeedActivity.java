@@ -67,6 +67,7 @@ import java.util.Map;
 import info.nexrave.nexrave.bot.CopyEventActivity;
 import info.nexrave.nexrave.bot.CreateEventActivity;
 import info.nexrave.nexrave.bot.GetListsActivity;
+import info.nexrave.nexrave.bot.InviteByTextActivity;
 import info.nexrave.nexrave.models.Event;
 import info.nexrave.nexrave.newsfeedparts.AppController;
 import info.nexrave.nexrave.newsfeedparts.FeedImageView;
@@ -97,8 +98,10 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
     private Map<String, Object> map;
     private int feedCount = 0;
 
-    TextView nav_displayName;
-    NetworkImageView iv;
+    private TextView nav_displayName;
+    private NetworkImageView iv;
+    private NavigationView navigationView;
+
 
 
     @SuppressLint("NewApi")
@@ -108,6 +111,7 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_feed);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout1);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -115,10 +119,10 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        nav_displayName = (TextView) findViewById(R.id.nav_user_name_display1);
-        iv = (NetworkImageView) findViewById(R.id.nav_user_profile1);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view1);
+        Log.d("TEXTVIEWE", "about to call");
+        navigationView = (NavigationView) findViewById(R.id.nav_view1);
         navigationView.setNavigationItemSelectedListener(this);
+        Log.d("TEXTVIEWE", "called");
         int width = getResources().getDisplayMetrics().widthPixels / 2;
         DrawerLayout.LayoutParams params = (android.support.v4.widget.DrawerLayout.LayoutParams) navigationView.getLayoutParams();
         params.width = width;
@@ -132,6 +136,8 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
             public void onAuthStateChanged(@NonNull final FirebaseAuth firebaseAuth) {
                 user = firebaseAuth.getCurrentUser();
                 if (user != null) {
+                    FireDatabase.backupFirebaseUser = user;
+                    FireDatabase.backupAccessToken = accessToken;
 
                     //Did this because onAuthStateChanged is called multiple times
                     //Cause duplicating feed items on feed
@@ -141,19 +147,25 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
 
                         // User is signed in
                         //Seems like timing is off, so I reset variables or else they'll be null
-                        nav_displayName = (TextView) findViewById(R.id.nav_user_name_display1);
-                        iv = (NetworkImageView) findViewById(R.id.nav_user_profile1);
+//                        nav_displayName = (TextView) findViewById(R.id.nav_user_name_display1);
+//                        iv = (NetworkImageView) findViewById(R.id.nav_user_profile1);
                         Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                        //TODO Make async task
 
                         Thread myThread = new Thread() {
                             @Override
                             public void run() {
                                 try {
-                                    nav_displayName = (TextView) findViewById(R.id.nav_user_name_display1);
-                                    iv = (NetworkImageView) findViewById(R.id.nav_user_profile1);
+                                    View v = (View) navigationView.getHeaderView(0);
+                                    nav_displayName = (TextView) v.findViewById(R.id.nav_user_name_display1);
+                                    iv = (NetworkImageView) v.findViewById(R.id.nav_user_profile1);
+                                    Log.d("TEXTVIEWE", "about to call 2");
+                                    if (((TextView) findViewById(R.id.nav_user_name_display1)) == null) {
+                                        Log.d("TEXTVIEWE", "it's null");
+                                    } else {
+                                        Log.d("TEXTVIEWE", "it's not null");
+                                    }
                                     GraphUser.setFacebookData(accessToken, FeedActivity.this, user, nav_displayName, iv);
-                                } catch (Exception e) {
+                                } catch(Exception e) {
                                     e.printStackTrace();
                                 }
                             }
@@ -263,6 +275,8 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.nav_menu_invitations) {
+            intent = new Intent(FeedActivity.this, InviteByTextActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_menu_add_codes) {
 

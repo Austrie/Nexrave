@@ -21,6 +21,7 @@ public class User implements Comparable<User> {
     public String role;
     public String pic_uri;
     public Integer age_range;
+    public Long phone_number;
     public Integer number_of_hosted_events;
     public ArrayList<String> photos = new ArrayList<>();
     public ArrayList<Integer> past_events = new ArrayList<>();
