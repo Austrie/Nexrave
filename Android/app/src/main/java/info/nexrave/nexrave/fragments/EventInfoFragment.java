@@ -19,6 +19,10 @@ import android.widget.TextView;
 import com.android.volley.toolbox.NetworkImageView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import info.nexrave.nexrave.FeedActivity;
 import info.nexrave.nexrave.R;
@@ -26,6 +30,7 @@ import info.nexrave.nexrave.models.Event;
 import info.nexrave.nexrave.newsfeedparts.AppController;
 import info.nexrave.nexrave.systemtools.ConvertMillitaryTime;
 import info.nexrave.nexrave.systemtools.FireDatabase;
+import info.nexrave.nexrave.systemtools.IsEventToday;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -86,22 +91,59 @@ public class EventInfoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_event_info, container, false);
+        final View view = inflater.inflate(R.layout.fragment_event_info, container, false);
 
         Uri uri = Uri.parse(event.image_uri);
         SimpleDraweeView event_flier = (SimpleDraweeView) view
                 .findViewById(R.id.eventInfo_flier);
         event_flier.setImageURI(uri);
 
-        NetworkImageView host_pic = (NetworkImageView) view
-                .findViewById(R.id.eventInfo_host_profile_pic);
-        host_pic.setImageUrl(event.main_host.host_image
-                , AppController.getInstance().getImageLoader());
+        DatabaseReference orgRef = FireDatabase.getRoot().child("organizations")
+                .child(event.organization);
+
+        orgRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    //Org name
+                    NetworkImageView host_pic = (NetworkImageView) view
+                            .findViewById(R.id.eventInfo_host_profile_pic);
+                    host_pic.setImageUrl((String) dataSnapshot.child("pic_uri").getValue()
+                            , AppController.getInstance().getImageLoader());
+
+                } else {
+
+                    final DatabaseReference mainHostRef = FireDatabase.getRoot().child("users")
+                            .child(event.main_host_id);
+                    mainHostRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                            //Main Host profile pic
+                            NetworkImageView host_pic = (NetworkImageView) view
+                                    .findViewById(R.id.eventInfo_host_profile_pic);
+                            host_pic.setImageUrl((String) dataSnapshot.child("pic_uri").getValue()
+                                    , AppController.getInstance().getImageLoader());
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         TextView date_time = (TextView) view
                 .findViewById(R.id.eventInfo_date_time);
-        String[] time = ConvertMillitaryTime.convert(event.date_time);
-        date_time.setText(time[0] + ":" + time[1] + " " + time[2]);
+        date_time.setText(IsEventToday.check(event.date_time));
 
         TextView event_name = (TextView) view
                 .findViewById(R.id.eventInfo_event_name);

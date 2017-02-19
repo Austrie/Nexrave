@@ -18,7 +18,7 @@ public class ConvertMillitaryTime {
             result[0] = militaryTime[0];
             result[2] = "AM";
         } else if (Integer.valueOf(militaryTime[0]).equals(12)) {
-            result[1] = "12";
+            result[0] = "12";
             result[2] = "PM";
         } else if (Integer.valueOf(militaryTime[0]).intValue() > 12) {
             result[0] = String.valueOf(Integer.valueOf(militaryTime[0]).intValue() - 12);

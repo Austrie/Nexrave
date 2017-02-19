@@ -6,11 +6,24 @@ import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.android.volley.toolbox.NetworkImageView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import info.nexrave.nexrave.R;
+import info.nexrave.nexrave.newsfeedparts.AppController;
+import info.nexrave.nexrave.systemtools.FireDatabase;
+import info.nexrave.nexrave.systemtools.RoundedNetworkImageView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,6 +43,12 @@ public class EventUserFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private static String current_user;
+    private static TextView usernameTV;
+    private static RoundedNetworkImageView profile_picIV;
+    private static NetworkImageView backgroundIV;
+    private static ImageButton facebookIB, instagramIB, twitterIB, snapchatIB;
+
     private OnFragmentInteractionListener mListener;
 
     public EventUserFragment() {
@@ -48,6 +67,7 @@ public class EventUserFragment extends Fragment {
     public static EventUserFragment newInstance() {
         EventUserFragment fragment = new EventUserFragment();
         Bundle args = new Bundle();
+        current_user = FireDatabase.backupFirebaseUser.getUid();
 //        args.putString(ARG_PARAM1, param1);
 //        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
@@ -67,7 +87,19 @@ public class EventUserFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_event_user, container, false);
+        View v = inflater.inflate(R.layout.fragment_event_user, container, false);
+        backgroundIV = (NetworkImageView) v.findViewById(R.id.eventUser_background);
+        profile_picIV = (RoundedNetworkImageView) v.findViewById(R.id.eventUser_user_profile_pic);
+        facebookIB = (ImageButton) v.findViewById(R.id.eventUser_facebook);
+        instagramIB = (ImageButton) v.findViewById(R.id.eventUser_instagram);
+        twitterIB = (ImageButton) v.findViewById(R.id.eventUser_twitter);
+        snapchatIB = (ImageButton) v.findViewById(R.id.eventUser_snapchat);
+        usernameTV = (TextView) v.findViewById(R.id.eventUser_username);
+        return v;
+    }
+
+    public static void setUserToBeViewed(String u) {
+        current_user = u;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -83,6 +115,50 @@ public class EventUserFragment extends Fragment {
             Activity a = getActivity();
             if (a != null) a.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Log.d("EventUserFragment", "onResume called");
+
+        DatabaseReference userRef = FireDatabase.getRoot().child("users").child(current_user);
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                profile_picIV.setImageUrl((String) dataSnapshot.child("pic_uri").getValue()
+                        , AppController.getInstance().getImageLoader());
+                backgroundIV.setImageUrl((String) dataSnapshot.child("pic_uri").getValue()
+                        , AppController.getInstance().getImageLoader());
+                usernameTV.setText((String) dataSnapshot.child("name").getValue());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    public static void loadUser(String user_id) {
+        DatabaseReference userRef = FireDatabase.getRoot().child("users").child(user_id);
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                profile_picIV.setImageUrl((String) dataSnapshot.child("pic_uri").getValue()
+                        , AppController.getInstance().getImageLoader());
+                backgroundIV.setImageUrl((String) dataSnapshot.child("pic_uri").getValue()
+                        , AppController.getInstance().getImageLoader());
+                usernameTV.setText((String) dataSnapshot.child("name").getValue());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override

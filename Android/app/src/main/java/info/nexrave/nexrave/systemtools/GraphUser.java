@@ -54,7 +54,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 public class GraphUser {
 
     private static String email, firstName, lastName, gender, link;
-    private static Map<String, Integer> ageRange;
+    private static Integer ageRange;
     private static Uri picURI;
     ArrayList<String[]> fList = new ArrayList<String[]>();
     private static DatabaseReference mRootReference = FireDatabase.getInstance().getReference();
@@ -107,7 +107,8 @@ public class GraphUser {
     public static void setFacebookData(@NonNull final AccessToken ac, @NonNull final Activity activity,
                                        @NonNull final FirebaseUser user,
                                        @NonNull final TextView nav_displayName,
-                                       @NonNull final NetworkImageView iv) {
+                                       @NonNull final RoundedNetworkImageView iv,
+                                       @NonNull final NetworkImageView backgroundIV2) {
         GraphRequest request = GraphRequest.newMeRequest(ac,
                 new GraphRequest.GraphJSONObjectCallback() {
                     @Override
@@ -118,28 +119,19 @@ public class GraphUser {
                             firstName = response.getJSONObject().getString("first_name");
                             lastName = response.getJSONObject().getString("last_name");
                             gender = response.getJSONObject().getString("gender");
-//                            ageRange = response.getJSONObject().get("age_range");
                             picURI = Uri.parse("https://graph.facebook.com/" + ac.getUserId()
                                     + "/picture?type=large");
-
-
-//                            aRange = String.valueOf(response.getJSONObject().getInt("age_range"));
-//
+                            String[] tempAgeRange = response.getJSONObject().get("age_range")
+                                    .toString().split(",");
+                            try {
+                                ageRange = Integer.valueOf(tempAgeRange[1].substring(6, tempAgeRange[1].length() - 1));
+                            } catch(Exception e) {
+                                Log.d("GraphUser", e.toString());
+                                ageRange = 18;
+                            }
                             Profile profile = Profile.getCurrentProfile();
                             link = profile.getLinkUri().toString();
-//
-//                            Log.i("Link",link);
-//                            if (Profile.getCurrentProfile()!=null)
-//                            {
-//                                Log.d("Login", "ProfilePic: " + Profile.getCurrentProfile().getProfilePictureUri(50, 50));
-//
-//                            }
-//
-//                            Log.d("Login" + "Email", email);
-//                            Log.d("Login"+ "FirstName", firstName);
-//                            Log.d("Login" + "LastName", lastName);
-//                            Log.d("Login" + "Gender", gender);
-//                            Log.d("Login" + "Bday", aRange);
+
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -149,19 +141,20 @@ public class GraphUser {
 
         );
         Bundle parameters = new Bundle();
-        parameters.putString("fields", "email,first_name,last_name,gender");
+        parameters.putString("fields", "email,first_name,last_name,gender,age_range");
         request.setParameters(parameters);
         request.executeAndWait();
         updateRealtimeDatabase(user, ac);
-        updateNavHeader(activity, user, nav_displayName, iv);
+        updateNavHeader(activity, user, nav_displayName, iv, backgroundIV2);
     }
 
     private static void updateNavHeader(final Activity activity, final FirebaseUser user,
-                                        final TextView nav_displayName, final NetworkImageView iv) {
+                                        final TextView nav_displayName, final RoundedNetworkImageView iv,
+                                        final NetworkImageView backgroundIV2) {
         //TODO: Set using firebase realtime database
         //Setting navigation drawer header
         final DatabaseReference ref = mRootReference.child("users").child(user.getUid());
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
@@ -171,6 +164,8 @@ public class GraphUser {
                     public void run() {
                         nav_displayName.setText((String) map.get("name"));
                         iv.setImageUrl((String) map.get("pic_uri")
+                                , AppController.getInstance().getImageLoader());
+                        backgroundIV2.setImageUrl((String) map.get("pic_uri")
                                 , AppController.getInstance().getImageLoader());
 
                     }
@@ -206,17 +201,38 @@ public class GraphUser {
 
         final Map<String, Object> map = new HashMap<String, Object>();
         final DatabaseReference ref = mRootReference.child("users");
-        //TODO: Store actual age
-        map.put(String.valueOf(user.getUid()),
-                new User(link, (firstName + " " + lastName)
-                        , ((firstName.toLowerCase().charAt(0)) + lastName.toLowerCase())
-                        , gender, "user", picURI.toString(), new Integer(18)));
-        ref.updateChildren(map);
+        ref.child(user.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    map.put("facebook_link", link);
+                    map.put("name", firstName + " " + lastName);
+                    map.put("gender", gender);
+                    map.put("pic_uri", picURI.toString());
+                    map.put("age_range", ageRange);
+                    if(!dataSnapshot.child("role").exists()) {
+                        map.put("role", "user");
+                    }
+                    ref.child(user.getUid()).updateChildren(map);
+                } else {
+                    //TODO: Store actual age
+                    map.put(String.valueOf(user.getUid()),
+                            new User(link, (firstName + " " + lastName),
+                                    gender, "user", picURI.toString(), ageRange));
+                    ref.updateChildren(map);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         Log.d("GraphUser: Updated", ref.toString());
 
 //        final DatabaseReference pending_user_invites = mRootReference.child("pending_user_invites")
 //                .child("facebook").child(ac.getUserId());
-//        pending_user_invites.addListenerForSingleValueEvent(new ValueEventListener() {
+//        pending_user_invites.addValueEventListener(new ValueEventListener() {
 //            @Override
 //            public void onDataChange(DataSnapshot dataSnapshot) {
 //                if (dataSnapshot.exists()) {

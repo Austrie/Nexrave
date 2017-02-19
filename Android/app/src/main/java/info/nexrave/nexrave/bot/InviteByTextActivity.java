@@ -51,13 +51,13 @@ public class InviteByTextActivity extends AppCompatActivity {
         setContentView(R.layout.activity_invitebytext);
         setupJavascript();
         Host host = new Host();
-        host.firebase_id = "cej9NdOP3uRSi1qBo6aZy6tzyoP2";
-        FireDatabase.addToListOfUsersToBeAddedToFacebook(host,
-                "cej9NdOP3uRSi1qBo6aZy6tzyoP2event2", "ePKPFosz3KeVs39MdVndueQnLVN2");
-        Guest guest = FireDatabase.getFromListOfUsersToBeAddedToFacebook();
-        if (guest == null) {
-            finish();
-        }
+//        host.firebase_id = "cej9NdOP3uRSi1qBo6aZy6tzyoP2";
+//        FireDatabase.addToListOfUsersToBeAddedToFacebook(host,
+//                "cej9NdOP3uRSi1qBo6aZy6tzyoP2event2", "ePKPFosz3KeVs39MdVndueQnLVN2");
+//        Guest guest = FireDatabase.getFromListOfUsersToBeAddedToFacebook();
+//        if (guest == null) {
+//            finish();
+//        }
 
         webView = (WebView) findViewById(R.id.inviteByText_webview);
         webView.addJavascriptInterface(this, "android");
@@ -68,42 +68,43 @@ public class InviteByTextActivity extends AppCompatActivity {
         webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
         webView.getSettings().setUserAgentString(ua);
 
-        DatabaseReference ref = FireDatabase.getInstance().getReference();
-        DatabaseReference eventRef = ref.child("events").child(guest.event_id).child("facebook_url");
-        eventRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    webView.loadUrl((String) dataSnapshot.getValue());
-                } else {
-                    Log.d("InvitedByText", "facebook/event doesn't exist");
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        DatabaseReference userRef = ref.child("users").child(guest.firebase_id).child("phone_number");
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    phone_number = (Long) dataSnapshot.getValue();
-
-                } else {
-                    Log.d("InvitedByText", "facebook/event doesn't exist");
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
+//        DatabaseReference ref = FireDatabase.getInstance().getReference();
+//        DatabaseReference eventRef = ref.child("events").child(guest.event_id).child("facebook_url");
+//        eventRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                if (dataSnapshot.exists()) {
+//                    webView.loadUrl((String) dataSnapshot.getValue());
+        webView.loadUrl("https://www.facebook.com/events/761369164012961/");
+//                } else {
+//                    Log.d("InvitedByText", "facebook/event doesn't exist");
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//
+//        DatabaseReference userRef = ref.child("users").child(guest.firebase_id).child("phone_number");
+//        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                if (dataSnapshot.exists()) {
+//                    phone_number = (Long) dataSnapshot.getValue();
+//
+//                } else {
+//                    Log.d("InvitedByText", "facebook/event doesn't exist");
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//
     }
 
     @JavascriptInterface
@@ -147,11 +148,12 @@ public class InviteByTextActivity extends AppCompatActivity {
     // To handle &quot;Back&quot; key press event for WebView to go back to previous screen.
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_BACK) && webView.canGoBack()) {
-            intent = new Intent(InviteByTextActivity.this, FeedActivity.class);
-            startActivity(intent);
-            return true;
-        }
+        finish();
+//        if ((keyCode == KeyEvent.KEYCODE_BACK) && webView.canGoBack()) {
+//            intent = new Intent(InviteByTextActivity.this, FeedActivity.class);
+//            startActivity(intent);
+//            return true;
+//        }
         return super.onKeyDown(keyCode, event);
     }
 
@@ -160,18 +162,24 @@ public class InviteByTextActivity extends AppCompatActivity {
                 //If on custom friends lists page
 //                + "window.onLoad = " +
 //                "function() { alert(document.getElementById('u_jsonp_2_q').innerHTML); }"
-                + "var button = document.querySelectorAll('a[class=\"_42ft _4jy0 _55pi _5vto _55_q _2agf _p _4jy4 _517h _51sy\"]');"
+                + "var button = document.querySelectorAll('a[class=\"_42ft _4jy0 _55pi _5vto _55_q _2agf _p _4jy4 _517h _51sy\"]'); "
 //                + "var e = document.createEvent('HTMLEvents'); " +
 //                "e.initEvent('click',true,true);"
-                + "button[0].click(); ((document.querySelectorAll('li[class=\"_54ni fbEventClassicButton __MenuItem\"]')[0]).firstChild).click();"
-                + "document.querySelector('button[class=\"_42ft _4jy0 layerConfirm uiOverlayButton _4jy3 _4jy1 selected _51sy\"]').click(); })()"
+                + "button[0].click();"
+                + "((document.querySelectorAll('li[class=\"_54ni fbEventClassicButton __MenuItem\"]')[0]).firstChild).click();"
+                + "function windowExist() { if ((document.querySelectorAll('span[class=\"_58ah\"]').length) == 0) { alert(((document.querySelectorAll('span[class=\"_58ah\"]').length)));"
+                + "setTimeout(windowExist, 100);} else { alert((document.querySelector('span[class=\"_58ah\"]')).children[0].children[0]) }}" +
+                "windowExist();"
+//                + "while(typeof (document.querySelectorAll('span[class=\"_58ah\"]')[2]) == 'undefined') {"
+//                + "}"
+//                + "document.querySelector('button[class=\"_42ft _4jy0 layerConfirm uiOverlayButton _4jy3 _4jy1 selected _51sy\"]').click(); })()"
                 + ""
 //                + "var button = document.getElementsByClassName('pam')[1]; "
 //                + "var list = prelist.getElementsByTagName('li'); alert(list.length);"
 //                + "for (i = 0; i < list.length; i++) {"
 //                + "android.pullListInfo(list[i].getElementsByTagName('a')[1].getAttribute('title'), "
 //                + "list[i].getElementsByTagName('a')[1].getAttribute('href'));} android.showLists();";
-                + "";
+                + "})()";
     }
 }
 

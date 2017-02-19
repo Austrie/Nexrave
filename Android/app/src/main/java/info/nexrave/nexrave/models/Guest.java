@@ -10,8 +10,6 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * Created by yoyor on 12/21/2016.
@@ -24,8 +22,9 @@ public class Guest implements Serializable {
     public String guest_name;
     public Integer can_invite = 0;
     public Long facebook_id;
+    public Long phone_number;
     public Long guest_id;
-    public Host invited_by;
+    public String invited_by;
     public String event_id;
     public ArrayList<Guest> invited_extra_guests = new ArrayList<>();
 
@@ -33,9 +32,9 @@ public class Guest implements Serializable {
 
     }
 
-    public Guest(Long id, Host by) {
+    public Guest(Long id, String host_id) {
         facebook_id = id;
-        invited_by = by;
+        invited_by = host_id;
     }
 
     public int hashCode() {
@@ -57,7 +56,11 @@ public class Guest implements Serializable {
         if (this == object) return true;
         if (!(object instanceof Guest)) return false;
         Guest guestObject = (Guest) object;
-        return this.facebook_id.equals(guestObject.facebook_id);
+        if (facebook_id != null) {
+            return this.facebook_id.equals(guestObject.facebook_id);
+        } else {
+            return this.phone_number.equals(guestObject.phone_number);
+        }
     }
 
     public int compareTo(Guest other) {

@@ -10,7 +10,8 @@
     tools:showIn="@layout/toolbar_feed"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
-    android:clipToPadding="true">
+    android:clipToPadding="true"
+    android:background="@color/colorPrimaryDark">
 
     <ListView
         android:id="@+id/list"

@@ -1,55 +1,31 @@
 package info.nexrave.nexrave;
 
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
-import android.hardware.Camera;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.NetworkImageView;
 import com.facebook.AccessToken;
+import com.facebook.drawee.drawable.Rounded;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
-
-import java.io.IOException;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 import info.nexrave.nexrave.fragments.CameraFragment;
 import info.nexrave.nexrave.fragments.EventChatFragment;
@@ -57,13 +33,10 @@ import info.nexrave.nexrave.fragments.EventInfoFragment;
 import info.nexrave.nexrave.fragments.EventUserFragment;
 import info.nexrave.nexrave.fragments.VerticalViewPagerFragment;
 import info.nexrave.nexrave.models.Event;
-import info.nexrave.nexrave.models.InviteList;
-import info.nexrave.nexrave.newsfeedparts.AppController;
 import info.nexrave.nexrave.newsfeedparts.FeedImageView;
-import info.nexrave.nexrave.newsfeedparts.FeedItem;
-import info.nexrave.nexrave.newsfeedparts.FeedListAdapter;
-import info.nexrave.nexrave.systemtools.CameraPreview;
+import info.nexrave.nexrave.systemtools.CloseOnlyActionBarDrawerToggle;
 import info.nexrave.nexrave.systemtools.GraphUser;
+import info.nexrave.nexrave.systemtools.RoundedNetworkImageView;
 import info.nexrave.nexrave.systemtools.VerticalViewPager;
 
 public class EventInfoActivity extends AppCompatActivity
@@ -84,7 +57,8 @@ public class EventInfoActivity extends AppCompatActivity
     private ViewPager mViewPager;
     private int fragment;
     private SectionsPagerAdapter mSectionsPagerAdapter;
-    private NetworkImageView iv2;
+    private RoundedNetworkImageView iv2;
+    private NetworkImageView backgroundIV2;
     private TextView nav_displayName2;
     private AccessToken accessToken;
     private FirebaseUser user;
@@ -106,14 +80,16 @@ public class EventInfoActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        ActionBarDrawerToggle toggle = new CloseOnlyActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
+//        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
 //        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         toggle.syncState();
 
         nav_displayName2 = (TextView) findViewById(R.id.nav_user_name_display2);
-        iv2 = (NetworkImageView) findViewById(R.id.nav_user_profile2);
+        iv2 = (RoundedNetworkImageView) findViewById(R.id.nav_user_profile2);
+        backgroundIV2 = (NetworkImageView) findViewById(R.id.nav_user_background2);
         navigationView = (NavigationView) findViewById(R.id.nav_view2);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -131,10 +107,11 @@ public class EventInfoActivity extends AppCompatActivity
                             try {
                                 View v = (View) navigationView.getHeaderView(0);
                                 nav_displayName2 = (TextView) v.findViewById(R.id.nav_user_name_display2);
-                                iv2 = (NetworkImageView) v.findViewById(R.id.nav_user_profile2);
+                                iv2 = (RoundedNetworkImageView) v.findViewById(R.id.nav_user_profile2);
+                                backgroundIV2 = (NetworkImageView) v.findViewById(R.id.nav_user_background2);
                                 Log.d("FeedActivity", nav_displayName2.getText().toString());
                                 GraphUser.setFacebookData(accessToken,
-                                        EventInfoActivity.this, user, nav_displayName2, iv2);
+                                        EventInfoActivity.this, user, nav_displayName2, iv2, backgroundIV2);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -209,8 +186,19 @@ public class EventInfoActivity extends AppCompatActivity
 //        if (page > 0) {
 //            mViewPager.setCurrentItem(page - 1, true);
         } else {
-            Log.i("MainActivity", "nothing on backstack, calling super");
-            super.onBackPressed();
+            int position = mViewPager.getCurrentItem();
+            if (position > 0) {
+                if (position == 1) {
+                    if(!VerticalViewPagerFragment.backToChat()) {
+                        mViewPager.setCurrentItem(position - 1, true);
+                    }
+                } else {
+                    mViewPager.setCurrentItem(position - 1, true);
+                }
+            } else {
+                Log.i("MainActivity", "nothing on backstack, calling super");
+                super.onBackPressed();
+            }
         }
 
 
@@ -244,9 +232,7 @@ public class EventInfoActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_menu_invitations) {
-            // Handle the camera action
-        } else if (id == R.id.nav_menu_add_codes) {
+        if (id == R.id.nav_menu_discover) {
 
         } else if (id == R.id.nav_menu_event_history) {
 

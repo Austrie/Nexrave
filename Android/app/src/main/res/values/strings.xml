@@ -7,6 +7,8 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_alternative_login">Sign in</string>
+    <string name="search_hint">Search for Venues</string>
+    <string name="menu_search">Search</string>
 
     <!-- Strings related to layouts_login.layout -->
     <string name="fb_login_prompt">Do you have, or plan to have, a Facebook page for your event?</string>

@@ -9,6 +9,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,6 +63,7 @@ public class EventChatFragment extends Fragment {
     private static Activity activity;
     private static String event_id;
     private static FirebaseUser user;
+    private ListAdapter listAdapter;
 
     private OnFragmentInteractionListener mListener;
 
@@ -130,18 +133,27 @@ public class EventChatFragment extends Fragment {
         });
 
         ListView listView = (ListView) view.findViewById(R.id.eventChat_listView);
-        ListAdapter listAdapter = new FirebaseListAdapter<EventChatMessage>(activity, EventChatMessage.class,
+        listAdapter = new FirebaseListAdapter<EventChatMessage>(activity, EventChatMessage.class,
                 R.layout.message, eventRef) {
             @Override
             protected void populateView(final View v, final EventChatMessage model, final int position) {
                 DatabaseReference userRef = usersRef.child(model.user_id);
-                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                userRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        User poster = dataSnapshot.getValue(User.class);
+                        final User poster = dataSnapshot.getValue(User.class);
                         ((NetworkImageView) v.findViewById(R.id.eventChat_user_profile_pic))
                                 .setImageUrl(poster.pic_uri, AppController.getInstance().getImageLoader());
-
+                        ((NetworkImageView) v.findViewById(R.id.eventChat_user_profile_pic)).setOnClickListener(
+                                new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        EventUserFragment.loadUser(model.user_id);
+                                        ViewPager vp = (ViewPager)getActivity().findViewById(R.id.eventInfoContainer);
+                                        vp.setCurrentItem(2, true);
+                                    }
+                                }
+                        );
                         ((TextView) v.findViewById(R.id.eventChat_user_name)).setText(poster.name);
                     }
 
@@ -156,6 +168,14 @@ public class EventChatFragment extends Fragment {
         listView.setAdapter(listAdapter);
 
         return view;
+    }
+
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser && isResumed()) {
+            Activity a = getActivity();
+            EventUserFragment.setUserToBeViewed(FireDatabase.backupFirebaseUser.getUid());
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event

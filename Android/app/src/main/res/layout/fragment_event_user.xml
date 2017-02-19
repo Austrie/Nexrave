@@ -11,68 +11,101 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <LinearLayout
-            android:layout_weight="0.2"
+
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_weight="0.1">
 
-            <ImageView
+            <com.android.volley.toolbox.NetworkImageView
+                android:id="@+id/eventUser_background"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:srcCompat="@mipmap/app_icon"
-                android:id="@+id/imageView2" />
+                android:layout_height="match_parent"
+                android:tint="#99000000"
+                android:scaleType="fitXY" />
 
-            <TextView
-                android:text="Anonymous User"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView5"
-                android:textColor="@color/white"
-                android:gravity="center"
-                android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+
             <LinearLayout
+                android:paddingTop="64dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-                <ImageButton
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    app:srcCompat="@drawable/bg_circle"
-                    android:id="@+id/imageButton1"
-                    android:layout_weight="1"
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                <info.nexrave.nexrave.systemtools.RoundedNetworkImageView
+                    android:id="@+id/eventUser_user_profile_pic"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_centerInParent="true"
+                    app:srcCompat="@mipmap/app_icon"
+                    android:paddingBottom="10dp"
                     android:scaleType="centerCrop" />
+                </RelativeLayout>
 
-                <ImageButton
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    app:srcCompat="@drawable/bg_circle"
-                    android:id="@+id/imageButton2"
-                    android:layout_weight="1"
-                    android:scaleType="centerCrop" />
+                <TextView
+                    android:id="@+id/eventUser_username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Anonymous User"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                    android:textColor="@color/white"/>
 
-                <ImageButton
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    app:srcCompat="@drawable/bg_circle"
-                    android:id="@+id/imageButton3"
-                    android:layout_weight="1"
-                    android:scaleType="centerCrop" />
+                <LinearLayout
+                    android:layout_weight="0.01"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-                <ImageButton
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    app:srcCompat="@drawable/bg_circle"
-                    android:id="@+id/imageButton4"
-                    android:layout_weight="1"
-                    android:scaleType="centerCrop" />
+                    <ImageButton
+                        android:id="@+id/eventUser_facebook"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_weight="1"
+                        android:background="#00000000"
+                        android:scaleType="center"
+                        app:srcCompat="@drawable/facebook_logo_button" />
+
+                    <ImageButton
+                        android:id="@+id/eventUser_instagram"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_weight="1"
+                        android:background="#00000000"
+                        android:scaleType="center"
+                        app:srcCompat="@drawable/instagram_logo" />
+
+                    <ImageButton
+                        android:id="@+id/eventUser_twitter"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_weight="1"
+                        android:background="#00000000"
+                        android:scaleType="center"
+                        app:srcCompat="@drawable/twitter_logo_button" />
+
+                    <ImageButton
+                        android:id="@+id/eventUser_snapchat"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_weight="1"
+                        android:background="#00000000"
+                        android:scaleType="center"
+                        app:srcCompat="@drawable/snapchat_logo_button" />
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
+        </FrameLayout>
 
         <LinearLayout
-            android:layout_weight="0.1"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_weight="0.1">
+            <ImageButton
+                android:layout_width="match_parent"
+                android:background="@color/white"
+                android:layout_height="3dp" />
 
             <GridView
                 android:layout_width="match_parent"

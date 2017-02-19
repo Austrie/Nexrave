@@ -23,7 +23,6 @@ public class Event implements Serializable {
     // public *** qr_codes;
     public int id;
     public String event_id;
-    public String facebook_id;
     public String facebook_cover_pic;
     public String facebook_url;
     public String event_name;
@@ -32,9 +31,13 @@ public class Event implements Serializable {
     public String date_time;
     public String location;
     public Integer party_code;
-    public Host main_host;
+    public String organization;
+    public String main_host_id;
+    public Integer number_checked_in = 0;
+    public Map<String, String> users_in = new LinkedHashMap<>();
     public Map<String, Host> hosts = new LinkedHashMap<>();
     public Map<String, Guest> guests = new LinkedHashMap<>();
+    public Map<String, Guest> phone_invites = new LinkedHashMap<>();
 
     public Event() {
 
@@ -56,7 +59,7 @@ public class Event implements Serializable {
         //TODO get Facebook id for main host;
         Host mainHost = new Host("Main Host");
         for (int i = 0; i < list.size(); i++) {
-            guests.put(list.get(i).toString(), new Guest(list.get(i), mainHost));
+            guests.put(list.get(i).toString(), new Guest(list.get(i), main_host_id));
         }
     }
 
@@ -66,7 +69,8 @@ public class Event implements Serializable {
 
     public String toString() {
         return "Name: " + event_name + " /n "
-                + "Number Invited: " + guests.size() + " By " + main_host.toString();
+                + "Number Invited: " + guests.size() + " By " + main_host_id + " Under " +
+                organization.toString();
     }
 
     //Gives error when creating FB event

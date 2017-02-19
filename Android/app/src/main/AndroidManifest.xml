@@ -7,13 +7,14 @@
         android:anyDensity="true"
         android:largeScreens="true"
         android:normalScreens="true"
+        android:protectionLevel="normal"
         android:smallScreens="false"
         android:xlargeScreens="true" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
@@ -101,6 +102,8 @@
         <activity
             android:name=".bot.InviteByTextActivity"
             android:theme="@style/AppTheme" />
+        <activity android:name=".DiscoverActivity"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

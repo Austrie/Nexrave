@@ -40,7 +40,7 @@ public class VerticalViewPagerFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private SectionsPagerAdapter mSectionsPagerAdapter;
-    private VerticalViewPager mViewPager;
+    private static VerticalViewPager mViewPager;
     private static FirebaseUser user;
     private static Event event;
     private static Activity context;
@@ -181,6 +181,19 @@ public class VerticalViewPagerFragment extends Fragment {
 //            }
 
             return "Event Chat";
+        }
+    }
+
+    public static boolean backToChat() {
+        if (mViewPager == null) {
+            return false;
+        }
+        int position = mViewPager.getCurrentItem();
+        if (position == 1) {
+            mViewPager.setCurrentItem(0, true);
+            return true;
+        } else {
+            return false;
         }
     }
 }

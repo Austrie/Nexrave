@@ -23,6 +23,10 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.bumptech.glide.Glide;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -33,6 +37,8 @@ import info.nexrave.nexrave.FeedActivity;
 import info.nexrave.nexrave.R;
 import info.nexrave.nexrave.models.Event;
 import info.nexrave.nexrave.systemtools.ConvertMillitaryTime;
+import info.nexrave.nexrave.systemtools.FireDatabase;
+import info.nexrave.nexrave.systemtools.IsEventToday;
 
 public class FeedListAdapter extends BaseAdapter {
     private Activity activity;
@@ -75,9 +81,9 @@ public class FeedListAdapter extends BaseAdapter {
             imageLoader = AppController.getInstance().getImageLoader();
 
 //        ImageView hostImage = (ImageView) convertView.findViewById(R.id.feed_host_profile_pic);
-        TextView hostUsername = (TextView) convertView.findViewById(R.id.feed_host_username);
-        TextView location = (TextView) convertView.findViewById(R.id.feed_event_location);
-        TextView timestamp = (TextView) convertView.findViewById(R.id.feed_event_date_time);
+        final TextView hostUsername = (TextView) convertView.findViewById(R.id.feed_host_username);
+        final TextView location = (TextView) convertView.findViewById(R.id.feed_event_location);
+        final TextView timestamp = (TextView) convertView.findViewById(R.id.feed_event_date_time);
         final Button eventButton = (Button) convertView.findViewById(R.id.feed_event_button);
         eventButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,90 +94,67 @@ public class FeedListAdapter extends BaseAdapter {
                 activity.startActivity(intent);
             }
         });
-//        TextView url = (TextView) convertView.findViewById(R.id.txtUrl);
-        NetworkImageView profilePic = (NetworkImageView) convertView
+        final NetworkImageView profilePic = (NetworkImageView) convertView
                 .findViewById(R.id.feed_host_profile_pic);
-//        ImageView feedImageView = (ImageView) convertView
-//                .findViewById(R.id.feed_event_pic);
 
+        DatabaseReference orgRef = FireDatabase.getRoot().child("organizations")
+                .child(item.organization);
 
-        hostUsername.setText(item.main_host.host_name);
-//
-//        // Converting timestamp into x ago format
-//        CharSequence timeAgo = DateUtils.getRelativeTimeSpanString(
-//                Long.parseLong(item.getTimeStamp()),
-//                System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS);
-        //TODO: Show date and time based on current date
-        String[] time = ConvertMillitaryTime.convert(item.date_time);
+        orgRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    //Org name
+                    hostUsername.setText((String) dataSnapshot.child("name").getValue());
 
-        timestamp.setText(time[0] + ":" + time[1] + " " + time[2]);
+                    //Org profile pic
+                    profilePic.setImageUrl((String) dataSnapshot.child("pic_uri").getValue(),
+                            imageLoader);
+
+                } else {
+
+                    final DatabaseReference mainHostRef = FireDatabase.getRoot().child("users")
+                            .child(item.main_host_id);
+                    mainHostRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            //Main Host name
+                            hostUsername.setText((String) dataSnapshot.child("name").getValue());
+
+                            //Main Host profile pic
+                            profilePic.setImageUrl((String) dataSnapshot.child("pic_uri").getValue(),
+                                    imageLoader);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        timestamp.setText(IsEventToday.check(item.date_time));
         location.setText(item.location);
         eventButton.setText(item.event_name);
-
-        if (item.event_id.equals("cej9NdOP3uRSi1qBo6aZy6tzyoP2event1")) {
-            item.main_host.host_name = "Shane Hover";
-            item.main_host.host_image = "https://graph.facebook.com/1172934346126648/picture?type=large";
-            item.main_host.firebase_id = "cej9NdOP3uRSi1qBo6aZy6tzyoP2";
-            item.main_host.facebook_id = Long.valueOf("1172934346126648");
-        }
-//
-//        // Chcek for empty status message
-//        if (!TextUtils.isEmpty(item.getStatus())) {
-//            statusMsg.setText(item.getStatus());
-//            statusMsg.setVisibility(View.VISIBLE);
-//        } else {
-//            // status is empty, remove from view
-//            statusMsg.setVisibility(View.GONE);
-//        }
-//
-//        // Checking for null feed url
-//        if (item.getUrl() != null) {
-//            url.setText(Html.fromHtml("<a href=\"" + item.getUrl() + "\">"
-//                    + item.getUrl() + "</a> "));
-//
-//            // Making url clickable
-//            url.setMovementMethod(LinkMovementMethod.getInstance());
-//            url.setVisibility(View.VISIBLE);
-//        } else {
-//            // url is null, remove from the view
-//            url.setVisibility(View.GONE);
-//        }
-//
-//        // user profile pic
-        profilePic.setImageUrl(item.main_host.host_image, imageLoader);
 
         // Feed image
         Log.d("FeedActivity", "JSON adapater: " + item.image_uri);
         if (item.image_uri != null) {
-//            FirebaseStorage storage = FirebaseStorage.getInstance();
-//            StorageReference storageRef = storage.getReferenceFromUrl("gs://nexrave-e1c12.appspot.com");
-//            StorageReference picRef = storageRef.child("events/cej9NdOP3uRSi1qBo6aZy6tzyoP2event1/cover.jpg");
-//            Glide.with(activity).load(item.image_uri).into(feedImageView);
             Uri uri = Uri.parse(item.image_uri);
             SimpleDraweeView draweeView = (SimpleDraweeView) convertView
                     .findViewById(R.id.feed_event_pic);
             draweeView.setImageURI(uri);
             Log.d("FeedActivity", "JSON adapter: error" + " " + item.image_uri);
-//            feedImageView.setImageUrl(item.image_uri, imageLoader);
-//            feedImageView.setVisibility(View.VISIBLE);
-//            feedImageView
-//                    .setResponseObserver(new FeedImageView.ResponseObserver() {
-//                        @Override
-//                        public void onError() {
-//                            Log.d("FeedActivity", "JSON adapter: error");
-//                        }
-//
-//                        @Override
-//                        public void onSuccess() {
-//
-//                            Log.d("FeedActivity", "JSON adapter: successful");
-//                        }
-//                    });
-//        } else {
-//            feedImageView.setVisibility(View.GONE);
-//        }
-//
         }
+
         return convertView;
     }
 }

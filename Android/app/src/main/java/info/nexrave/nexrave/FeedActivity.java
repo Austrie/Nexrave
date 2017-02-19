@@ -1,7 +1,6 @@
 package info.nexrave.nexrave;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,66 +15,29 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.Cache;
-import com.android.volley.Cache.Entry;
-import com.android.volley.Request.Method;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.NetworkImageView;
-import com.bumptech.glide.Glide;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.ProfileTracker;
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import info.nexrave.nexrave.bot.CopyEventActivity;
-import info.nexrave.nexrave.bot.CreateEventActivity;
 import info.nexrave.nexrave.bot.GetListsActivity;
 import info.nexrave.nexrave.bot.InviteByTextActivity;
 import info.nexrave.nexrave.models.Event;
-import info.nexrave.nexrave.newsfeedparts.AppController;
 import info.nexrave.nexrave.newsfeedparts.FeedImageView;
-import info.nexrave.nexrave.newsfeedparts.FeedItem;
 import info.nexrave.nexrave.newsfeedparts.FeedListAdapter;
 import info.nexrave.nexrave.systemtools.ArrayListEvents;
 import info.nexrave.nexrave.systemtools.FireDatabase;
 import info.nexrave.nexrave.systemtools.GraphUser;
+import info.nexrave.nexrave.systemtools.RoundedNetworkImageView;
 
 //Fragment related imports
 
@@ -99,8 +61,10 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
     private int feedCount = 0;
 
     private TextView nav_displayName;
-    private NetworkImageView iv;
+    private NetworkImageView backgroundIV;
+    private RoundedNetworkImageView iv;
     private NavigationView navigationView;
+    private DrawerLayout drawer;
 
 
 
@@ -113,7 +77,17 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout1);
+//        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (drawer.isDrawerOpen(GravityCompat.START)) {
+//                    drawer.closeDrawer(GravityCompat.START);
+//                } else {
+//                    drawer.openDrawer(GravityCompat.START);
+//                }
+//            }
+//        });
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout1);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -157,14 +131,15 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
                                 try {
                                     View v = (View) navigationView.getHeaderView(0);
                                     nav_displayName = (TextView) v.findViewById(R.id.nav_user_name_display1);
-                                    iv = (NetworkImageView) v.findViewById(R.id.nav_user_profile1);
+                                    backgroundIV = (NetworkImageView) v.findViewById(R.id.nav_user_background1);
+                                    iv = (RoundedNetworkImageView) v.findViewById(R.id.nav_user_profile1);
                                     Log.d("TEXTVIEWE", "about to call 2");
                                     if (((TextView) findViewById(R.id.nav_user_name_display1)) == null) {
                                         Log.d("TEXTVIEWE", "it's null");
                                     } else {
                                         Log.d("TEXTVIEWE", "it's not null");
                                     }
-                                    GraphUser.setFacebookData(accessToken, FeedActivity.this, user, nav_displayName, iv);
+                                    GraphUser.setFacebookData(accessToken, FeedActivity.this, user, nav_displayName, iv, backgroundIV);
                                 } catch(Exception e) {
                                     e.printStackTrace();
                                 }
@@ -227,8 +202,7 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
 
 
     private void loadFeed() {
-        //TODO: Change this to only load accepted events
-        FireDatabase.loadPendingEvents(user, accessToken, feedItems, listAdapter);
+        FireDatabase.loadFeedEvents(user, accessToken, feedItems, listAdapter);
     }
 
 
@@ -274,11 +248,9 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_menu_invitations) {
-            intent = new Intent(FeedActivity.this, InviteByTextActivity.class);
+        if (id == R.id.nav_menu_discover) {
+            intent = new Intent(FeedActivity.this, DiscoverActivity.class);
             startActivity(intent);
-
-        } else if (id == R.id.nav_menu_add_codes) {
 
         } else if (id == R.id.nav_menu_event_history) {
             intent = new Intent(FeedActivity.this, CopyEventActivity.class);

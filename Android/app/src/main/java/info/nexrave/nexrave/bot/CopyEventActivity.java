@@ -93,7 +93,7 @@ public class CopyEventActivity {
         event.facebook_cover_pic = coverPic;
         Log.d("CopyEventActivity", "onData: " + coverPic);
         if (FireDatabase.backupFirebaseUser != null) {
-            event.main_host = new Host(FireDatabase.backupFirebaseUser.getUid());
+            event.main_host_id = FireDatabase.backupFirebaseUser.getUid();
         }
         activity.runOnUiThread(new Runnable() {
             @Override

@@ -4,19 +4,20 @@
     <group android:checkableBehavior="single">
         <group android:checkableBehavior="single">
             <item
-                android:id="@+id/nav_menu_invitations"
-                android:title="Invitations" />
-            <item
-                android:id="@+id/nav_menu_add_codes"
-                android:title="Gallery" />
+                android:id="@+id/nav_menu_discover"
+                android:icon="@drawable/worldwide"
+                android:title="Discover" />
             <item
                 android:id="@+id/nav_menu_event_history"
-                android:title="Event History" />
+                android:icon="@drawable/time"
+                android:title="History" />
             <item
                 android:id="@+id/nav_menu_host"
+                android:icon="@drawable/megaphone"
                 android:title="Host" />
             <item
                 android:id="@+id/nav_menu_settings"
+                android:icon="@drawable/settings"
                 android:title="Settings" />
         </group>
 

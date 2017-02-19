@@ -1,7 +1,6 @@
 package info.nexrave.nexrave.systemtools;
 
 import android.util.Log;
-import android.widget.ListAdapter;
 
 import com.facebook.AccessToken;
 import com.google.firebase.auth.FirebaseUser;
@@ -11,22 +10,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
-import info.nexrave.nexrave.FeedActivity;
 import info.nexrave.nexrave.models.Event;
 import info.nexrave.nexrave.models.Guest;
 import info.nexrave.nexrave.models.Host;
@@ -45,6 +37,7 @@ public class FireDatabase {
     private static FirebaseDatabase instance;
     private static LinkedHashSet<Guest> usersToAddToFacebook = new LinkedHashSet<>();
     private static DatabaseReference mRootReference = FireDatabase.getInstance().getReference();
+    private static long phoneNumber = 0;
 
     public FireDatabase() {
     }
@@ -57,6 +50,10 @@ public class FireDatabase {
         return instance;
     }
 
+    public static DatabaseReference getRoot() {
+        return mRootReference;
+    }
+
     /**
      * Method to create an event without using Facebook Event
      **/
@@ -67,7 +64,7 @@ public class FireDatabase {
         //a unique id for the event
         final DatabaseReference userRef = mRootReference.child("users").child(user.getUid())
                 .child("number_of_hosted_events");
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        userRef.addValueEventListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -96,7 +93,7 @@ public class FireDatabase {
         final Event event = new Event(event_name, description, "_null_", time + date, location);
         event.setEventId(user.getUid() + "event" + eventNumber);
         final DatabaseReference ref = mRootReference.child("events").child(event.event_id);
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ref.setValue(event);
@@ -126,7 +123,7 @@ public class FireDatabase {
         //a unique id for the event
         final DatabaseReference userRef = mRootReference.child("users").child(user.getUid())
                 .child("number_of_hosted_events");
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        userRef.addValueEventListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -152,7 +149,7 @@ public class FireDatabase {
         userRef.setValue(eventNumber);
         event.setEventId(user.getUid() + "event" + String.valueOf(eventNumber));
         final DatabaseReference ref = mRootReference.child("events").child(event.event_id);
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ref.setValue(event);
@@ -243,9 +240,10 @@ public class FireDatabase {
 
         final DatabaseReference hostRef = mRootReference.child("events").child(event_id).child("hosts")
                 .child(user.getUid());
-        hostRef.child("firebase_id").setValue(user.getUid());
         if (backupAccessToken != null) {
             hostRef.child("facebook_id").setValue(backupAccessToken.getUserId());
+        } else {
+            hostRef.child("firebase_id").setValue(user.getUid());
         }
 
     }
@@ -263,7 +261,7 @@ public class FireDatabase {
     }
 
     public static void addToPendingUser(String uid, String event_id) {
-        final DatabaseReference userRef = mRootReference.child("pending_user_invites").child("firebase")
+        final DatabaseReference userRef = mRootReference.child("pending_invites").child("firebase")
                 .child(uid);
         Map<String, Object> map = new HashMap<>();
         map.put(event_id, event_id);
@@ -271,7 +269,7 @@ public class FireDatabase {
     }
 
     public static void addToPendingFacebookUser(Long facebook_id, String event_id) {
-        final DatabaseReference userRef = mRootReference.child("pending_user_invites").child("facebook")
+        final DatabaseReference userRef = mRootReference.child("pending_invites").child("facebook")
                 .child(facebook_id.toString());
         Map<String, Object> map = new HashMap<>();
         map.put(event_id, event_id);
@@ -279,10 +277,10 @@ public class FireDatabase {
     }
 
     public static void addToListOfUsersToBeAddedToFacebook(Host host, String event_id
-                                                          , String user_firebase_id) {
+            , String user_firebase_id) {
         Guest guest = new Guest();
         guest.firebase_id = user_firebase_id;
-        guest.invited_by = host;
+        guest.invited_by = host.firebase_id;
         guest.event_id = event_id;
         usersToAddToFacebook.add(guest);
     }
@@ -309,7 +307,7 @@ public class FireDatabase {
         final DatabaseReference userRef = mRootReference.child("pending_invites").child("facebook")
                 .child(facebook_id.toString());
 
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -334,7 +332,7 @@ public class FireDatabase {
 //                        events.add(event);
                     }
                     for (int i = 0; i < eventRefs.size(); i++) {
-                        eventRef.child(eventRefs.get(i)).addListenerForSingleValueEvent(new ValueEventListener() {
+                        eventRef.child(eventRefs.get(i)).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.exists()) {
@@ -383,12 +381,31 @@ public class FireDatabase {
                                          final FeedListAdapter listAdapter) {
 
         DatabaseReference mRootReference = FireDatabase.getInstance().getReference();
-        DatabaseReference userRef = mRootReference.child("pending_invites").child("facebook")
+        final DatabaseReference userRef = mRootReference.child("pending_invites").child("facebook")
                 .child(String.valueOf(accessToken.getUserId()));
-        final DatabaseReference eventsRef = mRootReference.child("events");
-        Log.d("JSONFEED", "about to call " + accessToken.getUserId());
+        DatabaseReference phoneRef = mRootReference.child("users").child(user.getUid()).child("phone_number");
+        phoneRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Log.d("FireDatabase", "Phone number before: " + String.valueOf(phoneNumber));
+                    phoneNumber = (Long) dataSnapshot.getValue();
+                    Log.d("FireDatabase", "Phone number after: " + String.valueOf(phoneNumber));
+                    pullPhoneNumberEvents(user, accessToken, feedItems, listAdapter);
+                } else {
+                    Log.d("FireDatabase", "No number on file: " + String.valueOf(phoneNumber));
+                }
+            }
 
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        final DatabaseReference eventsRef = mRootReference.child("events");
+        Log.d("FireDatabase", "about to call " + accessToken.getUserId());
+
+        userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -396,58 +413,63 @@ public class FireDatabase {
 //                    JSONArray feedArray = response.getJSONArray("feed");
 
                     //TODO: Order by event time
-                    Log.d("JSONFEED", map.toString());
+                    Log.d("FireDatabase", map.toString());
                     final ArrayList<Object> invitedEventsList = new ArrayList<Object>(map.keySet());
-                    Log.d("JSONFEED", invitedEventsList.toString());
+                    Log.d("FireDatabase", invitedEventsList.toString());
                     for (int i = 0; i < invitedEventsList.size(); i++) {
                         DatabaseReference eventRef = eventsRef.child((String) invitedEventsList.get(i));
 
 //                    final Event item = new Event();
                         final String event_id = (String) invitedEventsList.get(i);
-                        eventRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        eventRef.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                Event item = dataSnapshot.getValue(Event.class);
-                                item.event_id = event_id;
-                                Log.d("JSONFEED", item.toString());
-                                int contains = feedItems.containsEvent(item);
-                                if (contains == -1) {
-                                    feedItems.add(item);
-                                    Collections.sort(feedItems, new Comparator() {
-                                        @Override
-                                        public int compare(Object o, Object t1) {
-                                            if (Long.valueOf(((Event) o).date_time.replace(".", ""))
-                                                    > (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
-                                                return 1;
-                                            }
+                                if (dataSnapshot.exists()) {
+                                    Event item = dataSnapshot.getValue(Event.class);
+                                    item.event_id = event_id;
+                                    Log.d("FireDatabase", item.toString());
+                                    int contains = feedItems.containsEvent(item);
+                                    if (contains == -1) {
+                                        feedItems.add(item);
+                                        Collections.sort(feedItems, new Comparator() {
+                                            @Override
+                                            public int compare(Object o, Object t1) {
+                                                if (Long.valueOf(((Event) o).date_time.replace(".", ""))
+                                                        > (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
+                                                    return 1;
+                                                }
 
-                                            if (Long.valueOf(((Event) o).date_time.replace(".", ""))
-                                                    < (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
-                                                return -1;
+                                                if (Long.valueOf(((Event) o).date_time.replace(".", ""))
+                                                        < (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
+                                                    return -1;
+                                                }
+                                                return 0;
                                             }
-                                            return 0;
-                                        }
-                                    });
+                                        });
+                                    } else {
+                                        feedItems.add(contains, item);
+                                        Collections.sort(feedItems, new Comparator() {
+                                            @Override
+                                            public int compare(Object o, Object t1) {
+                                                if (Long.valueOf(((Event) o).date_time.replace(".", ""))
+                                                        > (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
+                                                    return 1;
+                                                }
+
+                                                if (Long.valueOf(((Event) o).date_time.replace(".", ""))
+                                                        < (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
+                                                    return -1;
+                                                }
+                                                return 0;
+                                            }
+                                        });
+                                    }
+                                    // notify data changes to list adapter
+                                    listAdapter.notifyDataSetChanged();
                                 } else {
-                                    feedItems.add(contains, item);
-                                    Collections.sort(feedItems, new Comparator() {
-                                        @Override
-                                        public int compare(Object o, Object t1) {
-                                            if (Long.valueOf(((Event) o).date_time.replace(".", ""))
-                                                    > (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
-                                                return 1;
-                                            }
-
-                                            if (Long.valueOf(((Event) o).date_time.replace(".", ""))
-                                                    < (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
-                                                return -1;
-                                            }
-                                            return 0;
-                                        }
-                                    });
-                                }
-                                // notify data changes to list adapter
-                                listAdapter.notifyDataSetChanged();
+                                    Log.d("FireDatabase", "Event no longer exists");
+                                    userRef.child(event_id).removeValue();
+                            }
 
                             }
 
@@ -458,7 +480,306 @@ public class FireDatabase {
                         });
                     }
                 } else {
-                    Log.d("FeedActivity", "User has no events");
+                    Log.d("FireDatabase", "User has no events");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    private static void pullPhoneNumberEvents(final FirebaseUser user, final AccessToken accessToken,
+                                              final ArrayListEvents<Event> feedItems,
+                                              final FeedListAdapter listAdapter) {
+        final DatabaseReference userRef2 = mRootReference.child("pending_invites").child("phone_number")
+                .child(String.valueOf(phoneNumber));
+        final DatabaseReference eventsRef = mRootReference.child("events");
+        if (phoneNumber != 0) {
+            Log.d("FireDatabase", "phone number not zero: " + String.valueOf(phoneNumber));
+            userRef2.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+//                    JSONArray feedArray = response.getJSONArray("feed");
+
+                        Log.d("FireDatabase", "Phone Number Events: " + map.toString());
+                        final ArrayList<Object> invitedEventsList = new ArrayList<Object>(map.keySet());
+                        Log.d("FireDatabase", invitedEventsList.toString());
+                        for (int i = 0; i < invitedEventsList.size(); i++) {
+                            DatabaseReference eventRef = eventsRef.child((String) invitedEventsList.get(i));
+
+//                    final Event item = new Event();
+                            final String event_id = (String) invitedEventsList.get(i);
+                            eventRef.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        Event item = dataSnapshot.getValue(Event.class);
+                                        item.event_id = event_id;
+                                        Log.d("FireDatabase", item.toString());
+                                        int contains = feedItems.containsEvent(item);
+                                        if (contains == -1) {
+                                            feedItems.add(item);
+                                            Collections.sort(feedItems, new Comparator() {
+                                                @Override
+                                                public int compare(Object o, Object t1) {
+                                                    if (Long.valueOf(((Event) o).date_time.replace(".", ""))
+                                                            > (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
+                                                        return 1;
+                                                    }
+
+                                                    if (Long.valueOf(((Event) o).date_time.replace(".", ""))
+                                                            < (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
+                                                        return -1;
+                                                    }
+                                                    return 0;
+                                                }
+                                            });
+                                        } else {
+                                            feedItems.add(contains, item);
+                                            Collections.sort(feedItems, new Comparator() {
+                                                @Override
+                                                public int compare(Object o, Object t1) {
+                                                    if (Long.valueOf(((Event) o).date_time.replace(".", ""))
+                                                            > (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
+                                                        return 1;
+                                                    }
+
+                                                    if (Long.valueOf(((Event) o).date_time.replace(".", ""))
+                                                            < (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
+                                                        return -1;
+                                                    }
+                                                    return 0;
+                                                }
+                                            });
+                                        }
+                                        // notify data changes to list adapter
+                                        listAdapter.notifyDataSetChanged();
+                                    } else {
+                                        Log.d("FireDatabase", "Event no longer exists");
+                                        userRef2.child(event_id).removeValue();
+                                }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+                    } else {
+                        Log.d("FireDatabase", "User has no events");
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+        } else {
+            Log.d("FireDatabase", "Phone number zero: " + String.valueOf(phoneNumber));
+        }
+    }
+
+    public static void loadFeedEvents(final FirebaseUser user, final AccessToken accessToken,
+                                      final ArrayListEvents<Event> feedItems,
+                                      final FeedListAdapter listAdapter) {
+
+        //TODO pull organization events too
+        DatabaseReference mRootReference = FireDatabase.getInstance().getReference();
+        final DatabaseReference userRef = mRootReference.child("users").child(user.getUid())
+                .child("accepted_invites");
+        DatabaseReference hostRef = mRootReference.child("users").child(user.getUid()).child("hosting_events");
+        hostRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    //TODO change to pull hosted events
+                    pullHostingEvents(user, accessToken, feedItems, listAdapter);
+                } else {
+                    Log.d("FireDatabase", "No hosted events");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        final DatabaseReference eventsRef = mRootReference.child("events");
+        Log.d("FireDatabase", "about to call " + accessToken.getUserId());
+
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+//                    JSONArray feedArray = response.getJSONArray("feed");
+
+                    //TODO: Order by event time
+                    Log.d("FireDatabase", map.toString());
+                    final ArrayList<Object> invitedEventsList = new ArrayList<Object>(map.keySet());
+                    Log.d("FireDatabase", invitedEventsList.toString());
+                    for (int i = 0; i < invitedEventsList.size(); i++) {
+                        DatabaseReference eventRef = eventsRef.child((String) invitedEventsList.get(i));
+
+//                    final Event item = new Event();
+                        final String event_id = (String) invitedEventsList.get(i);
+                        eventRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    Event item = dataSnapshot.getValue(Event.class);
+                                    item.event_id = event_id;
+                                    Log.d("FireDatabase", item.toString());
+                                    int contains = feedItems.containsEvent(item);
+                                    if (contains == -1) {
+                                        feedItems.add(item);
+                                        Collections.sort(feedItems, new Comparator() {
+                                            @Override
+                                            public int compare(Object o, Object t1) {
+                                                if (Long.valueOf(((Event) o).date_time.replace(".", ""))
+                                                        > (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
+                                                    return 1;
+                                                }
+
+                                                if (Long.valueOf(((Event) o).date_time.replace(".", ""))
+                                                        < (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
+                                                    return -1;
+                                                }
+                                                return 0;
+                                            }
+                                        });
+                                    } else {
+                                        feedItems.add(contains, item);
+                                        Collections.sort(feedItems, new Comparator() {
+                                            @Override
+                                            public int compare(Object o, Object t1) {
+                                                if (Long.valueOf(((Event) o).date_time.replace(".", ""))
+                                                        > (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
+                                                    return 1;
+                                                }
+
+                                                if (Long.valueOf(((Event) o).date_time.replace(".", ""))
+                                                        < (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
+                                                    return -1;
+                                                }
+                                                return 0;
+                                            }
+                                        });
+                                    }
+                                    // notify data changes to list adapter
+                                    listAdapter.notifyDataSetChanged();
+                                } else {
+                                    Log.d("FireDatabase", "Event no longer exists");
+                                    userRef.child(event_id).removeValue();
+                                }
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
+                    }
+                } else {
+                    Log.d("FireDatabase", "User has no events");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    private static void pullHostingEvents(final FirebaseUser user, final AccessToken accessToken,
+                                          final ArrayListEvents<Event> feedItems,
+                                          final FeedListAdapter listAdapter) {
+        final DatabaseReference userRef2 = mRootReference.child("users").child(user.getUid())
+                .child("hosting_events");
+        final DatabaseReference eventsRef = mRootReference.child("events");
+        userRef2.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+//                    JSONArray feedArray = response.getJSONArray("feed");
+
+                    Log.d("FireDatabase", "Phone Number Events: " + map.toString());
+                    final ArrayList<Object> invitedEventsList = new ArrayList<Object>(map.keySet());
+                    Log.d("FireDatabase", invitedEventsList.toString());
+                    for (int i = 0; i < invitedEventsList.size(); i++) {
+                        DatabaseReference eventRef = eventsRef.child((String) invitedEventsList.get(i));
+
+//                    final Event item = new Event();
+                        final String event_id = (String) invitedEventsList.get(i);
+                        eventRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    Event item = dataSnapshot.getValue(Event.class);
+                                    item.event_id = event_id;
+                                    Log.d("FireDatabase", item.toString());
+                                    int contains = feedItems.containsEvent(item);
+                                    if (contains == -1) {
+                                        feedItems.add(item);
+                                        Collections.sort(feedItems, new Comparator() {
+                                            @Override
+                                            public int compare(Object o, Object t1) {
+                                                if (Long.valueOf(((Event) o).date_time.replace(".", ""))
+                                                        > (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
+                                                    return 1;
+                                                }
+
+                                                if (Long.valueOf(((Event) o).date_time.replace(".", ""))
+                                                        < (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
+                                                    return -1;
+                                                }
+                                                return 0;
+                                            }
+                                        });
+                                    } else {
+                                        feedItems.add(contains, item);
+                                        Collections.sort(feedItems, new Comparator() {
+                                            @Override
+                                            public int compare(Object o, Object t1) {
+                                                if (Long.valueOf(((Event) o).date_time.replace(".", ""))
+                                                        > (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
+                                                    return 1;
+                                                }
+
+                                                if (Long.valueOf(((Event) o).date_time.replace(".", ""))
+                                                        < (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
+                                                    return -1;
+                                                }
+                                                return 0;
+                                            }
+                                        });
+                                    }
+                                    // notify data changes to list adapter
+                                    listAdapter.notifyDataSetChanged();
+                                } else {
+                                    Log.d("FireDatabase", "Event no longer exists");
+                                    userRef2.child(event_id).removeValue();
+
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+
+                        });
+                    }
+                } else {
+                    Log.d("FireDatabase", "User has no events");
                 }
             }
 
