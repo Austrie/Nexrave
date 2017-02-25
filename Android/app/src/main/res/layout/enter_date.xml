@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorPrimaryDark">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbarBot"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimaryDark"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <ImageView
+                android:id="@+id/abs_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/logo"
+                android:textAppearance="@style/TextAppearance.AppCompat" />
+            <ImageView
+                android:id="@+id/abs_forward"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:src="@drawable/next"
+                android:clickable="true"
+                android:textAppearance="@style/TextAppearance.AppCompat" />
+        </android.support.v7.widget.Toolbar>
+
+
+    </android.support.design.widget.AppBarLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:background="@color/white"
+        android:layout_height="1dp" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enter Event Start Date"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+    <View
+        android:layout_width="match_parent"
+        android:background="@color/white"
+        android:layout_height="1dp" />
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <DatePicker
+                android:headerBackground="@color/transparent"
+                android:yearListSelectorColor="@color/colorPrimary"
+                android:calendarTextColor="@color/colorPrimary"
+                android:headerYearTextAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:background="@color/white"
+                android:theme="@style/android:Theme.Material"
+                android:id="@+id/hostDatePicker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="23dp"
+                android:yearListItemTextAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:headerMonthTextAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:headerDayOfMonthTextAppearance="@style/TextAppearance.AppCompat.Body1" />
+        </RelativeLayout>
+
+
+</LinearLayout>

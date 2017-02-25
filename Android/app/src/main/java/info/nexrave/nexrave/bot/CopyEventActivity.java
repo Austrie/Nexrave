@@ -31,13 +31,9 @@ public class CopyEventActivity {
     private WebView webView;
     private String js;
     private Event event;
-    private String eventName = "Test Event";
-    private String eventLocation = "Atlanta, Georgia";
-    private String eventDate = "01/30/2017";
-    private String eventTime = "4:30";
-    private String eventTime2 = "PM";
-    private String eventDescription = "Random event info goes here!";
-    private String eventLink = "https://www.facebook.com/events/1829816323953687/";
+    private String eventName;
+    private String defaultFlyer = "http://freepsdflyer.com/wp-content/uploads/2015/06/Free-Elegant-Flyer-Template-Download.jpg";
+    private String eventLink;
     private String ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
                     + "Chrome/55.0.2883.87 Safari/537.36";
     int webpageCounter = 1;
@@ -141,20 +137,25 @@ public class CopyEventActivity {
     }
 
     private void setupJavascript() {
-        js = "javascript: " +
+        js = "javascript: function windowExist() { if ((document.querySelector('span[class=\"_5xhk\"]') == null) && (document.querySelector('a[class=\"_5xhk\"]') == null)) { "
+                + "setTimeout(windowExist, 100);} else {  " +
 
                 "if (document.querySelector('span[class=\"_5xhk\"]') == null) {"
                 + " android.setEventLocation(document.querySelector('a[class=\"_5xhk\"]').innerHTML);"
                 + "} else { android.setEventLocation(document.querySelectorAll('span[class=\"_5xhk\"]')[1].innerHTML); } "
 
-                + "android.setEventDescription(document.querySelector('div[class=\"_1w2q\"]').children[0].innerHTML);"
+                + "if (document.querySelector('div[class=\"_1w2q\"]').children[0] != null) {"
+                + "android.setEventDescription(document.querySelector('div[class=\"_1w2q\"]').children[0].innerHTML); }"
+                + "else { android.setEventDescription('No Description'); }"
 
-                + "android.setEventCoverPic(document.querySelector('img[class=\"coverPhotoImg photo img\"]').src);"
+                + "if (document.querySelector('img[class=\"coverPhotoImg photo img\"]') != null) { "
+                + "android.setEventCoverPic(document.querySelector('img[class=\"coverPhotoImg photo img\"]').src); }"
+                + "else { android.setEventCoverPic('"+ defaultFlyer +"') }"
 //                + "if (dateTime.innerHTML.includes(' PM') || dateTime.innerHTML.includes(' AM')) {"
 //                + " checkDT(); "
 //                + "} else { alert('not in it'); }"+
 //                "function checkDT() { if (document.querySelector('span[itemprop=\"startDate\"]').content == 'undefined') {setTimeout(checkDT, 100);}else{ alert(document.querySelector('span[itemprop=\"startDate\"]').content); }; }"
-                + "";
+                + " }} windowExist();";
     }
 
     public void pasteLink(String s) {

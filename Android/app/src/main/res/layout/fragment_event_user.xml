@@ -7,6 +7,7 @@
     tools:context="info.nexrave.nexrave.fragments.EventUserFragment">
 
     <!-- TODO: Update blank fragment layout -->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -102,7 +103,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0.1">
-            <ImageButton
+            <View
                 android:layout_width="match_parent"
                 android:background="@color/white"
                 android:layout_height="3dp" />
@@ -114,5 +115,52 @@
 
 
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/event_info_appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/transparent"
+                app:popupTheme="@style/AppTheme.PopupOverlay">
+
+                <ImageView
+                    android:id="@+id/eventInfo_backButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:rotation="180"
+                    android:src="@drawable/next"/>
+
+                <ImageView
+                    android:id="@+id/abs_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/logo"
+                    android:textAppearance="@style/TextAppearance.AppCompat" />
+
+                <ImageView
+                    android:layout_marginTop="1dp"
+                    android:layout_marginRight="13dp"
+                    android:id="@+id/eventInfo_inbox"
+                    android:layout_width="35dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:src="@drawable/inbox"
+                    android:visibility="visible" />
+            </android.support.v7.widget.Toolbar>
+
+        </android.support.design.widget.AppBarLayout>
+    </RelativeLayout>
 
 </FrameLayout>

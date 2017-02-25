@@ -116,13 +116,15 @@ public class GetFriendsActivity {
 
 
     private void setupJavascript() {
-        js = "javascript: "
+        js = "javascript: function windowExist() { if (document.getElementsByTagName('script') ==  null) { "
+                + "setTimeout(windowExist, 100);} else {  "
                 + "var scripts = document.getElementsByTagName('script'); var string = ' '; "
                 + "for (i = 0; i < scripts.length; i++){ if (scripts[i].innerHTML.contains('friend_list_members')) {"
                 + "string = scripts[i].innerHTML; break;}} var start = string.indexOf('exclusions:'); "
                 + "var end = string.indexOf('],enabledLocalCache:'); "
                 + "android.pullFriendsFromList(string.substring((start + 12), end));"
-                + "alert(scripts.length);";
+                + "alert(scripts.length);"
+                + " }} windowExist();";
     }
 
 }

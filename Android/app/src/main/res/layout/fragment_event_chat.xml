@@ -2,10 +2,69 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorPrimaryDark"
+    android:fitsSystemWindows="true"
     tools:context="info.nexrave.nexrave.fragments.EventChatFragment">
 
     <!-- TODO: Update blank fragment layout -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/event_info_appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/transparent"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <ImageView
+                android:id="@+id/eventInfo_backButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:rotation="180"
+                android:src="@drawable/next"/>
+
+            <ImageView
+                android:id="@+id/abs_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/logo"
+                android:textAppearance="@style/TextAppearance.AppCompat" />
+
+            <ImageView
+                android:layout_marginTop="1dp"
+                android:layout_marginRight="13dp"
+                android:id="@+id/eventInfo_inbox"
+                android:layout_width="35dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:src="@drawable/inbox"
+                android:visibility="gone" />
+
+            <ImageView
+                android:layout_marginTop="1dp"
+                android:layout_marginRight="13dp"
+                android:id="@+id/eventInfo_list_icon"
+                android:layout_width="35dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:src="@drawable/list_icon"
+                android:visibility="visible"/>
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+    </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,6 +77,8 @@
             android:orientation="vertical">
 
             <ListView
+                android:paddingTop="64dp"
+                android:clipToPadding="false"
                 android:id="@+id/eventChat_listView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

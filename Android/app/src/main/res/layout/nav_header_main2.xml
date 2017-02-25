@@ -3,19 +3,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/nav_header_height"
-    android:background="@drawable/side_nav_bar"
+    android:layout_height="200dp"
     android:gravity="bottom"
     android:orientation="vertical"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <com.android.volley.toolbox.NetworkImageView
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <info.nexrave.nexrave.systemtools.BlurredNetworkImageView
         android:id="@+id/nav_user_background1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:scaleType="fitXY"
         android:tint="#99000000"/>
+
+        <View
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            android:layout_height="1dp" />
+    </RelativeLayout>
 
 
     <LinearLayout
@@ -38,9 +47,12 @@
                 android:textAlignment="center"
                 android:gravity="center"
                 android:paddingTop="@dimen/nav_header_vertical_spacing"
+                android:paddingBottom="16dp"
                 android:text="Android Studio"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@color/white" />
+                android:textSize="16dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                android:textColor="@color/white"
+                android:elevation="0dp" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -49,13 +61,15 @@
 
             <info.nexrave.nexrave.systemtools.RoundedNetworkImageView
                 android:id="@+id/nav_user_profile1"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
                 android:layout_centerInParent="true"
                 android:paddingTop="@dimen/nav_header_vertical_spacing"
                 android:scaleType="fitCenter"
+                android:background="@drawable/bg_circle"
                 app:srcCompat="@mipmap/app_icon"/>
         </RelativeLayout>
     </LinearLayout>
+
 
 </FrameLayout>

@@ -97,10 +97,10 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
         navigationView = (NavigationView) findViewById(R.id.nav_view1);
         navigationView.setNavigationItemSelectedListener(this);
         Log.d("TEXTVIEWE", "called");
-        int width = getResources().getDisplayMetrics().widthPixels / 2;
-        DrawerLayout.LayoutParams params = (android.support.v4.widget.DrawerLayout.LayoutParams) navigationView.getLayoutParams();
-        params.width = width;
-        navigationView.setLayoutParams(params);
+//        int width = getResources().getDisplayMetrics().widthPixels / 2;
+//        DrawerLayout.LayoutParams params = (android.support.v4.widget.DrawerLayout.LayoutParams) navigationView.getLayoutParams();
+//        params.width = width;
+//        navigationView.setLayoutParams(params);
 
         // If the access token is available already assign it.
         mAuth = FirebaseAuth.getInstance();
@@ -235,7 +235,7 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
 
         //noinspection SimplifiableIfStatement
 //        if (id == R.id.action_settings) {
-//            return true;
+//            return true;s
 //        }
 
         return super.onOptionsItemSelected(item);
@@ -253,16 +253,12 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
             startActivity(intent);
 
         } else if (id == R.id.nav_menu_event_history) {
-            intent = new Intent(FeedActivity.this, CopyEventActivity.class);
-            startActivity(intent);
 
         } else if (id == R.id.nav_menu_host) {
             intent = new Intent(FeedActivity.this, HostActivity.class);
             startActivity(intent);
 
         } else if (id == R.id.nav_menu_settings) {
-            intent = new Intent(FeedActivity.this, GetListsActivity.class);
-            startActivity(intent);
 
         }
 

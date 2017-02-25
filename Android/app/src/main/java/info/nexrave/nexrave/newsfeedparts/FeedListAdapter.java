@@ -39,6 +39,7 @@ import info.nexrave.nexrave.models.Event;
 import info.nexrave.nexrave.systemtools.ConvertMillitaryTime;
 import info.nexrave.nexrave.systemtools.FireDatabase;
 import info.nexrave.nexrave.systemtools.IsEventToday;
+import info.nexrave.nexrave.systemtools.RoundedNetworkImageView;
 
 public class FeedListAdapter extends BaseAdapter {
     private Activity activity;
@@ -94,7 +95,7 @@ public class FeedListAdapter extends BaseAdapter {
                 activity.startActivity(intent);
             }
         });
-        final NetworkImageView profilePic = (NetworkImageView) convertView
+        final RoundedNetworkImageView profilePic = (RoundedNetworkImageView) convertView
                 .findViewById(R.id.feed_host_profile_pic);
 
         DatabaseReference orgRef = FireDatabase.getRoot().child("organizations")
@@ -142,7 +143,7 @@ public class FeedListAdapter extends BaseAdapter {
         });
 
         timestamp.setText(IsEventToday.check(item.date_time));
-        location.setText(item.location);
+        location.setText(item.city_state);
         eventButton.setText(item.event_name);
 
         // Feed image

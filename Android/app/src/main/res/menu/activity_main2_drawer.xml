@@ -6,14 +6,20 @@
             android:id="@+id/nav_menu_discover"
             android:icon="@drawable/worldwide"
             android:title="Discover" />
+    </group>
+    <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_menu_event_history"
             android:icon="@drawable/time"
             android:title="History" />
+    </group>
+    <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_menu_host"
             android:icon="@drawable/megaphone"
             android:title="Host" />
+    <group android:checkableBehavior="single">
+    </group>
         <item
             android:id="@+id/nav_menu_settings"
             android:icon="@drawable/settings"

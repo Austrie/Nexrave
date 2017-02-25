@@ -1,5 +1,8 @@
 package info.nexrave.nexrave.models;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import static android.R.id.message;
 
 /**
@@ -11,6 +14,9 @@ public class EventChatMessage {
     public String user_id;
     public String message;
     public Long time_stamp;
+    public String image_link;
+    public Integer numberOfLikes;
+    public Map<String, String> whoLiked = new LinkedHashMap<>();
 
     public EventChatMessage() {
 

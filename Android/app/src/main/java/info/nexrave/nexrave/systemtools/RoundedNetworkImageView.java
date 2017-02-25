@@ -20,6 +20,8 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -31,38 +33,6 @@ import com.android.volley.toolbox.NetworkImageView;import info.nexrave.nexrave.R
  */
 
 public class RoundedNetworkImageView extends NetworkImageView {
-    private static final ScaleType SCALE_TYPE = ScaleType.CENTER_CROP;
-
-    private static final Bitmap.Config BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
-    private static final int COLORDRAWABLE_DIMENSION = 2;
-
-    private static final int DEFAULT_BORDER_WIDTH = 5;
-    private static final int DEFAULT_BORDER_COLOR = Color.WHITE;
-    private static final boolean DEFAULT_BORDER_OVERLAY = false;
-
-    private final RectF mDrawableRect = new RectF();
-    private final RectF mBorderRect = new RectF();
-
-    private final Matrix mShaderMatrix = new Matrix();
-    private final Paint mBitmapPaint = new Paint();
-    private final Paint mBorderPaint = new Paint();
-
-    private int mBorderColor = DEFAULT_BORDER_COLOR;
-    private int mBorderWidth = DEFAULT_BORDER_WIDTH;
-
-    private Bitmap mBitmap;
-    private BitmapShader mBitmapShader;
-    private int mBitmapWidth;
-    private int mBitmapHeight;
-
-    private float mDrawableRadius;
-    private float mBorderRadius;
-
-    private ColorFilter mColorFilter;
-
-    private boolean mReady;
-    private boolean mSetupPending;
-    private boolean mBorderOverlay;
 
     public RoundedNetworkImageView(Context context) {
         super(context);
@@ -78,7 +48,6 @@ public class RoundedNetworkImageView extends NetworkImageView {
 
     @Override
     protected void onDraw(Canvas canvas) {
-
         try {
             Drawable drawable = getDrawable();
 
@@ -98,10 +67,9 @@ public class RoundedNetworkImageView extends NetworkImageView {
 
             Bitmap roundBitmap = getCroppedBitmap(bitmap, w);
             canvas.drawBitmap(roundBitmap, 0, 0, null);
-        } catch(Exception e) {
+        } catch (Exception e) {
             Log.d("RoundedNetworkImageView", e.toString());
         }
-
     }
 
     public static Bitmap getCroppedBitmap(Bitmap bmp, int radius) {
@@ -133,8 +101,6 @@ public class RoundedNetworkImageView extends NetworkImageView {
                 radius / 2 + 0.1f, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(sbmp, rect, rect, paint);
-
         return output;
     }
-
 }

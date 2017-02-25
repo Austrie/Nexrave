@@ -13,10 +13,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -41,6 +44,7 @@ import info.nexrave.nexrave.models.EventChatMessage;
 import info.nexrave.nexrave.models.User;
 import info.nexrave.nexrave.newsfeedparts.AppController;
 import info.nexrave.nexrave.systemtools.FireDatabase;
+import info.nexrave.nexrave.systemtools.RoundedNetworkImageView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -64,6 +68,7 @@ public class EventChatFragment extends Fragment {
     private static String event_id;
     private static FirebaseUser user;
     private ListAdapter listAdapter;
+    private ImageView inbox_user_iv, chat_list_iv;
 
     private OnFragmentInteractionListener mListener;
 
@@ -96,9 +101,6 @@ public class EventChatFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Log.d("EventChat", event_id);
-        Log.d("EventChat", String.valueOf(user));
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -141,10 +143,9 @@ public class EventChatFragment extends Fragment {
                 userRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        final User poster = dataSnapshot.getValue(User.class);
                         ((NetworkImageView) v.findViewById(R.id.eventChat_user_profile_pic))
-                                .setImageUrl(poster.pic_uri, AppController.getInstance().getImageLoader());
-                        ((NetworkImageView) v.findViewById(R.id.eventChat_user_profile_pic)).setOnClickListener(
+                                .setImageUrl(dataSnapshot.child("pic_uri").getValue(String.class), AppController.getInstance().getImageLoader());
+                        ((RoundedNetworkImageView) v.findViewById(R.id.eventChat_user_profile_pic)).setOnClickListener(
                                 new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -154,7 +155,7 @@ public class EventChatFragment extends Fragment {
                                     }
                                 }
                         );
-                        ((TextView) v.findViewById(R.id.eventChat_user_name)).setText(poster.name);
+                        ((TextView) v.findViewById(R.id.eventChat_user_name)).setText(dataSnapshot.child("name").getValue(String.class));
                     }
 
                     @Override
@@ -166,7 +167,6 @@ public class EventChatFragment extends Fragment {
             }
         };
         listView.setAdapter(listAdapter);
-
         return view;
     }
 

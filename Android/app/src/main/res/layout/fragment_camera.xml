@@ -9,6 +9,6 @@
     <include
         android:visibility="visible"
         android:id="@+id/camera_controls"
-        layout="@layout/camera_overlay" />
+        layout="@layout/camera_controls" />
 
 </FrameLayout>

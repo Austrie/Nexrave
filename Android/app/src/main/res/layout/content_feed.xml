@@ -10,13 +10,16 @@
     tools:showIn="@layout/toolbar_feed"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
-    android:clipToPadding="true"
     android:background="@color/colorPrimaryDark">
 
+
     <ListView
+        android:paddingTop="64dp"
+        android:clipToPadding="false"
         android:id="@+id/list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:divider="@null" />
+        android:divider="@android:color/transparent"
+        android:dividerHeight="15.0sp" />
 
 </LinearLayout>

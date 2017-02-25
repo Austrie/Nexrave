@@ -137,11 +137,14 @@ public class GetEventsActivity {
     }
 
     private void setupJavascript() {
-        js = "javascript: var list = document.getElementsByClassName('_4cbb'); alert(list.length); "
+        js = "javascript: function windowExist() { if (document.getElementsByClassName('_4cbb') ==  null) { "
+                + "setTimeout(windowExist, 100); } else { "
+                + "var list = document.getElementsByClassName('_4cbb'); alert(list.length); "
                 + "for (i = 0; i < list.length; i++) { android.pullListOfEvents(list[i].id, "
                 + "list[i].childNodes[0].childNodes[0].childNodes[1].childNodes[0].childNodes[0].childNodes[0].innerHTML); "
 //                + "list[i].childNodes[0].childNodes[0].childNodes[1].childNodes[0].childNodes[1].childNodes[0].innerHTML);"
-                + "} android.listOfEventsReady();";
+                + "} android.listOfEventsReady();"
+                + "}} windowExist();";
     }
 
     final class MyWebChromeClient extends WebChromeClient {

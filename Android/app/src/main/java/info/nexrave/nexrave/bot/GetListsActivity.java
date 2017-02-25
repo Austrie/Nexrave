@@ -1,11 +1,13 @@
 package info.nexrave.nexrave.bot;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsResult;
 import android.webkit.ValueCallback;
@@ -38,6 +40,7 @@ public class GetListsActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private boolean killed = false;
+    ProgressDialog progress;
 
 
     @Override
@@ -46,7 +49,15 @@ public class GetListsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_bot);
         setupJavascript();
 
+        progress = new ProgressDialog(this);
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress.setTitle("Loading");
+        progress.setMessage("Please wait while we fetch your facebook invite lists...");
+        progress.setCancelable(false);
+        progress.show();
+
         webView = (WebView) findViewById(R.id.webView);
+        webView.setVisibility(View.INVISIBLE);
         webView.addJavascriptInterface(this, "android");
         webView.setWebViewClient(new MyWebViewClient());
         webView.setWebChromeClient(new MyWebChromeClient());
@@ -63,6 +74,7 @@ public class GetListsActivity extends AppCompatActivity {
     @JavascriptInterface
     public void showLists() {
         Log.d("GetListsActivity", "Starting HostInviteActivity");
+        progress.dismiss();
         intent = new Intent(GetListsActivity.this, HostListViewActivity.class);
         intent.putExtra("INVITE_LISTS", inviteLists);
         startActivity(intent);
@@ -136,11 +148,16 @@ public class GetListsActivity extends AppCompatActivity {
     private void setupJavascript() {
         js = "javascript: alert('GetListsActivity JS'); "
                 //If on custom friends lists page
+                + "function windowExist() { if (document.getElementsByClassName('_bui nonDroppableNav _3-96')[1] ==  null) { "
+                + "setTimeout(windowExist, 100);} else { "
+
                 + "var prelist = document.getElementsByClassName('_bui nonDroppableNav _3-96')[1]; "
                 + "var list = prelist.getElementsByTagName('li'); alert(list.length);"
                 + "for (i = 0; i < list.length; i++) {"
                 + "android.pullListInfo(list[i].getElementsByTagName('a')[1].getAttribute('title'), "
-                + "list[i].getElementsByTagName('a')[1].getAttribute('href'));} android.showLists();";
+                + "list[i].getElementsByTagName('a')[1].getAttribute('href'));} android.showLists();"
+
+                + "}} windowExist();";
     }
 }
 

@@ -8,6 +8,7 @@
 
     <!-- TODO: Update blank fragment layout -->
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -25,115 +26,198 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="260dp"
+        android:paddingRight="10dp"
         android:paddingTop="64dp">
-
-        <TextView
-            android:id="@+id/eventInfo_date_time"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="12:59 PM"
-            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-            android:textColor="@color/white"
-            android:textSize="26dp"
-            android:textStyle="bold" />
-    </LinearLayout>
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:paddingLeft="20dp"
         android:paddingTop="220dp">
 
-        <com.android.volley.toolbox.NetworkImageView
-            android:id="@+id/eventInfo_host_profile_pic"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:scaleType="fitCenter"
-            app:srcCompat="@mipmap/app_icon" >
-        </com.android.volley.toolbox.NetworkImageView>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingLeft="10dp"
-            android:paddingTop="10dp">
-
-            <TextView
-                android:id="@+id/eventInfo_event_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Sample Event"
-                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                android:textColor="@color/white"
-                android:textSize="20dp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/eventInfo_ticket_button"
-                android:layout_width="156dp"
-                android:layout_height="32dp"
-                android:background="@drawable/buttonbackground"
-                android:text="Ticket"
-                android:textColor="@color/white"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-    </LinearLayout>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingLeft="20dp"
-            android:paddingTop="300dp">
+            android:layout_height="wrap_content">
 
+            <info.nexrave.nexrave.systemtools.RoundedNetworkImageView
+                android:id="@+id/eventInfo_host_profile_pic"
+                android:layout_marginTop="13dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@mipmap/app_icon" />
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Description:"
-                android:textColor="@color/white"
-                android:textSize="20dp"
-                android:textStyle="bold" />
+                android:orientation="vertical"
+                android:paddingLeft="10dp"
+                android:paddingTop="10dp">
 
-            <TextView
-                android:id="@+id/eventInfo_event_description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="This is a description"
-                android:textColor="@color/white"
-                android:textSize="16dp" />
+                <TextView
+                    android:id="@+id/eventInfo_event_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Sample Event"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                    android:textColor="@color/white"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="20dp"
-                android:text="Location:"
-                android:textColor="@color/white"
-                android:textSize="20dp"
-                android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/eventInfo_date_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="12:59 PM"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:autoLink = "map"
-                android:id="@+id/eventInfo_event_location"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Georgia Tech Station, Atlanta, Ga 30032"
-                android:textColor="@color/white"
-                android:textSize="16dp"
-                android:clickable="true"/>
+            </LinearLayout>
         </LinearLayout>
-    </ScrollView>
+
+        <Button
+            android:id="@+id/eventInfo_ticket_button"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:background="@drawable/buttonbackground"
+            android:text="Ticket"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="15dp"/>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Description:"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="@color/white"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/eventInfo_event_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="This is a description"
+                    android:textColor="@color/white"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Location:"
+                    android:textColor="@color/white"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/location_marker_wb"/>
+                <TextView
+                    android:id="@+id/eventInfo_event_location"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autoLink="map"
+                    android:clickable="true"
+                    android:text="Georgia Tech Station, Atlanta, Ga 30032"
+                    android:textColor="@color/white"
+                    android:textSize="16dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/eventInfo_qr_code_IV"
+            android:layout_width="500dp"
+            android:layout_height="500dp"
+            android:layout_centerInParent="true"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/event_info_appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/transparent"
+                app:popupTheme="@style/AppTheme.PopupOverlay">
+
+                <ImageView
+                    android:id="@+id/eventInfo_backButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:rotation="180"
+                    android:src="@drawable/next"/>
+
+                <ImageView
+                    android:id="@+id/abs_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/logo"
+                    android:textAppearance="@style/TextAppearance.AppCompat" />
+
+                <ImageView
+                    android:layout_marginTop="1dp"
+                    android:layout_marginRight="13dp"
+                    android:id="@+id/eventInfo_inbox"
+                    android:layout_width="35dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:src="@drawable/inbox"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:layout_marginTop="1dp"
+                    android:layout_marginRight="13dp"
+                    android:id="@+id/eventInfo_list_icon"
+                    android:layout_width="35dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:src="@drawable/list_icon"
+                    android:visibility="gone"/>
+            </android.support.v7.widget.Toolbar>
+
+        </android.support.design.widget.AppBarLayout>
+    </RelativeLayout>
 </FrameLayout>

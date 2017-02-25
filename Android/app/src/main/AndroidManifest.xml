@@ -15,6 +15,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
@@ -62,6 +63,7 @@
             android:theme="@style/AppThemeStatus" />
         <activity
             android:name=".FeedActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".EventInfoActivity"
@@ -72,6 +74,7 @@
         <activity android:name=".security.EnterAuthCode" />
         <activity
             android:name=".HostActivity"
+            android:screenOrientation="portrait"
             android:parentActivityName=".FeedActivity"
             android:theme="@style/AppTheme">
             <meta-data
@@ -80,6 +83,7 @@
         </activity>
         <activity
             android:name=".HostAddEventActivity"
+            android:screenOrientation="portrait"
             android:parentActivityName=".FeedActivity"
             android:theme="@style/AppTheme">
             <meta-data
@@ -88,9 +92,11 @@
         </activity>
         <activity
             android:name=".bot.GetListsActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".bot.CreateEventActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".bot.FBLoginActivity"
@@ -98,12 +104,19 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".HostListViewActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".bot.InviteByTextActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity android:name=".DiscoverActivity"
-            android:theme="@style/AppTheme"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="info.nexrave.nexrave.FeedActivity" />
+        </activity>
     </application>
 
 </manifest>

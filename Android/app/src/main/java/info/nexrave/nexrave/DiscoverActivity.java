@@ -17,6 +17,7 @@ public class DiscoverActivity extends AppCompatActivity {
 
     private FeedListAdapter listAdapter;
     private static ArrayListEvents<Event> feedItems;
+//    private static
     private ListView listView;
     private Intent intent;
 
@@ -46,7 +47,6 @@ public class DiscoverActivity extends AppCompatActivity {
         });
 
         loadFeed();
-
     }
 
     private void loadFeed() {

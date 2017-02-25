@@ -138,40 +138,6 @@ public class HostAddEventActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * The first screen for host activity
-     */
-    public static class HostMainFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public HostMainFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static HostMainFragment newInstance(int sectionNumber) {
-            HostMainFragment thisFragment = new HostMainFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            thisFragment.setArguments(args);
-            return thisFragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_host_main, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-            return rootView;
-        }
-    }
 
     /**
      * The first screen for host activity
@@ -213,6 +179,7 @@ public class HostAddEventActivity extends AppCompatActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_host_add, container, false);
             eventNameEt = (EditText) rootView.findViewById(R.id.et_event_name);
+            //TODO start using DatePicker and TimePicker
             eventTimeEt = (EditText) rootView.findViewById(R.id.et_event_time);
             eventDateEt = (EditText) rootView.findViewById(R.id.et_event_date);
             eventLocationEt = (EditText) rootView.findViewById(R.id.et_event_location);

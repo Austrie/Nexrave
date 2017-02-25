@@ -4,15 +4,20 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -31,6 +36,8 @@ import info.nexrave.nexrave.newsfeedparts.AppController;
 import info.nexrave.nexrave.systemtools.ConvertMillitaryTime;
 import info.nexrave.nexrave.systemtools.FireDatabase;
 import info.nexrave.nexrave.systemtools.IsEventToday;
+import info.nexrave.nexrave.systemtools.QRCode;
+import info.nexrave.nexrave.systemtools.RoundedNetworkImageView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,6 +54,8 @@ public class EventInfoFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     private static Event event;
+    private static ImageView QR;
+    private static Bitmap QRCodeBitmap;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -106,7 +115,7 @@ public class EventInfoFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     //Org name
-                    NetworkImageView host_pic = (NetworkImageView) view
+                    RoundedNetworkImageView host_pic = (RoundedNetworkImageView) view
                             .findViewById(R.id.eventInfo_host_profile_pic);
                     host_pic.setImageUrl((String) dataSnapshot.child("pic_uri").getValue()
                             , AppController.getInstance().getImageLoader());
@@ -120,7 +129,7 @@ public class EventInfoFragment extends Fragment {
                         public void onDataChange(DataSnapshot dataSnapshot) {
 
                             //Main Host profile pic
-                            NetworkImageView host_pic = (NetworkImageView) view
+                            RoundedNetworkImageView host_pic = (RoundedNetworkImageView) view
                                     .findViewById(R.id.eventInfo_host_profile_pic);
                             host_pic.setImageUrl((String) dataSnapshot.child("pic_uri").getValue()
                                     , AppController.getInstance().getImageLoader());
@@ -159,13 +168,47 @@ public class EventInfoFragment extends Fragment {
         event_location.setText(Html.fromHtml("<a href=\"http://maps.google.com/maps?q=" +
                 event.location.replace(" ", "+") + "\">" +
                 event.location + "</a>"));
-//        event_location.onCli
+
+        QR = (ImageView) view.findViewById(R.id.eventInfo_qr_code_IV);
         event_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Intent geoIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q="
                         + event.location));
                 startActivity(geoIntent);
+            }
+        });
+
+        QR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (QR.getVisibility() == View.VISIBLE) {
+                    Log.d("EventInfoActivity", "Was Visible");
+                    QR.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        Button ticketButton = (Button) view.findViewById(R.id.eventInfo_ticket_button);
+        Log.d("EventInfoActivity", "Button event set");
+        ticketButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (QR.getVisibility() != View.VISIBLE) {
+                    try {
+                        if (QRCodeBitmap == null) {
+                            String s = FireDatabase.backupAccessToken.getUserId() + "." + FireDatabase.backupFirebaseUser.getUid();
+                            QRCodeBitmap = QRCode.encodeAsBitmap(s);
+                        }
+                        QR.setImageBitmap(QRCodeBitmap);
+                        QR.setVisibility(View.VISIBLE);
+                    } catch (Exception e) {
+                        Log.d("EventInfoActivity", e.toString());
+                    }
+                } else {
+                    QR.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -173,11 +216,10 @@ public class EventInfoFragment extends Fragment {
             getActivity().getWindow().setStatusBarColor(Color.parseColor("#00000000"));
             getActivity().getWindow().setNavigationBarColor(Color.parseColor("#00000000"));
         }
-        getActivity().findViewById(R.id.toolbar).getBackground().setAlpha(0);
-        RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
-        getActivity().findViewById(R.id.eventInfo_contentLayout).setLayoutParams(p);
-
+//        getActivity().findViewById(R.id.toolbar).getBackground().setAlpha(0);
+//        RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+//                ViewGroup.LayoutParams.MATCH_PARENT);
+//        getActivity().findViewById(R.id.eventInfo_contentLayout).setLayoutParams(p);
 
         return view;
     }
@@ -194,6 +236,7 @@ public class EventInfoFragment extends Fragment {
         if (isVisibleToUser && isResumed()) {
             Activity a = getActivity();
             if (a != null) a.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
         }
     }
 
@@ -227,5 +270,16 @@ public class EventInfoFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public static void hideQR() {
+        QR.setVisibility(View.GONE);
+    }
+
+    public static boolean isQRVisible() {
+        if (QR.getVisibility() == View.VISIBLE) {
+            return true;
+        }
+        return false;
     }
 }

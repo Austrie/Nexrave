@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -35,6 +36,7 @@ import info.nexrave.nexrave.fragments.VerticalViewPagerFragment;
 import info.nexrave.nexrave.models.Event;
 import info.nexrave.nexrave.newsfeedparts.FeedImageView;
 import info.nexrave.nexrave.systemtools.CloseOnlyActionBarDrawerToggle;
+import info.nexrave.nexrave.systemtools.FireDatabase;
 import info.nexrave.nexrave.systemtools.GraphUser;
 import info.nexrave.nexrave.systemtools.RoundedNetworkImageView;
 import info.nexrave.nexrave.systemtools.VerticalViewPager;
@@ -48,25 +50,9 @@ public class EventInfoActivity extends AppCompatActivity
         CameraFragment.OnFragmentInteractionListener {
 
     private Event selectedEvent;
-    int position;
-    FeedImageView eventFlier;
-    View convertView;
-    LayoutInflater inflater;
-    ImageLoader imageLoader;
     private static final String TAG = EventInfoActivity.class.getSimpleName();
     private ViewPager mViewPager;
-    private int fragment;
     private SectionsPagerAdapter mSectionsPagerAdapter;
-    private RoundedNetworkImageView iv2;
-    private NetworkImageView backgroundIV2;
-    private TextView nav_displayName2;
-    private AccessToken accessToken;
-    private FirebaseUser user;
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
-    private NavigationView navigationView;
-
-    private static int page;
 
 
     @Override
@@ -75,52 +61,17 @@ public class EventInfoActivity extends AppCompatActivity
         getExtra(savedInstanceState);
         setContentView(R.layout.activity_event_info);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout2);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("");
-        setSupportActionBar(toolbar);
-        ActionBarDrawerToggle toggle = new CloseOnlyActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-//        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
-//        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        toggle.syncState();
-
-        nav_displayName2 = (TextView) findViewById(R.id.nav_user_name_display2);
-        iv2 = (RoundedNetworkImageView) findViewById(R.id.nav_user_profile2);
-        backgroundIV2 = (NetworkImageView) findViewById(R.id.nav_user_background2);
-        navigationView = (NavigationView) findViewById(R.id.nav_view2);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        mAuth = FirebaseAuth.getInstance();
-        accessToken = AccessToken.getCurrentAccessToken();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    EventChatFragment.setUser(user);
-                    Thread myThread = new Thread() {
-                        @Override
-                        public void run() {
-                            try {
-                                View v = (View) navigationView.getHeaderView(0);
-                                nav_displayName2 = (TextView) v.findViewById(R.id.nav_user_name_display2);
-                                iv2 = (RoundedNetworkImageView) v.findViewById(R.id.nav_user_profile2);
-                                backgroundIV2 = (NetworkImageView) v.findViewById(R.id.nav_user_background2);
-                                Log.d("FeedActivity", nav_displayName2.getText().toString());
-                                GraphUser.setFacebookData(accessToken,
-                                        EventInfoActivity.this, user, nav_displayName2, iv2, backgroundIV2);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    };
-                    myThread.start();
-                }
-            }
-        };
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        toolbar.setTitle("");
+//        ImageView back = (ImageView) findViewById(R.id.eventInfo_backButton);
+//        back.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                onBackPressed();
+//            }
+//        });
+//        setSupportActionBar(toolbar);
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 ////        setButtonTint(fab,ColorStateList.valueOf(000000));
@@ -144,8 +95,6 @@ public class EventInfoActivity extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
-        mAuth = FirebaseAuth.getInstance();
-        mAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override
@@ -156,15 +105,10 @@ public class EventInfoActivity extends AppCompatActivity
     @Override
     public void onStop() {
         super.onStop();
-        if (mAuthListener != null) {
-            mAuth = FirebaseAuth.getInstance();
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
     }
 
     private void getExtra(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
-//            user = (FirebaseUser) getIntent().getSerializableExtra("CURRENT_USER");
             Event extra = (Event) getIntent().getSerializableExtra("SELECTED_EVENT");
             if (extra == null) {
                 selectedEvent = new Event();
@@ -172,20 +116,12 @@ public class EventInfoActivity extends AppCompatActivity
                 selectedEvent = extra;
             }
         } else {
-//            user = (FirebaseUser) savedInstanceState.getSerializable("CURRENT_USER");
             selectedEvent = (Event) savedInstanceState.getSerializable("SELECTED_EVENT");
         }
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout2);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-//        } else
-//        if (page > 0) {
-//            mViewPager.setCurrentItem(page - 1, true);
-        } else {
             int position = mViewPager.getCurrentItem();
             if (position > 0) {
                 if (position == 1) {
@@ -195,19 +131,25 @@ public class EventInfoActivity extends AppCompatActivity
                 } else {
                     mViewPager.setCurrentItem(position - 1, true);
                 }
+            } else if (position == 0) {
+                if(EventInfoFragment.isQRVisible()) {
+                    EventInfoFragment.hideQR();
+                } else {
+                    Log.i("MainActivity", "nothing on backstack, calling super");
+                    super.onBackPressed();
+                }
             } else {
                 Log.i("MainActivity", "nothing on backstack, calling super");
                 super.onBackPressed();
             }
-        }
 
 
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action br if it is present.
-//                    getMenuInflater().inflate(R.menu.event_info, menu);
+        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.menu_bot, menu);
         return true;
     }
 
@@ -230,20 +172,18 @@ public class EventInfoActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
+//        int id = item.getItemId();
+//
+//        if (id == R.id.nav_menu_discover) {
+//
+//        } else if (id == R.id.nav_menu_event_history) {
+//
+//        } else if (id == R.id.nav_menu_host) {
+//
+//        } else if (id == R.id.nav_menu_settings) {
+//
+//        }
 
-        if (id == R.id.nav_menu_discover) {
-
-        } else if (id == R.id.nav_menu_event_history) {
-
-        } else if (id == R.id.nav_menu_host) {
-
-        } else if (id == R.id.nav_menu_settings) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout2);
-        drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
@@ -262,12 +202,11 @@ public class EventInfoActivity extends AppCompatActivity
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a HostMainFragment (defined as a static inner class below).
-            page = position;
             switch (position) {
                 case (0):
                     return EventInfoFragment.newInstance(selectedEvent);
                 case (1):
-                    return VerticalViewPagerFragment.newInstance(user, EventInfoActivity.this, selectedEvent);
+                    return VerticalViewPagerFragment.newInstance(FireDatabase.backupFirebaseUser, EventInfoActivity.this, selectedEvent);
                 case (2):
                     return EventUserFragment.newInstance();
             }
@@ -318,11 +257,4 @@ public class EventInfoActivity extends AppCompatActivity
         }
     }
 
-//    public static void setButtonTint(FloatingActionButtonButton button, ColorStateList tint) {
-//        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP && button instanceof AppCompatButton) {
-//            ((AppCompatButton) button).setSupportBackgroundTintList(tint);
-//        } else {
-//            ViewCompat.setBackgroundTintList(button, tint);
-//        }
-//    }
 }

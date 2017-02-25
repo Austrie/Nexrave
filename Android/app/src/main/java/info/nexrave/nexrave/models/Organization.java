@@ -19,7 +19,7 @@ public class Organization {
 
     public String name;
     public String pic_uri;
-    public HashMap<String, Event> events = new HashMap<>();
+    public HashMap<String, String> events = new HashMap<>();
     public HashMap<String, String> members = new HashMap<>();
     public HashMap<String, String> subscribers = new HashMap<>();
 

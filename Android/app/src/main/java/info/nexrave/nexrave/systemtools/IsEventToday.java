@@ -2,9 +2,7 @@ package info.nexrave.nexrave.systemtools;
 
 import android.text.format.DateFormat;
 
-import java.util.Calendar;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by yoyor on 2/19/2017.
@@ -16,9 +14,8 @@ public class IsEventToday {
         String day = (s.split("\\."))[2];
         String month = (s.split("\\."))[1];
         String year = (s.split("\\."))[0];
-        String[] eventTimeSections = ConvertMillitaryTime.convert(s);
         DateFormat dateInstance = new DateFormat();
-        String currentDate = String.valueOf(dateInstance.format("yyyy.MM.dd.hh.mm.ss.a", new Date()));
+        String currentDate = String.valueOf(dateInstance.format("yyyy.MM.dd.HH.mm", new Date()));
 //        String[] currentDateSections = currentDate.split("//.");
 //        long dayAsMillis = TimeUnit.DAYS.toMillis(1);
 //        long currentDateInMillis;
@@ -26,7 +23,7 @@ public class IsEventToday {
 //        long eventTimeInMillis;
 //        int am_pm;
 //        int c_am_pm;
-        if (s.substring(0, 9).equals(currentDate.substring(0, 9))) {
+        if (s.substring(0, 10).equals(currentDate.substring(0, 10))) {
 //
 //            if (eventTimeSections[2].equals("AM")) {
 //                am_pm = 0;
@@ -51,6 +48,8 @@ public class IsEventToday {
 //            calendar.set(Calendar.AM_PM, c_am_pm);
 //            currentDateInMillis = calendar.getTimeInMillis();
 
+
+            String[] eventTimeSections = ConvertMillitaryTime.convertBack(s);
             return eventTimeSections[0] + ":" + eventTimeSections[1] + " " + eventTimeSections[2];
         } else {
             return toMonth(month) + " " + day + ", " + year;

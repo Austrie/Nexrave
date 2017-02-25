@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/nxr_camera_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="#10CCCCCC"
+        android:padding="10dp"
+        android:src="@drawable/minilogo" />
+
+    <ImageView
+        android:id="@+id/eventCamera_red_dot"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:layout_alignRight="@id/nxr_camera_logo"
+        android:paddingLeft="50dp"
+        android:src="@drawable/bg_circle" />
+
+    <View
+        android:id="@+id/redDotSpacing"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/eventCamera_red_dot" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@id/redDotSpacing"
+        android:background="#50CCCCCC">
+
+        <RelativeLayout
+            android:id="@+id/locationMarkerLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true">
+
+        <ImageView
+            android:id="@+id/locationMarker"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/location_marker_red"
+            android:layout_centerVertical="true"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/locationMarkerLayout">
+
+            <TextView
+                android:id="@+id/eventCamera_event_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Gucci Mane Party of The Year"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="normal|bold|italic"
+                android:textSize="16dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                android:gravity="center"
+                android:textAllCaps="true" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

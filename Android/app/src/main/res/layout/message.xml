@@ -10,7 +10,7 @@
         android:layout_height="wrap_content">
 
 
-        <com.android.volley.toolbox.NetworkImageView
+        <info.nexrave.nexrave.systemtools.RoundedNetworkImageView
             android:layout_width="50dp"
             android:layout_height="50dp"
             app:srcCompat="@mipmap/app_icon"

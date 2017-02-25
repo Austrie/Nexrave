@@ -1,6 +1,7 @@
 package info.nexrave.nexrave;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,13 +18,17 @@ import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -42,24 +47,22 @@ public class HostListViewActivity extends AppCompatActivity {
     private Intent intent;
     //We use set instead of ArrayList to prevent duplicates, since Facebook tends to load the page twice
     private Set<InviteList> inviteLists;
-    private List<String> list;
-    private ListAdapter adapter;
     private WebView backgroundWebView1, backgroundWebView2, backgroundWebView3;
-    private boolean isFriendsListScreen = true;
-    private static EditText editText;
+    private static boolean isFriendsListScreen = true;
+    private static ListAdapter adapter;
+    private static List<String> list;
+    private static TimePicker timePicker;
     private static ListView listView;
-    private static Button submitButton;
     private static FirebaseUser user;
     private static FirebaseAuth mAuth;
-    private static HostListViewActivity activity;
     private static AlertDialog.Builder builder;
     private static AlertDialog dialog;
     private static Set<Event> listOfEvents;
     private static InviteList invitedList;
+    private static HostListViewActivity activity;
     private static boolean isInvitedListReady = false;
     private static boolean isListOfEventsReady = false;
     private static boolean isCopyEventReady = false;
-    private static boolean isProgressShowing = false;
     private static int positionClicked = -1;
     private static ProgressDialog progress;
 
@@ -68,6 +71,7 @@ public class HostListViewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activity = this;
         setContentView(R.layout.activity_host_invite_lists);
         builder = new AlertDialog.Builder(HostListViewActivity.this);
         list = new ArrayList<String>();
@@ -89,8 +93,6 @@ public class HostListViewActivity extends AppCompatActivity {
         Log.d("HostListViewActivity", String.valueOf(inviteLists.size()));
         checkInviteLists();
         if (inviteLists.size() != 0) {
-            //For some reason the size of the array is double
-            //Possibly because the webpage loads twice (so it adds twice)
             Object objArr[] = inviteLists.toArray();
             for (int i = 0; i < (inviteLists.size()); i++) {
                 list.add(((InviteList) objArr[i]).list_name);
@@ -114,7 +116,7 @@ public class HostListViewActivity extends AppCompatActivity {
 //                                list.remove(item);
 //                                adapter.notifyDataSetChanged();
                                 view.setAlpha(1);
-                                //Switch statment goes here
+                                //Switch statement goes here
                                 positionClicked = position;
                                 if (isFriendsListScreen) {
                                     onFriendsListsItemClick(position);
@@ -129,11 +131,16 @@ public class HostListViewActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
+        progress = new ProgressDialog(HostListViewActivity.this);
     }
 
     public static void setListOfEvents(Set<Event> arrEvents) {
         listOfEvents = arrEvents;
         isListOfEventsReady = true;
+        if (progress.isShowing()) {
+            progress.dismiss();
+            getActivity().loadEventLists();
+        }
 //        if ((positionClicked != -1) && (isProgressShowing)) {
 //            self.onFriendsListsItemClick(positionClicked);
 //        }
@@ -147,7 +154,13 @@ public class HostListViewActivity extends AppCompatActivity {
     }
 
     public void setEventInfo(final Event event) {
-        event.add_guest_from_invite_list(invitedList);
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                event.add_guest_from_invite_list(invitedList);
+            }
+        });
+        t.run();
         isCopyEventReady = true;
         Log.d("HostListViewActivity", "Event info copied");
         try {
@@ -155,26 +168,13 @@ public class HostListViewActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.d("HostListViewActivity", e.toString());
         }
+        progress.dismiss();
 
 //        listView.setVisibility(View.GONE);
 //        editText.setVisibility(View.VISIBLE);
 //        listView.setVisibility(View.INVISIBLE);
-        setContentView(R.layout.enter_time);
-        editText = (EditText) findViewById(R.id.enterFBTimeET);
-        submitButton = (Button) findViewById(R.id.submitFBTimeButton);
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!(editText.getText().toString() == "")) {
-                    //Fix date_time
-                    event.date_time = editText.getText().toString();
-                    Log.d("HostListViewActivity", "About to upload FB Event");
-                    FireDatabase.uploadFBEvent(user, event);
-                    intent = new Intent(HostListViewActivity.this, FeedActivity.class);
-                    startActivity(intent);
-                }
-            }
-        });
+        swapLayout(R.layout.enter_date);
+        setupViews(true, event);
 //        progress.dismiss();
     }
 
@@ -291,68 +291,139 @@ public class HostListViewActivity extends AppCompatActivity {
     }
 
     private void onFriendsListsItemClick(final int position) {
-        if (!isProgressShowing) {
-            pullFriends(position);
-        }
-        ProgressDialog progress = new ProgressDialog(HostListViewActivity.this);
+        pullFriends(position);
         if (isListOfEventsReady) {
-            if (listOfEvents.size() != 0) {
-                list = new ArrayList<String>();
-                Object objArr[] = listOfEvents.toArray();
-                //For some reason the size of the array is double
-                //Possibly because the webpage loads twice (so it adds twice)
-                for (int i = 0; i < (listOfEvents.size()); i++) {
-                    if (!(list.contains(((Event) objArr[i]).event_name))) {
-                        list.add(((Event) objArr[i]).event_name);
-                    }
-                }
-            }
-            adapter = new ListAdapter(HostListViewActivity.this, R.id.inviteListItemTV, list);
-            listView.setAdapter(adapter);
-
-            if (progress.isShowing()) {
-                progress.dismiss();
-                isProgressShowing = false;
-            }
-
-            isFriendsListScreen = false;
-
+            loadEventLists();
         } else {
             progress.setTitle("Loading");
             progress.setMessage("Wait while getting list of events from Facebook...");
             progress.setCancelable(false);
-//            progress.show();
-//            Thread recursiveWaiting = new Thread() {
-//                @Override
-//                public void run() {
-//                    while (!isListOfEventsReady) {
-//
-//                    }
-//                    onFriendsListsItemClick(position);
-//                }
-//            };
-//
-//            recursiveWaiting.run();
+            progress.show();
         }
     }
 
     private void onEventsListsItemClick(int position) {
         pullEventInfo(position);
         Log.d("HostListView", "Starting CopyEventActivity");
-        progress = new ProgressDialog(HostListViewActivity.this);
-        if (isCopyEventReady) {
+        if (!isCopyEventReady) {
 
-            if (progress.isShowing()) {
-                progress.dismiss();
-                isProgressShowing = false;
-            }
-
-        } else {
             progress.setTitle("Loading");
-            progress.setMessage("Wait while getting list of events from Facebook...");
+            progress.setMessage("Wait while copying event from Facebook...");
             progress.setCancelable(false);
-//            progress.show();
-            isProgressShowing = true;
+            progress.show();
+        }
+    }
+
+    private void loadEventLists() {
+        if (listOfEvents.size() != 0) {
+            list.clear();
+            Object objArr[] = listOfEvents.toArray();
+            //For some reason the size of the array is double
+            //Possibly because the webpage loads twice (so it adds twice)
+            for (int i = 0; i < (listOfEvents.size()); i++) {
+                if (!(list.contains(((Event) objArr[i]).event_name))) {
+                    list.add(((Event) objArr[i]).event_name);
+                }
+            }
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    adapter = new ListAdapter(getActivity(), R.id.inviteListItemTV, list);
+                    listView.setAdapter(adapter);
+                }
+            });
+        } else {
+            progress.setTitle("No Events Detected");
+            progress.setMessage("No upcoming Facebook events detected. Closing...");
+            progress.setCancelable(false);
+            progress.show();
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        wait(5000);
+                    }catch(Exception e) {
+                        Log.d("HostListViewActivity", e.toString());
+                    }
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            getActivity().finish();
+                        }
+                    });
+                }
+            });
+        }
+
+        isFriendsListScreen = false;
+    }
+
+    private static HostListViewActivity getActivity() {
+        return activity;
+    }
+
+    private void swapLayout(int i) {
+        setContentView(i);
+    }
+
+    private void setupViews(boolean choice, final Event event) {
+        if (choice) {
+            final DatePicker datePicker = (DatePicker) findViewById(R.id.hostDatePicker);
+            ImageView forwardButton = (ImageView) findViewById(R.id.abs_forward);
+            forwardButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String month;
+                    if ((datePicker.getMonth() + 1) <= 9) {
+                        month = "0" + (datePicker.getMonth() + 1);
+                    } else {
+                        month = String.valueOf(datePicker.getMonth() + 1);
+                    }
+                    String day;
+                    if ((datePicker.getDayOfMonth()) <= 9) {
+                        day = "0" + (datePicker.getDayOfMonth());
+                    } else {
+                        day = String.valueOf(datePicker.getDayOfMonth());
+                    }
+                    event.date_time = datePicker.getYear() + "." + month + "."
+                            + day;
+                    swapLayout(R.layout.enter_time);
+                    setupViews(false, event);
+                }
+
+            });
+        } else {
+            timePicker = (TimePicker) findViewById(R.id.hostTimePicker);
+            ImageView forwardButton = (ImageView) findViewById(R.id.abs_forward);
+            forwardButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String hour;
+                    if (timePicker.getCurrentHour() <= 9) {
+                        hour = "0" + timePicker.getCurrentHour();
+                    } else {
+                        hour = String.valueOf(timePicker.getCurrentHour());
+                    }
+                    String minute;
+                    if (timePicker.getCurrentMinute() <= 9) {
+                        minute = "0" + timePicker.getCurrentMinute();
+                    } else {
+                        minute = String.valueOf(timePicker.getCurrentMinute());
+                    }
+                    event.date_time += "." + hour + "." + minute;
+                    Log.d("HostListViewActivity", "About to upload FB Event");
+                    Thread t = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            FireDatabase.uploadFBEvent(user, event);
+                        }
+                    });
+                    t.run();
+                    intent = new Intent(HostListViewActivity.this, FeedActivity.class);
+                    startActivity(intent);
+                }
+
+            });
         }
     }
 
