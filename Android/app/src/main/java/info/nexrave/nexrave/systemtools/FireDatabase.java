@@ -23,7 +23,7 @@ import info.nexrave.nexrave.models.Event;
 import info.nexrave.nexrave.models.Guest;
 import info.nexrave.nexrave.models.Host;
 import info.nexrave.nexrave.models.InviteList;
-import info.nexrave.nexrave.newsfeedparts.FeedListAdapter;
+import info.nexrave.nexrave.feedparts.FeedListAdapter;
 
 /**
  * Created by yoyor on 12/22/2016.
@@ -36,7 +36,7 @@ public class FireDatabase {
     private static int eventNumber = 0;
     private static FirebaseDatabase instance;
     private static LinkedHashSet<Guest> usersToAddToFacebook = new LinkedHashSet<>();
-    private static DatabaseReference mRootReference = FireDatabase.getInstance().getReference();
+    private static DatabaseReference mRootReference;
     private static long phoneNumber = 0;
 
     public FireDatabase() {
@@ -47,10 +47,12 @@ public class FireDatabase {
             instance = FirebaseDatabase.getInstance();
             instance.setPersistenceEnabled(true);
         }
+        mRootReference = instance.getReference();
         return instance;
     }
 
     public static DatabaseReference getRoot() {
+        mRootReference = getInstance().getReference();
         return mRootReference;
     }
 
@@ -64,7 +66,7 @@ public class FireDatabase {
         //a unique id for the event
         final DatabaseReference userRef = mRootReference.child("users").child(user.getUid())
                 .child("number_of_hosted_events");
-        userRef.addValueEventListener(new ValueEventListener() {
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -123,7 +125,7 @@ public class FireDatabase {
         //a unique id for the event
         final DatabaseReference userRef = mRootReference.child("users").child(user.getUid())
                 .child("number_of_hosted_events");
-        userRef.addValueEventListener(new ValueEventListener() {
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -304,7 +306,7 @@ public class FireDatabase {
                                          final ArrayListEvents<Event> feedItems,
                                          final FeedListAdapter listAdapter) {
 
-        DatabaseReference mRootReference = FireDatabase.getInstance().getReference();
+        final DatabaseReference mRootReference = FireDatabase.getInstance().getReference();
         final DatabaseReference userRef = mRootReference.child("pending_invites").child("facebook")
                 .child(String.valueOf(accessToken.getUserId()));
         final DatabaseReference phoneRef = mRootReference.child("users").child(user.getUid()).child("phone_number");
@@ -315,13 +317,26 @@ public class FireDatabase {
                     Log.d("FireDatabase", "Phone number before: " + String.valueOf(phoneNumber));
                     phoneNumber = (Long) dataSnapshot.getValue();
                     Log.d("FireDatabase", "Phone number after: " + String.valueOf(phoneNumber));
-                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
 
+                    final DatabaseReference phoneRef2 = mRootReference.child("pending_invites")
+                            .child("phone_number").child(String.valueOf(phoneNumber));
+                    phoneRef2.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                                Log.d("FireDatabase", "Phone Number Events: " + map.toString());
+                                final ArrayList<Object> invitedEventsList = new ArrayList<Object>(map.keySet());
+                                Log.d("FireDatabase", invitedEventsList.toString());
+                                search(feedItems, listAdapter, invitedEventsList, phoneRef2);
+                            }
+                        }
 
-                    Log.d("FireDatabase", "Phone Number Events: " + map.toString());
-                    final ArrayList<Object> invitedEventsList = new ArrayList<Object>(map.keySet());
-                    Log.d("FireDatabase", invitedEventsList.toString());
-                    search(feedItems, listAdapter, invitedEventsList, phoneRef);
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                 } else {
                     Log.d("FireDatabase", "No number on file: " + String.valueOf(phoneNumber));
                 }

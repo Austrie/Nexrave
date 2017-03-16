@@ -1,69 +1,14 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorPrimaryDark"
     android:fitsSystemWindows="true"
+    android:windowSoftInputMode="adjustPan"
     tools:context="info.nexrave.nexrave.fragments.EventChatFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/event_info_appBarLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/transparent"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/transparent"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
-
-            <ImageView
-                android:id="@+id/eventInfo_backButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:rotation="180"
-                android:src="@drawable/next"/>
-
-            <ImageView
-                android:id="@+id/abs_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/logo"
-                android:textAppearance="@style/TextAppearance.AppCompat" />
-
-            <ImageView
-                android:layout_marginTop="1dp"
-                android:layout_marginRight="13dp"
-                android:id="@+id/eventInfo_inbox"
-                android:layout_width="35dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:src="@drawable/inbox"
-                android:visibility="gone" />
-
-            <ImageView
-                android:layout_marginTop="1dp"
-                android:layout_marginRight="13dp"
-                android:id="@+id/eventInfo_list_icon"
-                android:layout_width="35dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:src="@drawable/list_icon"
-                android:visibility="visible"/>
-        </android.support.v7.widget.Toolbar>
-
-    </android.support.design.widget.AppBarLayout>
-    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -77,44 +22,122 @@
             android:orientation="vertical">
 
             <ListView
-                android:paddingTop="64dp"
-                android:clipToPadding="false"
                 android:id="@+id/eventChat_listView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:stackFromBottom="true"/>
+                android:paddingTop="64dp"
+                android:stackFromBottom="true" />
         </LinearLayout>
 
         <LinearLayout
-            android:background="@color/white"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_weight="0.7"
+            android:background="@color/white"
             android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/eventChat_editText"
-                android:layout_width="match_parent"
+            <RelativeLayout
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="0.2"
-                android:ems="10"
-                android:inputType="textMultiLine"
-                android:hint="Type Here..."
-                android:imeOptions="actionSend" />
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="5dp">
+
+                <ImageView
+                    android:id="@+id/eventChat_shutter_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/shutter_icon" />
+            </RelativeLayout>
 
             <LinearLayout
-                android:paddingTop="5dp"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="0.9">
+                android:layout_weight="0.2"
+                android:orientation="vertical">
 
-                <ImageButton
-                    android:id="@+id/eventChat_sendButton"
+                <EditText
+                    android:id="@+id/eventChat_editText"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:src="@android:drawable/btn_star" />
+                    android:ems="1"
+                    android:hint="Broadcast what's happening at the party..."
+                    android:imeOptions="actionSend"
+                    android:inputType="textMultiLine"
+                    android:textColor="@color/colorPrimary"
+                    android:textColorHint="@color/colorPrimary"
+                    android:textSize="14.5sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/transparent" />
+
             </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0.9">
+
+                <ImageView
+                    android:id="@+id/eventChat_sendButton"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerInParent="true"
+                    android:background="@null"
+                    android:src="@drawable/airplane_icon" />
+            </RelativeLayout>
 
         </LinearLayout>
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/event_info_appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/transparent"
+                app:popupTheme="@style/AppTheme.PopupOverlay">
+
+                <ImageView
+                    android:id="@+id/eventInfo_backButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="backButton"
+                    android:rotation="180"
+                    android:src="@drawable/next" />
+
+                <ImageView
+                    android:id="@+id/abs_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/logo"
+                    android:textAppearance="@style/TextAppearance.AppCompat" />
+
+                <ImageView
+                    android:id="@+id/eventInfo_list_icon"
+                    android:layout_width="35dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_marginRight="13dp"
+                    android:layout_marginTop="1dp"
+                    android:src="@drawable/list_icon"
+                    android:visibility="visible" />
+            </android.support.v7.widget.Toolbar>
+
+        </android.support.design.widget.AppBarLayout>
+    </RelativeLayout>
 </FrameLayout>

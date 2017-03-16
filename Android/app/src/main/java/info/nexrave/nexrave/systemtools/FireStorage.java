@@ -89,8 +89,9 @@ public class FireStorage {
                         // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                         Log.d("FireStorage: C. Pic", taskSnapshot.getMetadata().toString());
                         Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                        //Where does this download link go
                         downloadLink = downloadUrl.toString();
-//                        dr.setValue(downloadLink);
+                        dr.setValue(downloadLink);
                         Log.d("FireStorage: ", downloadLink);
                     }
                 });

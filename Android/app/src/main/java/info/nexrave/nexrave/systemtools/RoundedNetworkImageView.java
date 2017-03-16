@@ -66,6 +66,14 @@ public class RoundedNetworkImageView extends NetworkImageView {
             int h = getHeight();
 
             Bitmap roundBitmap = getCroppedBitmap(bitmap, w);
+//            Paint paint = new Paint();
+//            paint.setAntiAlias(true);
+//            paint.setFilterBitmap(true);
+//            paint.setDither(true);
+//            canvas.drawARGB(0, 0, 0, 0);
+//            paint.setColor(Color.parseColor("#ffffff"));
+//            canvas.drawCircle((w / 2 + 0f), (w / 2 + 0f),
+//                    (w / 2 + 6f), paint);
             canvas.drawBitmap(roundBitmap, 0, 0, null);
         } catch (Exception e) {
             Log.d("RoundedNetworkImageView", e.toString());
@@ -97,6 +105,7 @@ public class RoundedNetworkImageView extends NetworkImageView {
         paint.setDither(true);
         canvas.drawARGB(0, 0, 0, 0);
         paint.setColor(Color.parseColor(color));
+        //To make the image smaller
         canvas.drawCircle(radius / 2 + 0.7f, radius / 2 + 0.7f,
                 radius / 2 + 0.1f, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));

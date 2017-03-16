@@ -139,6 +139,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:rotation="180"
+                    android:onClick="backButton"
                     android:src="@drawable/next"/>
 
                 <ImageView
@@ -161,6 +162,23 @@
             </android.support.v7.widget.Toolbar>
 
         </android.support.design.widget.AppBarLayout>
+
+        <RelativeLayout
+            android:id="@+id/eventUser_large_IV_container"
+            android:layout_below="@id/event_info_appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#90000000"
+            android:visibility="gone">
+
+            <com.android.volley.toolbox.NetworkImageView
+                android:id="@+id/eventUser_large_IV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxHeight="500dp"
+                android:maxWidth="500dp"
+                android:layout_centerInParent="true" />
+        </RelativeLayout>
     </RelativeLayout>
 
 </FrameLayout>

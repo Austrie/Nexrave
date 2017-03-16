@@ -1,17 +1,12 @@
 package info.nexrave.nexrave.systemtools;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-import com.bumptech.glide.Glide;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
@@ -24,10 +19,7 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,16 +28,10 @@ import android.net.Uri;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
-import info.nexrave.nexrave.FeedActivity;
-import info.nexrave.nexrave.R;
-import info.nexrave.nexrave.models.Event;
 import info.nexrave.nexrave.models.User;
-import info.nexrave.nexrave.newsfeedparts.AppController;
-
-import static com.facebook.FacebookSdk.getApplicationContext;
+import info.nexrave.nexrave.feedparts.AppController;
 
 /**
  * Created by yoyor on 12/19/2016.

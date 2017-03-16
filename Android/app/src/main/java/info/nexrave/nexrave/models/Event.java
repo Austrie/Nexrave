@@ -20,8 +20,7 @@ import java.util.Map;
 
 public class Event implements Serializable {
 
-    // public *** qr_codes;
-    public int id;
+    // public *** qr_codes
     public String event_id;
     public String facebook_cover_pic;
     public String facebook_url;
@@ -69,9 +68,14 @@ public class Event implements Serializable {
     }
 
     public String toString() {
-        return "Name: " + event_name + " /n "
-                + "Number Invited: " + guests.size() + " By " + main_host_id + " Under " +
-                organization.toString();
+        if (organization != null) {
+            return "Name: " + event_name + " \n "
+                    + "Number Invited: " + guests.size() + " By " + main_host_id + " Under " +
+                    organization;
+        } else {
+            return "Name: " + event_name + " \n "
+                    + "Number Invited: " + guests.size() + " By " + main_host_id;
+        }
     }
 
     //Gives error when creating FB event

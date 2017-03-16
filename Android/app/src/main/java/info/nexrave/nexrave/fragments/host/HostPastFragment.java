@@ -9,11 +9,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import info.nexrave.nexrave.DiscoverActivity;
 import info.nexrave.nexrave.EventInfoActivity;
 import info.nexrave.nexrave.R;
 import info.nexrave.nexrave.models.Event;
-import info.nexrave.nexrave.newsfeedparts.FeedListAdapter;
+import info.nexrave.nexrave.feedparts.FeedListAdapter;
 import info.nexrave.nexrave.systemtools.ArrayListEvents;
 import info.nexrave.nexrave.systemtools.FireDatabase;
 

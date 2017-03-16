@@ -49,7 +49,8 @@
                 android:paddingTop="@dimen/nav_header_vertical_spacing"
                 android:paddingBottom="16dp"
                 android:text="Android Studio"
-                android:textSize="16dp"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                 android:textColor="@color/white"
                 android:elevation="0dp" />

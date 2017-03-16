@@ -9,7 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import info.nexrave.nexrave.models.Event;
-import info.nexrave.nexrave.newsfeedparts.FeedListAdapter;
+import info.nexrave.nexrave.feedparts.FeedListAdapter;
 import info.nexrave.nexrave.systemtools.ArrayListEvents;
 import info.nexrave.nexrave.systemtools.FireDatabase;
 

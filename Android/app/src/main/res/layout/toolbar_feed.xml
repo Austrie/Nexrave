@@ -32,11 +32,12 @@
 
             <ImageView
                 android:layout_marginTop="5dp"
-                android:layout_marginRight="10dp"
+                android:layout_marginRight="12dp"
                 android:id="@+id/feed_inbox"
                 android:layout_width="25dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
+                android:onClick="toChat"
                 android:src="@drawable/inbox"
                 android:textAppearance="@style/TextAppearance.AppCompat" />
         </android.support.v7.widget.Toolbar>

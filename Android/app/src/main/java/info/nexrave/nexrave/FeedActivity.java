@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
@@ -26,14 +27,13 @@ import com.facebook.ProfileTracker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
 import java.util.Map;
 
-import info.nexrave.nexrave.bot.CopyEventActivity;
-import info.nexrave.nexrave.bot.GetListsActivity;
-import info.nexrave.nexrave.bot.InviteByTextActivity;
 import info.nexrave.nexrave.models.Event;
-import info.nexrave.nexrave.newsfeedparts.FeedImageView;
-import info.nexrave.nexrave.newsfeedparts.FeedListAdapter;
+import info.nexrave.nexrave.feedparts.AppController;
+import info.nexrave.nexrave.feedparts.FeedImageView;
+import info.nexrave.nexrave.feedparts.FeedListAdapter;
 import info.nexrave.nexrave.systemtools.ArrayListEvents;
 import info.nexrave.nexrave.systemtools.FireDatabase;
 import info.nexrave.nexrave.systemtools.GraphUser;
@@ -47,7 +47,6 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
     private ListView listView;
     private FeedListAdapter listAdapter;
     private static ArrayListEvents<Event> feedItems;
-    private String URL_FEED = "https://nexrave-e1c12.firebaseio.com/events/cej9NdOP3uRSi1qBo6aZy6tzyoP2event1.json";
     Intent intent;
 
     CallbackManager callbackManager;
@@ -65,7 +64,8 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
     private RoundedNetworkImageView iv;
     private NavigationView navigationView;
     private DrawerLayout drawer;
-
+    private static NetworkImageView enlargeFlyer;
+    private static RelativeLayout enlargeFlyerContainer;
 
 
     @SuppressLint("NewApi")
@@ -140,7 +140,7 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
                                         Log.d("TEXTVIEWE", "it's not null");
                                     }
                                     GraphUser.setFacebookData(accessToken, FeedActivity.this, user, nav_displayName, iv, backgroundIV);
-                                } catch(Exception e) {
+                                } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
@@ -157,7 +157,7 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
 
         listView = (ListView) findViewById(R.id.list);
 
-        feedItems = new ArrayListEvents<Event>();
+        feedItems = new ArrayListEvents<>();
 
         listAdapter = new FeedListAdapter(this, feedItems);
         listView.setAdapter(listAdapter);
@@ -167,10 +167,19 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
                 intent = new Intent(FeedActivity.this, EventInfoActivity.class);
                 Event selectedEvent = (Event) listView.getAdapter().getItem(position);
                 intent.putExtra("SELECTED_EVENT", selectedEvent);
-//                intent.putExtra("CURRENT_USER", user);
                 startActivity(intent);
             }
         });
+
+        enlargeFlyerContainer = (RelativeLayout) findViewById(R.id.feed_enlarge_flyer_container);
+        enlargeFlyerContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                enlargeFlyerContainer.setVisibility(View.GONE);
+                Log.d("FeedActivity", "Now it's gone");
+            }
+        });
+        enlargeFlyer = (NetworkImageView) findViewById(R.id.feed_enlarge_flyer);
     }
 
     @Override
@@ -200,6 +209,11 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    public void toChat(View v) {
+        intent = new Intent(FeedActivity.this, InboxActivity.class);
+        startActivity(intent);
+    }
+
 
     private void loadFeed() {
         FireDatabase.loadFeedEvents(user, accessToken, feedItems, listAdapter);
@@ -212,6 +226,8 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout1);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if (isFlyerVisible()) {
+            hideLargeFlyer();
         } else {
             super.onBackPressed();
         }
@@ -265,5 +281,26 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout1);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public static ArrayList<Object> loadFullImage(String pic_uri) {
+        enlargeFlyer.setImageUrl(pic_uri, AppController.getInstance().getImageLoader());
+        enlargeFlyerContainer.setVisibility(View.VISIBLE);
+        Log.d("FeedActivity", "Now it's here");
+        ArrayList<Object> flyer = new ArrayList<>();
+        flyer.add(0, enlargeFlyerContainer);
+        flyer.add(1, enlargeFlyer);
+        return flyer;
+    }
+
+    public static void hideLargeFlyer() {
+        enlargeFlyerContainer.setVisibility(View.GONE);
+    }
+
+    public static boolean isFlyerVisible() {
+        if (enlargeFlyerContainer.getVisibility() == View.VISIBLE) {
+            return true;
+        }
+        return false;
     }
 }

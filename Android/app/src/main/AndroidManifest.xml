@@ -21,12 +21,11 @@
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
-        android:name=".newsfeedparts.AppController"
-        android:allowBackup="true"
-        android:hardwareAccelerated="true"
+        android:name=".feedparts.AppController"
         android:icon="@mipmap/nexraveappicon"
         android:label="@string/app_name"
-        android:largeHeap="true">
+        android:noHistory="false"
+        android:screenOrientation="portrait">
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"
@@ -67,6 +66,7 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".EventInfoActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".security.EnterPhoneNumber"
@@ -74,8 +74,8 @@
         <activity android:name=".security.EnterAuthCode" />
         <activity
             android:name=".HostActivity"
-            android:screenOrientation="portrait"
             android:parentActivityName=".FeedActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -83,8 +83,8 @@
         </activity>
         <activity
             android:name=".HostAddEventActivity"
-            android:screenOrientation="portrait"
             android:parentActivityName=".FeedActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -110,13 +110,16 @@
             android:name=".bot.InviteByTextActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-        <activity android:name=".DiscoverActivity"
+        <activity
+            android:name=".DiscoverActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="info.nexrave.nexrave.FeedActivity" />
         </activity>
+        <activity android:name=".InboxActivity"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

@@ -2,27 +2,18 @@ package info.nexrave.nexrave.fragments;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
-import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
@@ -31,20 +22,16 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import info.nexrave.nexrave.EventInfoActivity;
 import info.nexrave.nexrave.R;
-import info.nexrave.nexrave.models.EventChatMessage;
-import info.nexrave.nexrave.models.User;
-import info.nexrave.nexrave.newsfeedparts.AppController;
+import info.nexrave.nexrave.models.Message;
+import info.nexrave.nexrave.feedparts.AppController;
 import info.nexrave.nexrave.systemtools.FireDatabase;
-import info.nexrave.nexrave.systemtools.RoundedNetworkImageView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -68,7 +55,9 @@ public class EventChatFragment extends Fragment {
     private static String event_id;
     private static FirebaseUser user;
     private ListAdapter listAdapter;
-    private ImageView inbox_user_iv, chat_list_iv;
+    private TextView numLikesTV;
+    private int numOfLikes;
+    private boolean choice;
 
     private OnFragmentInteractionListener mListener;
 
@@ -76,35 +65,18 @@ public class EventChatFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     * <p>
-     * //     * @param param1 Parameter 1.
-     * //     * @param param2 Parameter 2.
-     *
-     * @return A new instance of fragment EventChatFragment.
-     */
     // TODO: Rename and change types and number of parameters
     public static EventChatFragment newInstance(FirebaseUser mUser, Activity context, String id) {
         user = mUser;
         activity = context;
         event_id = id;
         EventChatFragment fragment = new EventChatFragment();
-        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -117,14 +89,14 @@ public class EventChatFragment extends Fragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_event_chat, container, false);
         final EditText typedMessage = (EditText) view.findViewById(R.id.eventChat_editText);
-        ImageButton sendButton = (ImageButton) view.findViewById(R.id.eventChat_sendButton);
+        ImageView sendButton = (ImageView) view.findViewById(R.id.eventChat_sendButton);
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!typedMessage.getText().toString().isEmpty()) {
                     Long time = System.currentTimeMillis();
-                    EventChatMessage message = new EventChatMessage(
+                    Message message = new Message(
                             user.getUid(), typedMessage.getText().toString(), time);
                     Map<String, Object> map = new HashMap<String, Object>();
                     map.put(String.valueOf(time), message);
@@ -134,28 +106,46 @@ public class EventChatFragment extends Fragment {
             }
         });
 
+
+        ImageView shutterButton = (ImageView) view.findViewById(R.id.eventChat_shutter_icon);
+        shutterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                VerticalViewPagerFragment.toCamera();
+            }
+        });
+
         ListView listView = (ListView) view.findViewById(R.id.eventChat_listView);
-        listAdapter = new FirebaseListAdapter<EventChatMessage>(activity, EventChatMessage.class,
+        listAdapter = new FirebaseListAdapter<Message>(activity, Message.class,
                 R.layout.message, eventRef) {
             @Override
-            protected void populateView(final View v, final EventChatMessage model, final int position) {
+            protected void populateView(final View v, final Message model, final int position) {
                 DatabaseReference userRef = usersRef.child(model.user_id);
                 userRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         ((NetworkImageView) v.findViewById(R.id.eventChat_user_profile_pic))
                                 .setImageUrl(dataSnapshot.child("pic_uri").getValue(String.class), AppController.getInstance().getImageLoader());
-                        ((RoundedNetworkImageView) v.findViewById(R.id.eventChat_user_profile_pic)).setOnClickListener(
+                        (v.findViewById(R.id.eventChat_user_profile_pic)).setOnClickListener(
                                 new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         EventUserFragment.loadUser(model.user_id);
-                                        ViewPager vp = (ViewPager)getActivity().findViewById(R.id.eventInfoContainer);
+                                        ViewPager vp = (ViewPager) getActivity().findViewById(R.id.eventInfoContainer);
                                         vp.setCurrentItem(2, true);
                                     }
                                 }
                         );
+
                         ((TextView) v.findViewById(R.id.eventChat_user_name)).setText(dataSnapshot.child("name").getValue(String.class));
+                        v.findViewById(R.id.eventChat_user_name).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                EventUserFragment.loadUser(model.user_id);
+                                ViewPager vp = (ViewPager) getActivity().findViewById(R.id.eventInfoContainer);
+                                vp.setCurrentItem(2, true);
+                            }
+                        });
                     }
 
                     @Override
@@ -164,6 +154,36 @@ public class EventChatFragment extends Fragment {
                     }
                 });
                 ((TextView) v.findViewById(R.id.eventChat_user_message)).setText(model.message);
+
+                numLikesTV = (TextView) v.findViewById(R.id.eventChat_numberOfLikes);
+                if ((model.numberOfLikes != 0)) {
+                    numLikesTV.setText(String.valueOf(model.numberOfLikes));
+                } else {
+                    numLikesTV.setText("");
+                }
+
+                final ImageView heartIV = (ImageView) v.findViewById(R.id.eventChat_message_heart_icon);
+
+                if (model.whoLiked.containsKey(FireDatabase.backupFirebaseUser.getUid())) {
+                    heartIV.setImageResource(R.drawable.heart_icon);
+                } else {
+                    heartIV.setImageResource(R.drawable.empty_heart_icon);
+                }
+
+                ((ImageView) v.findViewById(R.id.eventChat_message_heart_icon)).setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if (model.whoLiked.containsKey(FireDatabase.backupFirebaseUser.getUid())) {
+                                    heartIV.setImageResource(R.drawable.empty_heart_icon);
+                                    userLiked(false, String.valueOf(model.time_stamp));
+                                } else {
+                                    heartIV.setImageResource(R.drawable.heart_icon);
+                                    userLiked(true, String.valueOf(model.time_stamp));
+                                }
+                            }
+                        }
+                );
             }
         };
         listView.setAdapter(listAdapter);
@@ -173,7 +193,6 @@ public class EventChatFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser && isResumed()) {
-            Activity a = getActivity();
             EventUserFragment.setUserToBeViewed(FireDatabase.backupFirebaseUser.getUid());
         }
     }
@@ -189,7 +208,6 @@ public class EventChatFragment extends Fragment {
     public void onResume() {
         super.onResume();
     }
-
 
 
     @Override
@@ -222,6 +240,55 @@ public class EventChatFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void userLiked(final boolean choice, String timeStamp) {
+        final DatabaseReference messageRef = FireDatabase.getRoot().child("event_messages").child(event_id)
+                .child(timeStamp);
+
+        if (choice) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put(FireDatabase.backupFirebaseUser.getUid(), System.currentTimeMillis());
+            messageRef.child("whoLiked").updateChildren(map);
+            messageRef.child("numberOfLikes").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        int numOfLikes = dataSnapshot.getValue(Integer.class);
+                        messageRef.child("numberOfLikes").setValue(++numOfLikes);
+                        numLikesTV.setText(String.valueOf(++numOfLikes));
+                    } else {
+                        messageRef.child("numberOfLikes").setValue(1);
+                        numLikesTV.setText(String.valueOf(1));
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+        } else {
+            messageRef.child("whoLiked").child(FireDatabase.backupFirebaseUser.getUid()).removeValue();
+            messageRef.child("numberOfLikes").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        numOfLikes = dataSnapshot.getValue(Integer.class);
+                        numOfLikes = (numOfLikes - 1);
+                        messageRef.child("numberOfLikes").setValue(numOfLikes);
+                        numLikesTV.setText(String.valueOf(numOfLikes));
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+        }
     }
 
     public static void setUser(@NonNull FirebaseUser firebaseUser) {

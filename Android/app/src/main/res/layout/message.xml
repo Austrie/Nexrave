@@ -1,48 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorPrimaryDark">
+    android:background="@color/colorPrimaryDark"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
 
 
         <info.nexrave.nexrave.systemtools.RoundedNetworkImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            app:srcCompat="@mipmap/app_icon"
             android:id="@+id/eventChat_user_profile_pic"
+            android:layout_width="31dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/bg_circle"
             android:clickable="true"
-            android:layout_weight="0.11" />
+            app:srcCompat="@mipmap/app_icon" />
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1.00">
+            android:weightSum="1">
 
-            <TextView
-                android:text="Anonymous User"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="257dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/eventChat_user_name"
-                android:textSize="14sp"
-                android:textColor="@color/white"
-                android:textStyle="normal|bold" />
+                android:layout_weight="0.78"
+                android:orientation="vertical">
 
-            <TextView
-                android:text="Hidden Message"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/eventChat_user_message"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
+
+                    <TextView
+                        android:id="@+id/eventChat_user_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Anonymous User"
+                        android:textColor="#90ffffff"
+                        android:textSize="12sp" />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/eventChat_user_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Hidden Message"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="normal|bold" />
+
+
+                <ImageView
+                    android:id="@+id/eventChat_message_attached_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxHeight="250dp"
+                    android:maxWidth="250dp" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="45dp"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/eventChat_message_heart_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerInParent="true"
+                    android:clickable="true"
+                    android:src="@drawable/empty_heart_icon" />
+
+                <TextView
+                    android:id="@+id/eventChat_numberOfLikes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignTop="@+id/eventChat_message_heart_icon"
+                    android:text="10"
+                    android:textColor="#90ffffff"
+                    android:textSize="10dp" />
+            </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
-
 
 </LinearLayout>

@@ -11,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
@@ -21,7 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import info.nexrave.nexrave.R;
-import info.nexrave.nexrave.newsfeedparts.AppController;
+import info.nexrave.nexrave.feedparts.AppController;
 import info.nexrave.nexrave.systemtools.FireDatabase;
 import info.nexrave.nexrave.systemtools.RoundedNetworkImageView;
 
@@ -47,6 +47,9 @@ public class EventUserFragment extends Fragment {
     private static TextView usernameTV;
     private static RoundedNetworkImageView profile_picIV;
     private static NetworkImageView backgroundIV;
+    private static NetworkImageView largeIV;
+    private static RelativeLayout largeIVContainer;
+    private static String pic_uri;
     private static ImageButton facebookIB, instagramIB, twitterIB, snapchatIB;
 
     private OnFragmentInteractionListener mListener;
@@ -58,9 +61,10 @@ public class EventUserFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
+     * <p>
+     * //     * @param param1 Parameter 1.
+     * //     * @param param2 Parameter 2.
      *
-//     * @param param1 Parameter 1.
-//     * @param param2 Parameter 2.
      * @return A new instance of fragment EventUserFragment.
      */
     // TODO: Rename and change types and number of parameters
@@ -88,8 +92,37 @@ public class EventUserFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_event_user, container, false);
+        largeIVContainer = (RelativeLayout) v.findViewById(R.id.eventUser_large_IV_container);
+        largeIVContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (largeIVContainer.getVisibility() == View.VISIBLE) {
+                    Log.d("EventInfoActivity", "Was Visible");
+                    largeIVContainer.setVisibility(View.GONE);
+                }
+            }
+        });
+        largeIV = (NetworkImageView) v.findViewById(R.id.eventUser_large_IV);
+        largeIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (largeIVContainer.getVisibility() == View.VISIBLE) {
+                    Log.d("EventInfoActivity", "Was Visible");
+                    largeIVContainer.setVisibility(View.GONE);
+                }
+            }
+        });
         backgroundIV = (NetworkImageView) v.findViewById(R.id.eventUser_background);
         profile_picIV = (RoundedNetworkImageView) v.findViewById(R.id.eventUser_user_profile_pic);
+        profile_picIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (largeIVContainer.getVisibility() != View.VISIBLE) {
+                    largeIV.setImageUrl(pic_uri, AppController.getInstance().getImageLoader());
+                    largeIVContainer.setVisibility(View.VISIBLE);
+                }
+            }
+        });
         facebookIB = (ImageButton) v.findViewById(R.id.eventUser_facebook);
         instagramIB = (ImageButton) v.findViewById(R.id.eventUser_instagram);
         twitterIB = (ImageButton) v.findViewById(R.id.eventUser_twitter);
@@ -127,10 +160,9 @@ public class EventUserFragment extends Fragment {
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                profile_picIV.setImageUrl((String) dataSnapshot.child("pic_uri").getValue()
-                        , AppController.getInstance().getImageLoader());
-                backgroundIV.setImageUrl((String) dataSnapshot.child("pic_uri").getValue()
-                        , AppController.getInstance().getImageLoader());
+                pic_uri = (String) dataSnapshot.child("pic_uri").getValue();
+                profile_picIV.setImageUrl(pic_uri, AppController.getInstance().getImageLoader());
+                backgroundIV.setImageUrl(pic_uri, AppController.getInstance().getImageLoader());
                 usernameTV.setText((String) dataSnapshot.child("name").getValue());
             }
 
@@ -147,11 +179,11 @@ public class EventUserFragment extends Fragment {
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                profile_picIV.setImageUrl((String) dataSnapshot.child("pic_uri").getValue()
-                        , AppController.getInstance().getImageLoader());
-                backgroundIV.setImageUrl((String) dataSnapshot.child("pic_uri").getValue()
-                        , AppController.getInstance().getImageLoader());
+                pic_uri = (String) dataSnapshot.child("pic_uri").getValue();
+                profile_picIV.setImageUrl(pic_uri, AppController.getInstance().getImageLoader());
+                backgroundIV.setImageUrl(pic_uri, AppController.getInstance().getImageLoader());
                 usernameTV.setText((String) dataSnapshot.child("name").getValue());
+                largeIVContainer.setVisibility(View.GONE);
             }
 
             @Override
@@ -191,5 +223,16 @@ public class EventUserFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public static void hideLargeIV() {
+        largeIVContainer.setVisibility(View.GONE);
+    }
+
+    public static boolean isLargeIVisible() {
+        if (largeIVContainer.getVisibility() == View.VISIBLE) {
+            return true;
+        }
+        return false;
     }
 }

@@ -52,9 +52,10 @@ public class VerticalViewPagerFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
+     * <p>
+     * //     * @param param1 Parameter 1.
+     * //     * @param param2 Parameter 2.
      *
-//     * @param param1 Parameter 1.
-//     * @param param2 Parameter 2.
      * @return A new instance of fragment VerticalViewPagerFragment.
      */
     // TODO: Rename and change types and number of parameters
@@ -191,6 +192,19 @@ public class VerticalViewPagerFragment extends Fragment {
         int position = mViewPager.getCurrentItem();
         if (position == 1) {
             mViewPager.setCurrentItem(0, true);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean toCamera() {
+        if (mViewPager == null) {
+            return false;
+        }
+        int position = mViewPager.getCurrentItem();
+        if (position == 0) {
+            mViewPager.setCurrentItem(1, true);
             return true;
         } else {
             return false;
