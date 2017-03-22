@@ -129,7 +129,7 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
                             @Override
                             public void run() {
                                 try {
-                                    View v = (View) navigationView.getHeaderView(0);
+                                    View v = navigationView.getHeaderView(0);
                                     nav_displayName = (TextView) v.findViewById(R.id.nav_user_name_display1);
                                     backgroundIV = (NetworkImageView) v.findViewById(R.id.nav_user_background1);
                                     iv = (RoundedNetworkImageView) v.findViewById(R.id.nav_user_profile1);
@@ -151,35 +151,13 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
+                    intent = new Intent(FeedActivity.this, SplashActivity.class);
+                    startActivity(intent);
                 }
             }
         };
+        setupVariables();
 
-        listView = (ListView) findViewById(R.id.list);
-
-        feedItems = new ArrayListEvents<>();
-
-        listAdapter = new FeedListAdapter(this, feedItems);
-        listView.setAdapter(listAdapter);
-        listView.setOnItemClickListener(new ListView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                intent = new Intent(FeedActivity.this, EventInfoActivity.class);
-                Event selectedEvent = (Event) listView.getAdapter().getItem(position);
-                intent.putExtra("SELECTED_EVENT", selectedEvent);
-                startActivity(intent);
-            }
-        });
-
-        enlargeFlyerContainer = (RelativeLayout) findViewById(R.id.feed_enlarge_flyer_container);
-        enlargeFlyerContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                enlargeFlyerContainer.setVisibility(View.GONE);
-                Log.d("FeedActivity", "Now it's gone");
-            }
-        });
-        enlargeFlyer = (NetworkImageView) findViewById(R.id.feed_enlarge_flyer);
     }
 
     @Override
@@ -193,6 +171,20 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
         super.onStart();
         mAuth = FirebaseAuth.getInstance();
         mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    public void onResume() {
+        super.onResume();
+        if (mAuth == null) {
+            mAuth = FirebaseAuth.getInstance();
+        }
+        if (user == null) {
+            user = mAuth.getCurrentUser();
+        }
+        if (listView == null|| listAdapter == null || enlargeFlyer == null) {
+            setupVariables();
+        }
+        loadFeed();
     }
 
     @Override
@@ -209,7 +201,7 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    public void toChat(View v) {
+    public void toInbox(View v) {
         intent = new Intent(FeedActivity.this, InboxActivity.class);
         startActivity(intent);
     }
@@ -302,5 +294,33 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
             return true;
         }
         return false;
+    }
+
+    private void setupVariables() {
+        listView = (ListView) findViewById(R.id.list);
+
+        feedItems = new ArrayListEvents<>();
+
+        listAdapter = new FeedListAdapter(this, feedItems);
+        listView.setAdapter(listAdapter);
+        listView.setOnItemClickListener(new ListView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                intent = new Intent(FeedActivity.this, EventInfoActivity.class);
+                Event selectedEvent = (Event) listView.getAdapter().getItem(position);
+                intent.putExtra("SELECTED_EVENT", selectedEvent);
+                startActivity(intent);
+            }
+        });
+
+        enlargeFlyerContainer = (RelativeLayout) findViewById(R.id.feed_enlarge_flyer_container);
+        enlargeFlyerContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                enlargeFlyerContainer.setVisibility(View.GONE);
+                Log.d("FeedActivity", "Now it's gone");
+            }
+        });
+        enlargeFlyer = (NetworkImageView) findViewById(R.id.feed_enlarge_flyer);
     }
 }

@@ -10,7 +10,8 @@ import java.util.Map;
 
 public class InboxThread {
 
-
+    public boolean group_chat = false;
+    public boolean group_name;
     public String thread_id;
     public Map<String, String> members = new LinkedHashMap<>();
     public Map<String, Message> messages = new LinkedHashMap<>();

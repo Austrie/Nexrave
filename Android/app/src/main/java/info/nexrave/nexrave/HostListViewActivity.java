@@ -412,13 +412,7 @@ public class HostListViewActivity extends AppCompatActivity {
                     }
                     event.date_time += "." + hour + "." + minute;
                     Log.d("HostListViewActivity", "About to upload FB Event");
-                    Thread t = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            FireDatabase.uploadFBEvent(user, event);
-                        }
-                    });
-                    t.run();
+                    FireDatabase.uploadFBEvent(activity, user, event);
                     intent = new Intent(HostListViewActivity.this, FeedActivity.class);
                     startActivity(intent);
                 }

@@ -1,6 +1,7 @@
 package info.nexrave.nexrave;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import info.nexrave.nexrave.fragments.CameraFragment;
@@ -52,11 +54,23 @@ public class EventInfoActivity extends AppCompatActivity
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.eventInfoContainer);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
     }
 
     @Override
     public void onStart() {
         super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        if (selectedEvent == null) {
+            Intent intent = new Intent(EventInfoActivity.this, FeedActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        super.onResume();
     }
 
     @Override
@@ -73,7 +87,9 @@ public class EventInfoActivity extends AppCompatActivity
         if (savedInstanceState == null) {
             Event extra = (Event) getIntent().getSerializableExtra("SELECTED_EVENT");
             if (extra == null) {
-                selectedEvent = new Event();
+                Intent intent = new Intent(EventInfoActivity.this, FeedActivity.class);
+                startActivity(intent);
+                finish();
             } else {
                 selectedEvent = extra;
             }
@@ -95,7 +111,9 @@ public class EventInfoActivity extends AppCompatActivity
         int position = mViewPager.getCurrentItem();
         if (position > 0) {
             if (position == 1) {
-                if (!VerticalViewPagerFragment.backToChat()) {
+                if (EventChatFragment.isUserListShowing()) {
+                    EventChatFragment.hideUserList();
+                } else if (!VerticalViewPagerFragment.backToChat()) {
                     mViewPager.setCurrentItem(position - 1, true);
                 }
             } else {
@@ -132,16 +150,24 @@ public class EventInfoActivity extends AppCompatActivity
         @Override
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
-            // Return a HostMainFragment (defined as a static inner class below).
-            switch (position) {
-                case (0):
-                    return EventInfoFragment.newInstance(selectedEvent);
-                case (1):
-                    return VerticalViewPagerFragment.newInstance(FireDatabase.backupFirebaseUser, EventInfoActivity.this, selectedEvent);
-                case (2):
-                    return EventUserFragment.newInstance();
+            // Return a ___Fragment (defined as a static inner class below).
+            try {
+                switch (position) {
+                    case (0):
+                        return EventInfoFragment.newInstance();
+                    case (1):
+                        return VerticalViewPagerFragment.newInstance();
+                    case (2):
+                        return EventUserFragment.newInstance();
+                }
+                return EventInfoFragment.newInstance();
+            } catch (Exception e) {
+                Log.d("EventInfoActivity", e.toString());
+                Intent intent = new Intent(EventInfoActivity.this, FeedActivity.class);
+                startActivity(intent);
+                finish();
             }
-            return EventInfoFragment.newInstance(selectedEvent);
+            return null;
         }
 
         @Override
@@ -172,6 +198,15 @@ public class EventInfoActivity extends AppCompatActivity
 
             return "Event Info";
         }
+    }
+
+    public Event getEvent() {
+        if (selectedEvent == null) {
+            Intent intent = new Intent(EventInfoActivity.this, FeedActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        return selectedEvent;
     }
 
     @Override

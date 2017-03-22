@@ -1,16 +1,66 @@
 package info.nexrave.nexrave.systemtools;
 
 import android.text.format.DateFormat;
+import android.util.Log;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
- * Created by yoyor on 2/19/2017.
+ * Created by yoyor on 2/8/2017.
  */
 
-public class IsEventToday {
+public class TimeConversion {
 
-    public static String check(String s) {
+    public static String[] convertMilitaryTime(String s) {
+        String[] militaryTime = (s.substring(11, 16)).split("\\.");
+        String[] result = new String[3];
+        result[1] = militaryTime[1];
+
+        if (Integer.valueOf(militaryTime[0]).equals(0)) {
+            result[0] = "12";
+            result[2] = "AM";
+        } else if (Integer.valueOf(militaryTime[0]) < 12) {
+            result[0] = militaryTime[0];
+            result[2] = "AM";
+        } else if (Integer.valueOf(militaryTime[0]).equals(12)) {
+            result[0] = "12";
+            result[2] = "PM";
+        } else if (Integer.valueOf(militaryTime[0]) > 12) {
+            result[0] = String.valueOf(Integer.valueOf(militaryTime[0]) - 12);
+            result[2] = "PM";
+        }
+
+        return result;
+    }
+
+    public static String messageTime(long l) {
+        int timeDifference = Long.valueOf((System.currentTimeMillis() - l) / 1000).intValue();
+        if (timeDifference >= 0 && timeDifference <= 60) {
+            return timeDifference + " min";
+        } else {
+            timeDifference = timeDifference / 60;
+            if (timeDifference < 24) {
+                return timeDifference + " hour";
+            } else {
+                Date date = new Date(l);
+                SimpleDateFormat sourceFormat = new SimpleDateFormat("MMM dd, yyyy");
+                sourceFormat.setTimeZone(TimeZone.getDefault());
+                String dateText = sourceFormat.format(date);
+                return dateText;
+
+            }
+        }
+
+    }
+
+//    public static String convertTo(Date date) {
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
+//        String dateString = sdf.format(date1);
+//    }
+
+    public static String eventTime(String s) {
         String day = (s.split("\\."))[2];
         String month = (s.split("\\."))[1];
         String year = (s.split("\\."))[0];
@@ -49,14 +99,14 @@ public class IsEventToday {
 //            currentDateInMillis = calendar.getTimeInMillis();
 
 
-            String[] eventTimeSections = ConvertMillitaryTime.convertBack(s);
+            String[] eventTimeSections = convertMilitaryTime(s);
             return eventTimeSections[0] + ":" + eventTimeSections[1] + " " + eventTimeSections[2];
         } else {
             return toMonth(month) + " " + day + ", " + year;
         }
     }
 
-    public static String toMonth(String s){
+    private static String toMonth(String s) {
         String month;
         switch (s) {
             case ("01"):
@@ -101,4 +151,5 @@ public class IsEventToday {
         }
         return month;
     }
+
 }

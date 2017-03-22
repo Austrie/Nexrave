@@ -9,13 +9,7 @@
     tools:context="info.nexrave.nexrave.EventInfoActivity">
 
 
+    <include layout="@layout/content_event_info" />
 
-        <RelativeLayout
-            android:id="@+id/eventInfo_contentLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <include layout="@layout/content_event_info" />
-        </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

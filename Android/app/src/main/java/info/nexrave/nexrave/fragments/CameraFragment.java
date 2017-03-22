@@ -47,7 +47,6 @@ public class CameraFragment extends Fragment {
 
     private Camera mCamera;
     private CameraPreview mPreview;
-    private static Activity activity;
 
     private OnFragmentInteractionListener mListener;
     private FrameLayout frameLayout;
@@ -76,9 +75,8 @@ public class CameraFragment extends Fragment {
      * @return A new instance of fragment CameraFragment.
      */
     //TODO: Rename and change types and number of parameters
-    public static CameraFragment newInstance(Activity a, String eventId) {
+    public static CameraFragment newInstance() {
         CameraFragment fragment = new CameraFragment();
-        activity = a;
 //        Bundle args = new Bundle();;
 //        args.putString(ARG_PARAM2, param2);
 //        fragment.setArguments(args);
@@ -99,13 +97,13 @@ public class CameraFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d("CameraActivity", "onCreateView called");
-        AskRunTimePermission.ask(activity, Manifest.permission.CAMERA, 1);
+        AskRunTimePermission.ask(getActivity(), Manifest.permission.CAMERA, 1);
         // Inflate the layout for this fragment
 //        activity.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         View view = inflater.inflate(R.layout.fragment_camera, container, false);
         mCamera = getCameraInstance();
-        mPreview = new CameraPreview(activity, mCamera);
+        mPreview = new CameraPreview(getActivity(), mCamera);
         frameLayout = (FrameLayout) view.findViewById(R.id.eventInfo_camera_frame);
         frameLayout.addView(mPreview);
         RelativeLayout controls = (RelativeLayout) frameLayout.findViewById(R.id.camera_controls);
@@ -169,9 +167,9 @@ public class CameraFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        AskRunTimePermission.ask(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE, 1);
-        AskRunTimePermission.ask(activity, Manifest.permission.READ_EXTERNAL_STORAGE, 1);
-        AskRunTimePermission.ask(activity, Manifest.permission.RECORD_AUDIO, 1);
+        AskRunTimePermission.ask(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE, 1);
+        AskRunTimePermission.ask(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE, 1);
+        AskRunTimePermission.ask(getActivity(), Manifest.permission.RECORD_AUDIO, 1);
         Log.d("CameraActivity", "onResume called");
         try {
             if ((mCamera == null) || (mPreview == null)) {
@@ -306,7 +304,7 @@ public class CameraFragment extends Fragment {
 
                         }
                         // work on UiThread for better performance
-                        activity.runOnUiThread(new Runnable() {
+                        getActivity().runOnUiThread(new Runnable() {
                             public void run() {
                                 try {
                                     mPreview.getRecorder().start();
@@ -324,7 +322,7 @@ public class CameraFragment extends Fragment {
                                 redBlink(true);
                                 if (elapsed == 31000) {
                                     try {
-                                        activity.runOnUiThread(new Runnable() {
+                                        getActivity().runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
                                                 recording = false;
@@ -397,7 +395,7 @@ public class CameraFragment extends Fragment {
     }
 
     public void redBlink(final boolean blink) {
-        activity.runOnUiThread(new Runnable() {
+        getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (blink) {

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorPrimaryDark"
+    android:paddingBottom="10dp"
+    android:orientation="horizontal">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <info.nexrave.nexrave.systemtools.RoundedNetworkImageView
+            android:id="@+id/eventChat_user_list_user_profile_pic"
+            android:layout_width="51dp"
+            android:layout_height="60dp"
+            android:paddingTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/bg_circle"
+            android:clickable="true"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/app_icon" />
+
+        <TextView
+            android:clickable="true"
+            android:id="@+id/eventChat_user_list_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Anonymous User"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/eventChat_user_list_user_profile_pic"
+            android:layout_toEndOf="@+id/eventChat_user_list_user_profile_pic" />
+    </RelativeLayout>
+
+</LinearLayout>

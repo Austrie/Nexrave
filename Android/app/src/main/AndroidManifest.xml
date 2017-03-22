@@ -67,7 +67,8 @@
         <activity
             android:name=".EventInfoActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".security.EnterPhoneNumber"
             android:theme="@style/Theme.AppCompat" />
@@ -118,8 +119,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="info.nexrave.nexrave.FeedActivity" />
         </activity>
-        <activity android:name=".InboxActivity"
-            android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".InboxActivity"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".UserProfileActivity"
+            android:theme="@style/AppTheme"/>
     </application>
 
 </manifest>

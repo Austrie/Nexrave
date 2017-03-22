@@ -29,21 +29,10 @@ import info.nexrave.nexrave.systemtools.VerticalViewPager;
  * create an instance of this fragment.
  */
 public class VerticalViewPagerFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private static VerticalViewPager mViewPager;
-    private static FirebaseUser user;
-    private static Event event;
-    private static Activity context;
 
     public VerticalViewPagerFragment() {
         // Required empty public constructor
@@ -59,12 +48,8 @@ public class VerticalViewPagerFragment extends Fragment {
      * @return A new instance of fragment VerticalViewPagerFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static VerticalViewPagerFragment newInstance(FirebaseUser firebaseUser,
-                                                        Activity activity, Event selectedEvent) {
+    public static VerticalViewPagerFragment newInstance() {
         VerticalViewPagerFragment fragment = new VerticalViewPagerFragment();
-        user = firebaseUser;
-        event = selectedEvent;
-        context = activity;
 //        Bundle args = new Bundle();
 //        args.putString(ARG_PARAM1, param1);
 //        args.putString(ARG_PARAM2, param2);
@@ -147,13 +132,13 @@ public class VerticalViewPagerFragment extends Fragment {
             switch (position) {
                 case (0):
                     Log.d("EventInfo", "Chat");
-                    return EventChatFragment.newInstance(user, context, event.event_id);
+                    return EventChatFragment.newInstance();
                 case (1):
                     Log.d("EventInfo", "Camera");
-                    return CameraFragment.newInstance(context, event.event_id);
+                    return CameraFragment.newInstance();
             }
             Log.d("EventInfo", "Non-selected");
-            return EventChatFragment.newInstance(user, context, event.event_id);
+            return EventChatFragment.newInstance();
         }
 
         @Override

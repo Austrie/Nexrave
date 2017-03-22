@@ -1,5 +1,8 @@
 package info.nexrave.nexrave.systemtools;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.facebook.AccessToken;
@@ -24,6 +27,7 @@ import info.nexrave.nexrave.models.Guest;
 import info.nexrave.nexrave.models.Host;
 import info.nexrave.nexrave.models.InviteList;
 import info.nexrave.nexrave.feedparts.FeedListAdapter;
+import info.nexrave.nexrave.services.UploadImageService;
 
 /**
  * Created by yoyor on 12/22/2016.
@@ -59,7 +63,7 @@ public class FireDatabase {
     /**
      * Method to create an event without using Facebook Event
      **/
-    public static void createEvent(final FirebaseUser user, final String event_name, final String description
+    public static void createEvent(Activity activity, final FirebaseUser user, final String event_name, final String description
             , final String time, final String date, final String location, final File file) {
 
         //First we must get how many events the user has hosted. This number will help us create
@@ -71,7 +75,7 @@ public class FireDatabase {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    eventNumber = ((Integer) dataSnapshot.getValue(Integer.class)).intValue();
+                    eventNumber = dataSnapshot.getValue(Integer.class);
                     Log.d("FireDatabase: event ", String.valueOf(eventNumber));
                 } else {
                     userRef.setValue(0);
@@ -95,31 +99,39 @@ public class FireDatabase {
         final Event event = new Event(event_name, description, "_null_", time + date, location);
         event.setEventId(user.getUid() + "event" + eventNumber);
         final DatabaseReference ref = mRootReference.child("events").child(event.event_id);
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                ref.setValue(event);
-                Log.d("FireDatabase: Creating ", "event" + ref.toString());
-                String dLink = FireStorage.uploadEventCoverPic(event.event_id, file);
-                Log.d("FireDatabase: ", dLink);
-                Map<String, Object> map = new HashMap<String, Object>();
-                map.put("image_uri ", dLink);
-                ref.updateChildren(map);
-            }
+        ref.setValue(event);
 
-            //            ;
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.d("FireDatabase: ", "onCancelled from createEvent.creatingEvent");
-            }
-        });
+        Intent intent = new Intent(activity, UploadImageService.class);
+        intent.putExtra("TASK", UploadImageService.STORAGE_UPLOAD_EVENT_COVER);
+        intent.putExtra("ID", event.event_id);
+        intent.putExtra("PIC", file);
+        activity.startService(intent);
+
+//        FireStorage.uploadEventCoverPic(event.event_id, file);
+//        ref.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                Log.d("FireDatabase: Creating ", "event" + ref.toString());
+//                String dLink =
+//                Log.d("FireDatabase: ", dLink);
+//                Map<String, Object> map = new HashMap<String, Object>();
+//                map.put("image_uri ", dLink);
+//                ref.updateChildren(map);
+//            }
+//
+//            //            ;
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                Log.d("FireDatabase: ", "onCancelled from createEvent.creatingEvent");
+//            }
+//        });
 
     }
 
     /**
      * Method to create an event using Facebook Event
      **/
-    public static void uploadFBEvent(final FirebaseUser user, final Event event) {
+    public static void uploadFBEvent(Activity activity, final FirebaseUser user, final Event event) {
 
         //First we must get how many events the user has hosted. This number will help us create
         //a unique id for the event
@@ -151,38 +163,20 @@ public class FireDatabase {
         userRef.setValue(eventNumber);
         event.setEventId(user.getUid() + "event" + String.valueOf(eventNumber));
         final DatabaseReference ref = mRootReference.child("events").child(event.event_id);
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                ref.setValue(event);
-                Log.d("FireDatabase: Creating ", "event " + ref.toString() + " " + event.facebook_cover_pic);
-                try {
-                    DatabaseReference picRef = ref.child("image_uri");
-                    Log.d("FireDatabase: ", " About to upload pic to FireStorage");
-//                    String dLink = FireStorage.uploadFBEventCoverPic(user.getUid()
-//                            + "event" + eventNumber.toString(), event.facebook_cover_pic);
-//                    Log.d("FireDatabase: ", dLink);
-//                    picRef.setValue(dLink);
-                    FireStorage.uploadFBEventCoverPic(event.event_id, event.facebook_cover_pic, picRef);
+        ref.setValue(event);
 
-                    ArrayList<Guest> list = new ArrayList<Guest>(event.guests.values());
-                    addHostingEventToUserAccount(user, event.event_id);
-                    for (int i = 0; i > event.guests.size(); i++) {
+        Intent intent = new Intent(activity, UploadImageService.class);
+        intent.putExtra("TASK", UploadImageService.STORAGE_UPLOAD_FACEBOOK_EVENT_COVER);
+        intent.putExtra("ID", event.event_id);
+        intent.putExtra("PIC", event.facebook_cover_pic);
+        activity.startService(intent);
+
+        ArrayList<Guest> list = new ArrayList<Guest>(event.guests.values());
+        addHostingEventToUserAccount(user, event.event_id);
+        for (int i = 0; i > event.guests.size(); i++) {
 //                        addEventToUserAccount(, event, event.event_id);
-                        addToPendingFacebookUser(list.get(i).facebook_id, event.event_id);
-                    }
-
-
-                } catch (Exception e) {
-                    Log.d("FireDatabase", e.toString());
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.d("FireDatabase: ", "onCancelled from createEvent.creatingEvent");
-            }
-        });
+            addToPendingFacebookUser(list.get(i).facebook_id, event.event_id);
+        }
     }
 
     /**
@@ -270,7 +264,7 @@ public class FireDatabase {
         userRef.updateChildren(map);
     }
 
-    public static void addToPendingFacebookUser(Long facebook_id, String event_id) {
+    private static void addToPendingFacebookUser(Long facebook_id, String event_id) {
         final DatabaseReference userRef = mRootReference.child("pending_invites").child("facebook")
                 .child(facebook_id.toString());
         Map<String, Object> map = new HashMap<>();
@@ -509,10 +503,9 @@ public class FireDatabase {
 
         final DatabaseReference eventsRef = mRootReference.child("events");
         for (int i = 0; i < invitedEventsList.size(); i++) {
-            DatabaseReference eventRef = eventsRef.child((String) invitedEventsList.get(i));
+            final DatabaseReference eventRef = eventsRef.child((String) invitedEventsList.get(i));
             eventRef.keepSynced(true);
 
-//                    final Event item = new Event();
             final String event_id = (String) invitedEventsList.get(i);
             eventRef.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -521,6 +514,9 @@ public class FireDatabase {
                         Event item = dataSnapshot.getValue(Event.class);
                         item.event_id = event_id;
                         Log.d("FireDatabase", item.toString());
+                        //Adds the firebase id in case the user was added via facebook
+                        eventRef.child("guests").child(backupAccessToken.getUserId())
+                                .child("firebase_id").setValue(backupFirebaseUser.getUid());
 
                         sort(feedItems, item, listAdapter);
                     } else {
@@ -540,42 +536,22 @@ public class FireDatabase {
     }
 
     public static void sort(ArrayListEvents<Event> feedItems, Event item, FeedListAdapter listAdapter) {
-        int contains = feedItems.containsEvent(item);
-        if (contains == -1) {
-            feedItems.add(item);
-            Collections.sort(feedItems, new Comparator() {
-                @Override
-                public int compare(Object o, Object t1) {
-                    if (Long.valueOf(((Event) o).date_time.replace(".", ""))
-                            > (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
-                        return 1;
-                    }
-
-                    if (Long.valueOf(((Event) o).date_time.replace(".", ""))
-                            < (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
-                        return -1;
-                    }
-                    return 0;
+        feedItems.add(item);
+        Collections.sort(feedItems, new Comparator() {
+            @Override
+            public int compare(Object o, Object t1) {
+                if (Long.valueOf(((Event) o).date_time.replace(".", ""))
+                        > (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
+                    return 1;
                 }
-            });
-        } else {
-            feedItems.add(contains, item);
-            Collections.sort(feedItems, new Comparator() {
-                @Override
-                public int compare(Object o, Object t1) {
-                    if (Long.valueOf(((Event) o).date_time.replace(".", ""))
-                            > (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
-                        return 1;
-                    }
 
-                    if (Long.valueOf(((Event) o).date_time.replace(".", ""))
-                            < (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
-                        return -1;
-                    }
-                    return 0;
+                if (Long.valueOf(((Event) o).date_time.replace(".", ""))
+                        < (Long.valueOf(((Event) t1).date_time.replace(".", "")))) {
+                    return -1;
                 }
-            });
-        }
+                return 0;
+            }
+        });
         // notify data changes to list adapter
         listAdapter.notifyDataSetChanged();
     }

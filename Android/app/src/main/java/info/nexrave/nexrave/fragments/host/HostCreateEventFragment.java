@@ -86,7 +86,7 @@ public class HostCreateEventFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                FireDatabase.createEvent(user, eventNameEt.getText().toString()
+                FireDatabase.createEvent(getActivity(), user, eventNameEt.getText().toString()
                         , eventDescriptionEt.getText().toString(), eventTimeEt.getText().toString()
                         , eventDateEt.getText().toString(), eventLocationEt.getText().toString()
                         , picFile);

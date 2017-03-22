@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context="info.nexrave.nexrave.InboxActivity">
 
-    <android.support.v4.view.ViewPager
+    <info.nexrave.nexrave.systemtools.LockableViewPager
         android:id="@+id/inbox_Container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -2,6 +2,7 @@ package info.nexrave.nexrave.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import info.nexrave.nexrave.R;
+import info.nexrave.nexrave.UserProfileActivity;
 import info.nexrave.nexrave.feedparts.AppController;
 import info.nexrave.nexrave.fragments.EventUserFragment;
 import info.nexrave.nexrave.fragments.VerticalViewPagerFragment;
@@ -89,14 +91,25 @@ public class InboxMessagesAdapter extends BaseAdapter {
             isUser = false;
         }
 
-        final DatabaseReference mRootReference = FireDatabase.getInstance().getReference();
-        final DatabaseReference usersRef = mRootReference.child("users");
         if (!isUser) {
+            final DatabaseReference mRootReference = FireDatabase.getInstance().getReference();
+            final DatabaseReference usersRef = mRootReference.child("users").child(message.user_id);
             usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    ((NetworkImageView) v.findViewById(R.id.InboxMessages_user_profile_pic))
-                            .setImageUrl(dataSnapshot.child("pic_uri").getValue(String.class), AppController.getInstance().getImageLoader());
+                    NetworkImageView profilePic = (NetworkImageView) v.findViewById(R.id.InboxMessages_user_profile_pic);
+
+                    profilePic.setImageUrl(dataSnapshot.child("pic_uri").getValue(String.class),
+                            AppController.getInstance().getImageLoader());
+
+                    profilePic.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(activity, UserProfileActivity.class);
+                            intent.putExtra("id", message.user_id);
+                            activity.startActivity(intent);
+                        }
+                    });
                 }
 
                 @Override
@@ -115,7 +128,7 @@ public class InboxMessagesAdapter extends BaseAdapter {
                 //If it's invisible (because it has no likes) then make it visible
                 if (heartIV.getVisibility() == View.INVISIBLE) {
                     heartIV.setVisibility(View.VISIBLE);
-                //Else if it's visible, and it has zero likes, then make it invisible
+                    //Else if it's visible, and it has zero likes, then make it invisible
                 } else if (numOfLikes == 0) {
                     numLikesTV.setVisibility(View.INVISIBLE);
                     heartIV.setVisibility(View.INVISIBLE);

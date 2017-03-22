@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginTop="64dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
+    android:fitsSystemWindows="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <View
+            android:layout_marginTop="48dp"
+            android:id="@+id/whiteline"
+            android:layout_alignParentTop="true"
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            android:layout_height="1dp" />
+
+        <ListView
+            android:layout_marginTop="10dp"
+            android:fastScrollEnabled="true"
+            android:fastScrollAlwaysVisible="true"
+            android:layout_below="@id/whiteline"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/event_chat_user_list_listview" />
+    </RelativeLayout>
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#C4C4C4C4"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/transparent"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+            <include
+                android:id="@+id/eventChat_search_toolbar"
+                layout="@layout/search_layout" />
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+</android.support.design.widget.CoordinatorLayout>
+

@@ -14,13 +14,13 @@
         <!--android:src="@android:drawable/ic_menu_search" />-->
 
     <SearchView
-        android:id="@+id/searchText"
+        android:id="@+id/searchView"
         android:background="@color/transparent"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
         android:layout_centerVertical="true" >
 
         <requestFocus />

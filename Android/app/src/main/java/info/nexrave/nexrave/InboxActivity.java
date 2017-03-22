@@ -14,14 +14,14 @@ import info.nexrave.nexrave.fragments.inbox.InboxMessagesFragment;
 import info.nexrave.nexrave.fragments.inbox.InboxThreadsFragment;
 import info.nexrave.nexrave.models.InboxThread;
 import info.nexrave.nexrave.systemtools.FireDatabase;
+import info.nexrave.nexrave.systemtools.LockableViewPager;
 
 public class InboxActivity extends AppCompatActivity
         implements InboxThreadsFragment.OnFragmentInteractionListener,
                     InboxMessagesFragment.OnFragmentInteractionListener {
 
     private static final String TAG = InboxActivity.class.getSimpleName();
-    private static ViewPager mViewPager;
-    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private static LockableViewPager mViewPager;
 
 
     @Override
@@ -32,11 +32,12 @@ public class InboxActivity extends AppCompatActivity
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.inbox_Container);
+        mViewPager = (LockableViewPager) findViewById(R.id.inbox_Container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setPagingEnabled(false);
     }
 
 //    private void getExtra(Bundle savedInstanceState) {
@@ -124,16 +125,6 @@ public class InboxActivity extends AppCompatActivity
                 case 1:
                     return "Chat";
             }
-//
-//                case (1):
-//                    switch (position) {
-//                        case 0:
-//                            return "Private";
-//                        case 1:
-//                            return "Public";
-//                    }
-//                    break;
-//            }
 
             return "Event Info";
         }
@@ -154,6 +145,7 @@ public class InboxActivity extends AppCompatActivity
 
     public static void setInboxThread(InboxThread thread) {
         InboxMessagesFragment.setInboxThread(thread);
+        mViewPager.setPagingEnabled(true);
         mViewPager.setCurrentItem(1, true);
     }
 

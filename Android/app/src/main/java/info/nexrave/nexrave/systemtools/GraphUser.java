@@ -1,9 +1,11 @@
 package info.nexrave.nexrave.systemtools;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
@@ -30,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import info.nexrave.nexrave.UserProfileActivity;
 import info.nexrave.nexrave.models.User;
 import info.nexrave.nexrave.feedparts.AppController;
 
@@ -149,8 +152,24 @@ public class GraphUser {
                     @Override
                     public void run() {
                         nav_displayName.setText((String) map.get("name"));
+                        nav_displayName.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent intent = new Intent(activity, UserProfileActivity.class);
+                                intent.putExtra("id", user.getUid());
+                                activity.startActivity(intent);
+                            }
+                        });
                         iv.setImageUrl((String) map.get("pic_uri")
                                 , AppController.getInstance().getImageLoader());
+                        iv.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent intent = new Intent(activity, UserProfileActivity.class);
+                                intent.putExtra("id", user.getUid());
+                                activity.startActivity(intent);
+                            }
+                        });
                         backgroundIV2.setImageUrl((String) map.get("pic_uri")
                                 , AppController.getInstance().getImageLoader());
 
@@ -183,7 +202,7 @@ public class GraphUser {
     //ask for access token and guest/user/host/event
     //TODO: Set facebook_id as variable
     public static void updateRealtimeDatabase(@NonNull final FirebaseUser user, @NonNull AccessToken ac) {
-        //Updating Firebase Real-time Databashboard
+        //Updating Firebase Real-time Database
 
         final Map<String, Object> map = new HashMap<String, Object>();
         final DatabaseReference ref = mRootReference.child("users");

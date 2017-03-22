@@ -81,16 +81,16 @@ public class SplashActivity extends AppCompatActivity {
         //Video settings
         Log.d(TAG, "Video about to be called");
         videoHolder = (VideoView) findViewById(R.id.videoView);
-        Uri video = Uri.parse("android.resource://" + getPackageName() + "/"
-                + R.raw.video_footage);
-        videoHolder.setVideoURI(video);
-        videoHolder.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                mp.setLooping(true);
-            }
-        });
-        videoHolder.start();
+//        Uri video = Uri.parse("android.resource://" + getPackageName() + "/"
+//                + R.raw.video_footage);
+//        videoHolder.setVideoURI(video);
+//        videoHolder.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+//            @Override
+//            public void onPrepared(MediaPlayer mp) {
+//                mp.setLooping(true);
+//            }
+//        });
+//        videoHolder.start();
 
 
         FireDatabase.getInstance();

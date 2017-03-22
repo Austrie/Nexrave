@@ -5,7 +5,7 @@
     android:fitsSystemWindows="true">
 
     <ListView
-        android:paddingTop="56dp"
+        android:layout_marginTop="64dp"
         android:clipToPadding="true"
         android:id="@+id/discover_pending_events_search_results"
         android:layout_width="match_parent"
@@ -15,7 +15,7 @@
     </ListView>
 
     <ListView
-        android:paddingTop="56dp"
+        android:layout_marginTop="64dp"
         android:clipToPadding="true"
         android:id="@+id/discover_pending_events"
         android:layout_width="match_parent"

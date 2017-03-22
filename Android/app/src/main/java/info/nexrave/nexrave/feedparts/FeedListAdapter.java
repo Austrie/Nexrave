@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.net.Uri;
 import android.support.v7.graphics.Palette;
 import android.util.Log;
@@ -43,8 +45,8 @@ import info.nexrave.nexrave.FeedActivity;
 import info.nexrave.nexrave.R;
 import info.nexrave.nexrave.models.Event;
 import info.nexrave.nexrave.systemtools.FireDatabase;
-import info.nexrave.nexrave.systemtools.IsEventToday;
 import info.nexrave.nexrave.systemtools.RoundedNetworkImageView;
+import info.nexrave.nexrave.systemtools.TimeConversion;
 
 public class FeedListAdapter extends BaseAdapter {
     private Activity activity;
@@ -75,151 +77,188 @@ public class FeedListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        try {
+            final Event item = feedItems.get(position);
 
-        final Event item = feedItems.get(position);
-
-        if (inflater == null)
-            inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if (convertView == null) {
-            while (convertView == null) {
-                try {
-                    convertView = inflater.inflate(R.layout.feed_item2, null);
-                } catch (Exception e) {
-
-                }
-            }
-        }
-
-        if (imageLoader == null)
-            imageLoader = AppController.getInstance().getImageLoader();
-
-//        ImageView hostImage = (ImageView) convertView.findViewById(R.id.feed_host_profile_pic);
-        final TextView hostUsername = (TextView) convertView.findViewById(R.id.feed_host_username);
-        final TextView location = (TextView) convertView.findViewById(R.id.feed_event_location);
-        final TextView timestamp = (TextView) convertView.findViewById(R.id.feed_event_date_time);
-        final Button eventButton = (Button) convertView.findViewById(R.id.feed_event_button);
-        final ImageView nextButton = (ImageView) convertView.findViewById(R.id.feed_flyer_next_button);
-        eventButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(activity, EventInfoActivity.class);
-                intent.putExtra("SELECTED_EVENT", item);
-                Log.d("JSONFEED", item.event_id);
-                activity.startActivity(intent);
-            }
-        });
-        final RoundedNetworkImageView profilePic = (RoundedNetworkImageView) convertView
-                .findViewById(R.id.feed_host_profile_pic);
-
-        DatabaseReference orgRef = FireDatabase.getRoot().child("organizations")
-                .child(item.organization);
-
-        orgRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    //Org name
-                    hostUsername.setText((String) dataSnapshot.child("name").getValue());
-
-                    //Org profile pic
-                    profilePic.setImageUrl((String) dataSnapshot.child("pic_uri").getValue(),
-                            imageLoader);
-
-                } else {
-
-                    final DatabaseReference mainHostRef = FireDatabase.getRoot().child("users")
-                            .child(item.main_host_id);
-                    mainHostRef.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            //Main Host name
-                            hostUsername.setText((String) dataSnapshot.child("name").getValue());
-
-                            //Main Host profile pic
-                            profilePic.setImageUrl((String) dataSnapshot.child("pic_uri").getValue(),
-                                    imageLoader);
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        timestamp.setText(IsEventToday.check(item.date_time));
-        location.setText(item.city_state);
-        eventButton.setText(item.event_name);
-
-        // Feed image
-        Log.d("FeedActivity", "JSON adapater: " + item.image_uri);
-        if (item.image_uri != null) {
-            Uri uri = Uri.parse(item.image_uri);
-            final SimpleDraweeView draweeView = (SimpleDraweeView) convertView
-                    .findViewById(R.id.feed_event_pic);
-            Postprocessor colorDetectorPostprocessor = new BasePostprocessor() {
-                @Override
-                public String getName() {
-                    return "colorDetectorPostprocessor";
-                }
-
-                @Override
-                public void process(Bitmap bitmap) {
+            if (inflater == null)
+                inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            if (convertView == null) {
+                while (convertView == null) {
                     try {
-                        Palette.generateAsync(bitmap, new Palette.PaletteAsyncListener() {
-                            public void onGenerated(Palette palette) {
-                                try {
-                                    eventButton.setBackgroundColor(palette.getDarkMutedColor(Color.WHITE));
-                                    eventButton.setTextColor(palette.getVibrantColor(Color.RED));
-                                    nextButton.setColorFilter(palette.getVibrantColor(Color.RED));
-                                } catch (Exception e) {
-                                    Log.d("FeedActivity", e.toString());
-                                }
-                            }
-                        });
+                        convertView = inflater.inflate(R.layout.feed_item, null);
                     } catch (Exception e) {
-                        Log.d("FeedActivity", e.toString());
+
                     }
                 }
-            };
+            }
 
-            ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
-                    .setPostprocessor(colorDetectorPostprocessor)
-                    .build();
+            if (imageLoader == null)
+                imageLoader = AppController.getInstance().getImageLoader();
 
-            PipelineDraweeController controller = (PipelineDraweeController)
-                    Fresco.newDraweeControllerBuilder()
-                            .setImageRequest(request)
-                            .setOldController(draweeView.getController())
-                            // other setters as you need
-                            .build();
-            draweeView.setController(controller);
-            Log.d("FeedActivity", "JSON adapter: error" + " " + item.image_uri);
-            draweeView.setOnClickListener(new View.OnClickListener() {
+//        ImageView hostImage = (ImageView) convertView.findViewById(R.id.feed_host_profile_pic);
+            final TextView hostUsername = (TextView) convertView.findViewById(R.id.feed_host_username);
+            final TextView location = (TextView) convertView.findViewById(R.id.feed_event_location);
+            final TextView timestamp = (TextView) convertView.findViewById(R.id.feed_event_date_time);
+            final Button eventButton = (Button) convertView.findViewById(R.id.feed_event_button);
+            final ImageView nextButton = (ImageView) convertView.findViewById(R.id.feed_flyer_next_button);
+            eventButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    final ArrayList<Object> flyerArray = (FeedActivity.loadFullImage(item.image_uri));
-                    NetworkImageView flyer = (NetworkImageView) flyerArray.get(1);
-                    flyer.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            eventButton.callOnClick();
-                            ((RelativeLayout)flyerArray.get(0)).setVisibility(View.GONE);
-                        }
-                    });
+                    Intent intent = new Intent(activity, EventInfoActivity.class);
+                    intent.putExtra("SELECTED_EVENT", item);
+                    Log.d("JSONFEED", item.event_id);
+                    activity.startActivity(intent);
+                }
+            });
+            final RoundedNetworkImageView profilePic = (RoundedNetworkImageView) convertView
+                    .findViewById(R.id.feed_host_profile_pic);
+
+            DatabaseReference orgRef = FireDatabase.getRoot().child("organizations")
+                    .child(item.organization);
+
+            orgRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        //Org name
+                        hostUsername.setText((String) dataSnapshot.child("name").getValue());
+
+                        //Org profile pic
+                        profilePic.setImageUrl((String) dataSnapshot.child("pic_uri").getValue(),
+                                imageLoader);
+
+                    } else {
+
+                        final DatabaseReference mainHostRef = FireDatabase.getRoot().child("users")
+                                .child(item.main_host_id);
+                        mainHostRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                //Main Host name
+                                hostUsername.setText((String) dataSnapshot.child("name").getValue());
+
+                                //Main Host profile pic
+                                profilePic.setImageUrl((String) dataSnapshot.child("pic_uri").getValue(),
+                                        imageLoader);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
                 }
             });
-        }
 
-        return convertView;
+            timestamp.setText(TimeConversion.eventTime(item.date_time));
+            location.setText(item.city_state);
+            eventButton.setText(item.event_name);
+
+            // Feed image
+            Log.d("FeedActivity", "JSON adapater: " + item.image_uri);
+            if (item.image_uri != null) {
+                Uri uri = Uri.parse(item.image_uri);
+                final SimpleDraweeView draweeView = (SimpleDraweeView) convertView
+                        .findViewById(R.id.feed_event_pic);
+                Postprocessor colorDetectorPostprocessor = new BasePostprocessor() {
+                    @Override
+                    public String getName() {
+                        return "colorDetectorPostprocessor";
+                    }
+
+                    @Override
+                    public void process(final Bitmap bitmap) {
+                        try {
+                            if (!bitmap.isRecycled()) {
+                                new Palette.Builder(bitmap).generate(
+                                        new Palette.PaletteAsyncListener() {
+                                            public void onGenerated(Palette palette) {
+                                                try {
+                                                    if (!bitmap.isRecycled()) {
+//                                    eventButton.setBackgroundColor(palette.getDarkMutedColor(Color.WHITE));
+                                                        int vibrantColor = palette.getVibrantColor(Color.WHITE);
+                                                        GradientDrawable drawable = new GradientDrawable();
+                                                        drawable.setStroke(3, vibrantColor);
+                                                        drawable.setColor(Color.BLACK);
+                                                        drawable.setShape(GradientDrawable.RECTANGLE);
+                                                        StateListDrawable states = new StateListDrawable();
+                                                        states.addState(new int[] {android.R.attr.state_pressed},
+                                                                activity.getResources().getDrawable(R.drawable.bg_feed_item_button));
+                                                        states.addState(new int[] { }, drawable);
+                                                        eventButton.setBackground(states);
+                                                        eventButton.setTextColor(vibrantColor);
+                                                        nextButton.setColorFilter(vibrantColor);
+                                                    }
+                                                } catch (Exception e) {
+                                                    Log.d("FeedActivity", e.toString());
+                                                    eventButton.setTextColor(Color.WHITE);
+                                                    nextButton.setColorFilter(Color.WHITE);
+                                                }
+                                            }
+                                        });
+                            }
+                        } catch (Exception e) {
+                            Log.d("FeedActivity", e.toString());
+                            eventButton.setTextColor(Color.WHITE);
+                            nextButton.setColorFilter(Color.WHITE);
+                        }
+                    }
+                };
+                try {
+                    ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
+                            .setPostprocessor(colorDetectorPostprocessor)
+                            .build();
+
+                    PipelineDraweeController controller = (PipelineDraweeController)
+                            Fresco.newDraweeControllerBuilder()
+                                    .setImageRequest(request)
+                                    .setOldController(draweeView.getController())
+                                    // other setters as you need
+                                    .build();
+                    draweeView.setController(controller);
+                } catch (Exception e) {
+                    Log.d("FeedActivity", e.toString());
+                    ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
+                            .setPostprocessor(colorDetectorPostprocessor)
+                            .build();
+
+                    PipelineDraweeController controller = (PipelineDraweeController)
+                            Fresco.newDraweeControllerBuilder()
+                                    .setImageRequest(request)
+                                    .setOldController(draweeView.getController())
+                                    // other setters as you need
+                                    .build();
+                    draweeView.setController(controller);
+                }
+                Log.d("FeedActivity", "JSON adapter: error" + " " + item.image_uri);
+                draweeView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final ArrayList<Object> flyerArray = (FeedActivity.loadFullImage(item.image_uri));
+                        NetworkImageView flyer = (NetworkImageView) flyerArray.get(1);
+                        flyer.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                eventButton.callOnClick();
+                                ((RelativeLayout) flyerArray.get(0)).setVisibility(View.GONE);
+                            }
+                        });
+
+                    }
+                });
+            }
+
+            return convertView;
+        } catch (Exception e) {
+            Log.d("FeedListAdapter", e.toString());
+        }
+        return null;
     }
 }

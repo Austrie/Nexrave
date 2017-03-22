@@ -1,19 +1,23 @@
 package info.nexrave.nexrave.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
@@ -28,7 +32,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import info.nexrave.nexrave.EventInfoActivity;
 import info.nexrave.nexrave.R;
+import info.nexrave.nexrave.adapters.EventUsersListAdapter;
+import info.nexrave.nexrave.models.Guest;
 import info.nexrave.nexrave.models.Message;
 import info.nexrave.nexrave.feedparts.AppController;
 import info.nexrave.nexrave.systemtools.FireDatabase;
@@ -51,13 +58,14 @@ public class EventChatFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private static Activity activity;
-    private static String event_id;
     private static FirebaseUser user;
+    private static View userList_Container;
     private ListAdapter listAdapter;
     private TextView numLikesTV;
     private int numOfLikes;
-    private boolean choice;
+    private static boolean isUserListShowing = false;
+    private ListView userList;
+    private EventUsersListAdapter userListAdapter;
 
     private OnFragmentInteractionListener mListener;
 
@@ -66,10 +74,8 @@ public class EventChatFragment extends Fragment {
     }
 
     // TODO: Rename and change types and number of parameters
-    public static EventChatFragment newInstance(FirebaseUser mUser, Activity context, String id) {
-        user = mUser;
-        activity = context;
-        event_id = id;
+    public static EventChatFragment newInstance() {
+        user = FireDatabase.backupFirebaseUser;
         EventChatFragment fragment = new EventChatFragment();
         return fragment;
     }
@@ -80,28 +86,41 @@ public class EventChatFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         DatabaseReference mRootReference = FireDatabase.getInstance().getReference();
         final DatabaseReference usersRef = mRootReference.child("users");
-        final DatabaseReference eventRef = mRootReference.child("event_messages").child(event_id);
+        final DatabaseReference eventRef = mRootReference.child("event_messages")
+                .child(((EventInfoActivity) getActivity()).getEvent().event_id);
 
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_event_chat, container, false);
-        final EditText typedMessage = (EditText) view.findViewById(R.id.eventChat_editText);
-        ImageView sendButton = (ImageView) view.findViewById(R.id.eventChat_sendButton);
+        final EditText typedMessageET = (EditText) view.findViewById(R.id.eventChat_editText);
+        final ImageView sendButton = (ImageView) view.findViewById(R.id.eventChat_sendButton);
+
+        typedMessageET.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    sendButton.performClick();
+                    handled = true;
+                }
+                return handled;
+            }
+        });
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!typedMessage.getText().toString().isEmpty()) {
+                if (!typedMessageET.getText().toString().isEmpty()) {
                     Long time = System.currentTimeMillis();
                     Message message = new Message(
-                            user.getUid(), typedMessage.getText().toString(), time);
+                            user.getUid(), typedMessageET.getText().toString(), time);
                     Map<String, Object> map = new HashMap<String, Object>();
                     map.put(String.valueOf(time), message);
                     eventRef.updateChildren(map);
-                    typedMessage.setText("");
+                    typedMessageET.setText("");
                 }
             }
         });
@@ -116,7 +135,7 @@ public class EventChatFragment extends Fragment {
         });
 
         ListView listView = (ListView) view.findViewById(R.id.eventChat_listView);
-        listAdapter = new FirebaseListAdapter<Message>(activity, Message.class,
+        listAdapter = new FirebaseListAdapter<Message>(getActivity(), Message.class,
                 R.layout.message, eventRef) {
             @Override
             protected void populateView(final View v, final Message model, final int position) {
@@ -137,7 +156,8 @@ public class EventChatFragment extends Fragment {
                                 }
                         );
 
-                        ((TextView) v.findViewById(R.id.eventChat_user_name)).setText(dataSnapshot.child("name").getValue(String.class));
+                        final TextView username = (TextView) v.findViewById(R.id.eventChat_user_name);
+                        username.setText(dataSnapshot.child("name").getValue(String.class));
                         v.findViewById(R.id.eventChat_user_name).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -146,6 +166,13 @@ public class EventChatFragment extends Fragment {
                                 vp.setCurrentItem(2, true);
                             }
                         });
+
+                        //TODO: FirebaseListAdapter is too unstable with different views to do this
+//                        Event currentEvent = ((EventInfoActivity) getActivity()).getEvent();
+//                        if (currentEvent.main_host_id.equals(model.user_id)
+//                                || currentEvent.hosts.containsKey(model.user_id)) {
+//                            username.setTextColor(Color.RED);
+//                        }
                     }
 
                     @Override
@@ -187,6 +214,63 @@ public class EventChatFragment extends Fragment {
             }
         };
         listView.setAdapter(listAdapter);
+
+
+        userList_Container = view.findViewById(R.id.eventChat_user_list_container);
+        final SearchView searchView = (SearchView) (userList_Container.findViewById(R.id.eventChat_search_toolbar))
+                .findViewById(R.id.searchView);
+        userList = (ListView) userList_Container.findViewById(R.id.event_chat_user_list_listview);
+        (view.findViewById(R.id.eventChat_users_icon)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View mView) {
+                if (!isUserListShowing) {
+                    userListAdapter = new EventUsersListAdapter((EventInfoActivity) getActivity(), false);
+//                    TextView tv = new TextView(getActivity());
+//                    tv.setText("500");
+//                    userList.addView(tv);
+//                    userList.addFooterView(tv);
+                    userList.setAdapter(userListAdapter);
+                    userListAdapter.notifyDataSetChanged();
+                    userList_Container.setVisibility(View.VISIBLE);
+                    searchView.setIconified(false);
+                    searchView.setQueryHint("Enter guest name here...");
+//                    Log.d("EventUsersList", String.valueOf(userListAdapter.getCount()));
+//                    Log.d("EventUsersList", String.valueOf(userListAdapter.getItemId(0)));
+//                    Log.d("EventUsersList", String.valueOf(userList.getChildCount()));
+                    //TODO Remove AP and Kunal
+                    long l = 100002510856637L;
+                    final Guest AP = new Guest(l, FireDatabase.backupFirebaseUser.getUid());
+                    AP.firebase_id = "geDSG6TDxTXWsWr8UjV6j7gI3232";
+                    ((EventInfoActivity) getActivity()).getEvent().guests.put("100002510856637", AP);
+
+                    long l2 = 791117281041660L;
+                    final Guest KS = new Guest(l2, FireDatabase.backupFirebaseUser.getUid());
+                    KS.firebase_id = "ePKPFosz3KeVs39MdVndueQnLVN2";
+                    ((EventInfoActivity) getActivity()).getEvent().guests.put("791117281041660", KS);
+                    userListAdapter.setNewList(false);
+//                    Log.d("EventUsersList", String.valueOf(userListAdapter.getCount()));
+////                    for (int i = 0; i < userListAdapter.getCount(); i++) {
+////                        listAdapter.getItem(i).
+////                    }
+//                    Log.d("EventUsersList", String.valueOf(userListAdapter.getItemId(0)));
+//                    Log.d("EventUsersList", String.valueOf(userList.getChildCount()));
+//                    userListAdapter.setNewList(false);
+//
+//                    Log.d("EventUsersList", String.valueOf(userListAdapter.getCount()));
+////                    for (int i = 0; i < userListAdapter.getCount(); i++) {
+////                        listAdapter.getItem(i).
+////                    }
+//                    Log.d("EventUsersList", String.valueOf(userListAdapter.getItemId(0)));
+//                    Log.d("EventUsersList", String.valueOf(userList.getChildCount()));
+//                    userList.invalidate();
+//                    userList.requestLayout();
+                    isUserListShowing = true;
+
+                } else {
+                    hideUserList();
+                }
+            }
+        });
         return view;
     }
 
@@ -243,8 +327,8 @@ public class EventChatFragment extends Fragment {
     }
 
     public void userLiked(final boolean choice, String timeStamp) {
-        final DatabaseReference messageRef = FireDatabase.getRoot().child("event_messages").child(event_id)
-                .child(timeStamp);
+        final DatabaseReference messageRef = FireDatabase.getRoot().child("event_messages")
+                .child(((EventInfoActivity) getActivity()).getEvent().event_id).child(timeStamp);
 
         if (choice) {
             Map<String, Object> map = new LinkedHashMap<>();
@@ -288,6 +372,19 @@ public class EventChatFragment extends Fragment {
                 }
             });
 
+        }
+    }
+
+    public static boolean isUserListShowing() {
+        return isUserListShowing;
+    }
+
+    public static void hideUserList() {
+        if (isUserListShowing && (userList_Container != null)) {
+            userList_Container.setVisibility(View.GONE);
+            isUserListShowing = false;
+        } else {
+            isUserListShowing = false;
         }
     }
 

@@ -7,16 +7,16 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
         android:weightSum="1">
 
 
         <info.nexrave.nexrave.systemtools.RoundedNetworkImageView
-            android:id="@+id/inboxThreads_user_profile_pic"
+            android:id="@+id/InboxThreads_user_profile_pic"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginRight="15dp"
@@ -28,83 +28,85 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:weightSum="1">
+                android:orientation="vertical">
 
                 <LinearLayout
-                    android:layout_width="210dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:weightSum="1">
+
+                    <LinearLayout
+                        android:layout_width="210dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+
+                            <TextView
+                                android:id="@+id/InboxThreads_user_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Anonymous User"
+                                android:textColor="#90ffffff"
+                                android:textSize="16sp" />
+
+                        </RelativeLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_marginTop="2dp"
+                                android:layout_marginRight="1dp"
+                                android:layout_width="10dp"
+                                android:layout_height="10dp"
+                                android:tint="#C4C4C4C4"
+                                android:src="@drawable/play_icon"/>
+
+                            <TextView
+                                android:id="@+id/InboxThreads_user_message"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Hidden Message"
+                                android:textColor="@color/white"
+                                android:textSize="12sp"
+                                android:textStyle="normal|bold" />
+                        </LinearLayout>
+
+
+                    </LinearLayout>
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
+                        android:layout_height="match_parent">
 
                         <TextView
-                            android:id="@+id/inboxThreads_user_name"
+                            android:id="@+id/InboxThreads_user_message_timestamp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Anonymous User"
+                            android:text="Jan 1, 2017"
                             android:textColor="#90ffffff"
-                            android:textSize="16sp" />
+                            android:textSize="12sp" />
 
                     </RelativeLayout>
-
-                    <TextView
-                        android:id="@+id/inboxThreads_user_message"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Hidden Message"
-                        android:textColor="@color/white"
-                        android:textSize="12sp"
-                        android:textStyle="normal|bold" />
-
-
                 </LinearLayout>
 
-                <RelativeLayout
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <FrameLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true">
-
-                        <com.facebook.drawee.view.DraweeView
-                            android:id="@+id/inboxThreads_flyer2"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_marginLeft="8dp"
-                            android:clickable="true"
-                            android:src="@drawable/sampleeventflier"
-                            android:tint="#90000000" />
-
-                        <com.facebook.drawee.view.DraweeView
-                            android:id="@+id/inboxThreads_flyer"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:clickable="true"
-                            android:src="@drawable/sampleeventflier" />
-                    </FrameLayout>
-                </RelativeLayout>
+                    android:layout_height="0.5dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="4dp"
+                    android:background="#90ffffff" />
             </LinearLayout>
-            <View
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="4dp"
-                android:layout_alignParentBottom="true"
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:background="#90ffffff"/>
-        </LinearLayout>
         </RelativeLayout>
     </LinearLayout>
 

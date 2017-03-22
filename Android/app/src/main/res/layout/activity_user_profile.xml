@@ -1,10 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
-    tools:context="info.nexrave.nexrave.fragments.EventUserFragment">
+    tools:context="info.nexrave.nexrave.UserProfileActivity">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -19,7 +20,7 @@
             android:layout_weight="0.1">
 
             <com.android.volley.toolbox.NetworkImageView
-                android:id="@+id/eventUser_background"
+                android:id="@+id/UserProfile_background"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="fitXY"
@@ -37,7 +38,7 @@
                     android:layout_height="wrap_content">
 
                     <info.nexrave.nexrave.systemtools.RoundedNetworkImageView
-                        android:id="@+id/eventUser_user_profile_pic"
+                        android:id="@+id/UserProfile_user_profile_pic"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
                         android:layout_centerInParent="true"
@@ -47,7 +48,7 @@
                 </RelativeLayout>
 
                 <TextView
-                    android:id="@+id/eventUser_username"
+                    android:id="@+id/UserProfile_username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -97,7 +98,7 @@
                 app:popupTheme="@style/AppTheme.PopupOverlay">
 
                 <ImageView
-                    android:id="@+id/eventUser_backButton"
+                    android:id="@+id/userProfile_backButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="backButton"
@@ -114,7 +115,7 @@
                     android:textAppearance="@style/TextAppearance.AppCompat" />
 
                 <ImageView
-                    android:id="@+id/eventUser_inbox"
+                    android:id="@+id/UserProfile_inbox"
                     android:layout_width="35dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
@@ -127,7 +128,7 @@
         </android.support.design.widget.AppBarLayout>
 
         <RelativeLayout
-            android:id="@+id/eventUser_large_IV_container"
+            android:id="@+id/UserProfile_large_IV_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/event_info_appBarLayout"
@@ -135,7 +136,7 @@
             android:visibility="gone">
 
             <com.android.volley.toolbox.NetworkImageView
-                android:id="@+id/eventUser_large_IV"
+                android:id="@+id/UserProfile_large_IV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
@@ -152,7 +153,7 @@
             android:weightSum="1">
 
             <ImageButton
-                android:id="@+id/eventUser_facebook"
+                android:id="@+id/UserProfile_facebook"
                 android:layout_width="55dp"
                 android:layout_height="50dp"
                 android:layout_marginLeft="30dp"
@@ -164,37 +165,37 @@
                 app:srcCompat="@drawable/facebook_logo_button" />
 
             <ImageButton
-                android:id="@+id/eventUser_instagram"
+                android:id="@+id/UserProfile_instagram"
                 android:layout_width="53dp"
+                android:layout_height="52dp"
                 android:layout_marginRight="30dp"
                 android:layout_marginTop="160dp"
                 android:background="#00000000"
                 android:scaleType="fitCenter"
                 app:srcCompat="@drawable/instagram_logo"
-                android:layout_weight="0.06"
-                android:layout_height="50dp" />
+                android:layout_weight="0.06" />
 
             <ImageButton
-                android:id="@+id/eventUser_twitter"
+                android:id="@+id/UserProfile_twitter"
                 android:layout_width="46dp"
+                android:layout_height="51dp"
                 android:layout_marginRight="25dp"
                 android:layout_marginTop="160dp"
                 android:layout_weight="0.13"
                 android:background="#00000000"
                 android:scaleType="fitCenter"
-                app:srcCompat="@drawable/twitter_logo_button"
-                android:layout_height="50dp" />
+                app:srcCompat="@drawable/twitter_logo_button" />
 
             <ImageButton
 
-                android:id="@+id/eventUser_snapchat"
-                android:layout_width="52dp"
+                android:id="@+id/UserProfile_snapchat"
+                android:layout_width="55dp"
+                android:layout_height="59dp"
                 android:layout_marginTop="156dp"
+                android:layout_weight="0.11"
                 android:background="#00000000"
                 android:scaleType="fitCenter"
-                app:srcCompat="@drawable/snapchat_logo_button"
-                android:layout_weight="0.15"
-                android:layout_height="58dp" />
+                app:srcCompat="@drawable/snapchat_logo_button" />
         </LinearLayout>
     </RelativeLayout>
 

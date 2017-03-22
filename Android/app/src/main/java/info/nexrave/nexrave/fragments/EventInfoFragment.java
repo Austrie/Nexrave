@@ -25,13 +25,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import info.nexrave.nexrave.EventInfoActivity;
 import info.nexrave.nexrave.R;
 import info.nexrave.nexrave.models.Event;
 import info.nexrave.nexrave.feedparts.AppController;
 import info.nexrave.nexrave.systemtools.FireDatabase;
-import info.nexrave.nexrave.systemtools.IsEventToday;
 import info.nexrave.nexrave.systemtools.QRCode;
 import info.nexrave.nexrave.systemtools.RoundedNetworkImageView;
+import info.nexrave.nexrave.systemtools.TimeConversion;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -71,12 +72,11 @@ public class EventInfoFragment extends Fragment {
      * @return A new instance of fragment EventInfoFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static EventInfoFragment newInstance(Event selectedEvent) {
+    public static EventInfoFragment newInstance() {
         EventInfoFragment fragment = new EventInfoFragment();
         Bundle args = new Bundle();
 //        args.putString(ARG_PARAM1, param1);
 //        args.putString(ARG_PARAM2, param2);
-        event = selectedEvent;
         fragment.setArguments(args);
         return fragment;
     }
@@ -84,10 +84,7 @@ public class EventInfoFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        event = ((EventInfoActivity)getActivity()).getEvent();
     }
 
     @Override
@@ -96,7 +93,16 @@ public class EventInfoFragment extends Fragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_event_info, container, false);
 
-        Uri uri = Uri.parse(event.image_uri);
+        Uri uri = Uri.EMPTY;
+        try {
+            uri = Uri.parse(event.image_uri);
+        } catch (Exception e) {
+            Log.d("EventInfoActivity", e.toString());
+            event = ((EventInfoActivity) getActivity()).getEvent();
+            if (event ==  null) {
+                getActivity().finish();
+            }
+        }
         SimpleDraweeView event_flier = (SimpleDraweeView) view
                 .findViewById(R.id.eventInfo_flier);
         event_flier.setImageURI(uri);
@@ -146,7 +152,7 @@ public class EventInfoFragment extends Fragment {
 
         TextView date_time = (TextView) view
                 .findViewById(R.id.eventInfo_date_time);
-        date_time.setText(IsEventToday.check(event.date_time));
+        date_time.setText(TimeConversion.eventTime(event.date_time));
 
         TextView event_name = (TextView) view
                 .findViewById(R.id.eventInfo_event_name);

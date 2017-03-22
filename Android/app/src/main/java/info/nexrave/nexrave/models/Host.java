@@ -22,7 +22,6 @@ public class Host implements Serializable{
     public String firebase_id;
     public Long facebook_id;
     public String host_name;
-    public String host_image;
     public ArrayList<Host> invited_hosts = new ArrayList<>();
     public ArrayList<Guest> invited_guests = new ArrayList<>();
 
