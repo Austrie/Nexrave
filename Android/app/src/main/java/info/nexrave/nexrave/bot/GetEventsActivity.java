@@ -1,8 +1,12 @@
 package info.nexrave.nexrave.bot;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsResult;
 import android.webkit.ValueCallback;
@@ -130,7 +134,7 @@ public class GetEventsActivity {
     public void listOfEventsReady() {
         Log.d("GetEventsActivity", "Events ready");
         HostListViewActivity.setListOfEvents(listOfEvents);
-        if(killed == false) {
+        if(!killed) {
             KillWebView.kill(webView, activity);
             killed = true;
         }
@@ -148,6 +152,91 @@ public class GetEventsActivity {
     }
 
     final class MyWebChromeClient extends WebChromeClient {
+//        @Override
+//        public void onConsoleMessage(final String message, int lineNumber, String sourceID) {
+//            super.onConsoleMessage(message, lineNumber, sourceID);
+//            if (message.contains("Uncaught ")) {
+//                final AlertDialog dialog;
+//                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+//
+//                builder.setMessage("Your Facebook event can't be copied at the moment. Do you want" +
+//                        " to send us an autofilled email so we can look into it?")
+//                        .setTitle("Facebook Event Denied");
+//                // Add the buttons
+//                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        // User clicked OK button
+//                        Intent i = new Intent(android.content.Intent.ACTION_SEND);
+//                        i.setType("text/plain");
+//                        i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"nexravecorp@gmail.com",
+//                                "austrieshane@gmail.com"});
+//                        i.putExtra(Intent.EXTRA_SUBJECT, "Nexrave: Facebook Copy Event Error");
+//                        i.putExtra(Intent.EXTRA_TEXT   , message);
+//                        activity.startActivity(Intent.createChooser(i, "Email:"));
+//                    }
+//                });
+//                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        // User cancelled the dialog
+//                        dialog.dismiss();
+//                    }
+//                });
+//                // Create the AlertDialog
+//                dialog = builder.create();
+//                dialog.setOnShowListener( new DialogInterface.OnShowListener() {
+//                    @Override
+//                    public void onShow(DialogInterface arg0) {
+//                        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(activity.getResources().getColor(R.color.colorPrimaryDark));
+//                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.getResources().getColor(R.color.colorPrimaryDark));
+//                    }
+//                });
+//                dialog.show();
+//            }
+//        }
+//
+//        @Override
+//        public boolean onConsoleMessage(final ConsoleMessage consoleMessage) {
+//            if (consoleMessage.message().contains("Uncaught ")) {
+//                final AlertDialog dialog;
+//                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+//
+//                builder.setMessage("Your Facebook event can't be copied at the moment. Do you want" +
+//                        " to send us an autofilled email so we can look into it?")
+//                        .setTitle("Facebook Event Denied");
+//                // Add the buttons
+//                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        // User clicked OK button
+//                        Intent i = new Intent(android.content.Intent.ACTION_SEND);
+//                        i.setType("text/plain");
+//                        i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"nexravecorp@gmail.com",
+//                                "austrieshane@gmail.com"});
+//                        i.putExtra(Intent.EXTRA_SUBJECT, "Nexrave: Facebook Copy Event Error");
+//                        i.putExtra(Intent.EXTRA_TEXT   , consoleMessage.message());
+//                        activity.startActivity(Intent.createChooser(i, "Email:"));
+//                    }
+//                });
+//                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        // User cancelled the dialog
+//                        dialog.dismiss();
+//                    }
+//                });
+//                // Create the AlertDialog
+//                dialog = builder.create();
+//                dialog.setOnShowListener( new DialogInterface.OnShowListener() {
+//                    @Override
+//                    public void onShow(DialogInterface arg0) {
+//                        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(activity.getResources().getColor(R.color.colorPrimaryDark));
+//                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.getResources().getColor(R.color.colorPrimaryDark));
+//                    }
+//                });
+//                dialog.show();
+//            }
+//            return super.onConsoleMessage(consoleMessage);
+//
+//        }
+
         @Override
         public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
             Log.d("GetEventsActivity", "LogTag " + message);

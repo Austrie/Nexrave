@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
@@ -14,7 +15,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import info.nexrave.nexrave.feedparts.AppController;
+import info.nexrave.nexrave.feedparts.FeedListAdapter;
 import info.nexrave.nexrave.models.Event;
+import info.nexrave.nexrave.systemtools.ArrayListEvents;
 import info.nexrave.nexrave.systemtools.FireDatabase;
 import info.nexrave.nexrave.systemtools.RoundedNetworkImageView;
 
@@ -25,6 +28,8 @@ public class UserProfileActivity extends AppCompatActivity {
     private RoundedNetworkImageView profilePic;
     private TextView username;
     private ImageView inboxIcon;
+    private static FeedListAdapter adapter;
+    private static ArrayListEvents<Event> listOfEvents;
     //TODO: Social media icons, list view
 
     @Override
@@ -44,6 +49,10 @@ public class UserProfileActivity extends AppCompatActivity {
         profilePic = (RoundedNetworkImageView) findViewById(R.id.UserProfile_user_profile_pic);
         username = (TextView) findViewById(R.id.UserProfile_username);
         inboxIcon = (ImageView) findViewById(R.id.UserProfile_inbox);
+        listOfEvents = new ArrayListEvents<>();
+        adapter = new FeedListAdapter(UserProfileActivity.this, listOfEvents);
+        ListView listView = (ListView) findViewById(R.id.UserProfile_history);
+        listView.setAdapter(adapter);
     }
 
     @Override
@@ -80,6 +89,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 backgroundPic.setImageUrl(picUrl, AppController.getInstance().getImageLoader());
                 profilePic.setImageUrl(picUrl, AppController.getInstance().getImageLoader());
                 username.setText(dataSnapshot.child("name").getValue(String.class));
+                loadHistory(selectedUserFireId, String.valueOf(dataSnapshot.child("facebook_id").getValue(Long.class)));
             }
 
             @Override
@@ -91,5 +101,9 @@ public class UserProfileActivity extends AppCompatActivity {
             //TODO inbox icon giving null pointer exception
 //            inboxIcon.setVisibility(View.GONE);
         }
+    }
+
+    private static void loadHistory(String userId, String accessToken) {
+        FireDatabase.loadFeedEvents(userId, accessToken, listOfEvents, adapter);
     }
 }

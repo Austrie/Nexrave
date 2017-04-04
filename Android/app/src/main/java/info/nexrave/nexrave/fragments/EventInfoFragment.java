@@ -44,17 +44,10 @@ import info.nexrave.nexrave.systemtools.TimeConversion;
  */
 public class EventInfoFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
     private static Event event;
     private static ImageView QR;
     private static Bitmap QRCodeBitmap;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
@@ -74,17 +67,13 @@ public class EventInfoFragment extends Fragment {
     // TODO: Rename and change types and number of parameters
     public static EventInfoFragment newInstance() {
         EventInfoFragment fragment = new EventInfoFragment();
-        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        event = ((EventInfoActivity)getActivity()).getEvent();
+        event = ((EventInfoActivity) getActivity()).getEvent();
     }
 
     @Override
@@ -93,62 +82,59 @@ public class EventInfoFragment extends Fragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_event_info, container, false);
 
-        Uri uri = Uri.EMPTY;
-        try {
+        Uri uri;
+        if (event.image_uri != null) {
             uri = Uri.parse(event.image_uri);
-        } catch (Exception e) {
-            Log.d("EventInfoActivity", e.toString());
-            event = ((EventInfoActivity) getActivity()).getEvent();
-            if (event ==  null) {
-                getActivity().finish();
-            }
+        } else {
+            uri = Uri.parse(event.facebook_cover_pic);
+
         }
         SimpleDraweeView event_flier = (SimpleDraweeView) view
                 .findViewById(R.id.eventInfo_flier);
         event_flier.setImageURI(uri);
+        if (event.organization != null) {
+            DatabaseReference orgRef = FireDatabase.getRoot().child("organizations")
+                    .child(event.organization);
 
-        DatabaseReference orgRef = FireDatabase.getRoot().child("organizations")
-                .child(event.organization);
+            orgRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        //Org name
+                        RoundedNetworkImageView host_pic = (RoundedNetworkImageView) view
+                                .findViewById(R.id.eventInfo_host_profile_pic);
+                        host_pic.setImageUrl((String) dataSnapshot.child("pic_uri").getValue()
+                                , AppController.getInstance().getImageLoader());
 
-        orgRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    //Org name
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        } else {
+            final DatabaseReference mainHostRef = FireDatabase.getRoot().child("users")
+                    .child(event.main_host_id);
+            mainHostRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    //Main Host profile pic
                     RoundedNetworkImageView host_pic = (RoundedNetworkImageView) view
                             .findViewById(R.id.eventInfo_host_profile_pic);
                     host_pic.setImageUrl((String) dataSnapshot.child("pic_uri").getValue()
                             , AppController.getInstance().getImageLoader());
+                }
 
-                } else {
-
-                    final DatabaseReference mainHostRef = FireDatabase.getRoot().child("users")
-                            .child(event.main_host_id);
-                    mainHostRef.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-
-                            //Main Host profile pic
-                            RoundedNetworkImageView host_pic = (RoundedNetworkImageView) view
-                                    .findViewById(R.id.eventInfo_host_profile_pic);
-                            host_pic.setImageUrl((String) dataSnapshot.child("pic_uri").getValue()
-                                    , AppController.getInstance().getImageLoader());
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
                 }
-            }
+            });
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        }
 
         TextView date_time = (TextView) view
                 .findViewById(R.id.eventInfo_date_time);

@@ -1,18 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="@dimen/feed_item_margin"
-    android:layout_marginRight="@dimen/feed_item_margin"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
     android:layout_marginBottom="2dp"
     android:background="@drawable/bg_parent_rounded_corner">
 
     <LinearLayout
+        android:id="@+id/feed_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="1dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <info.nexrave.nexrave.systemtools.RoundedNetworkImageView
+                android:id="@+id/feed_host_profile_pic"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="1dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@mipmap/app_icon"/>
+
+
+        </LinearLayout>
+
+        <View
+            android:layout_marginRight="14dp"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimaryDark" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingRight="5dp"
+            android:paddingTop="2dp">
+
+            <TextView
+                android:id="@+id/feed_host_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Username"
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/feed_event_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Location"
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="12sp" />
+
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="2dp">
+
+            <TextView
+                android:id="@+id/feed_event_date_time"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="5dp"
+                android:gravity="right"
+                android:text="8:00 PM"
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                android:textColor="#90000000"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_below="@id/feed_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingLeft="1dp"
         android:paddingRight="1dp">
@@ -44,88 +133,6 @@
         </FrameLayout>
     </LinearLayout>
 
-    <info.nexrave.nexrave.systemtools.FullyFadeLinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="1dp"
-        android:layout_marginRight="1dp"
-        android:layout_marginTop="1dp"
-        android:background="@drawable/event_item_gradient"
-        android:orientation="horizontal"
-        android:paddingBottom="3dp">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingRight="16dp">
-
-            <info.nexrave.nexrave.systemtools.RoundedNetworkImageView
-                android:id="@+id/feed_host_profile_pic"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginLeft="1dp"
-                android:layout_marginTop="1dp"
-                android:scaleType="fitCenter"
-                app:srcCompat="@mipmap/app_icon"/>
-
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:paddingRight="5dp"
-            android:paddingTop="2dp">
-
-            <TextView
-                android:id="@+id/feed_host_username"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Username"
-                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/feed_event_location"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Location"
-                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                android:textColor="@color/white"
-                android:textSize="12sp" />
-
-
-        </LinearLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="2dp">
-
-            <TextView
-                android:id="@+id/feed_event_date_time"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginRight="5dp"
-                android:gravity="right"
-                android:text="8:00 PM"
-                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                android:textColor="@color/white"
-                android:textSize="18sp" />
-
-        </RelativeLayout>
-
-    </info.nexrave.nexrave.systemtools.FullyFadeLinearLayout>
-
     <ImageView
         android:id="@+id/feed_flyer_next_button"
         android:layout_marginTop="260dp"
@@ -133,5 +140,6 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:src="@drawable/next"/>
+    </FrameLayout>
 
-</FrameLayout>
+</RelativeLayout>

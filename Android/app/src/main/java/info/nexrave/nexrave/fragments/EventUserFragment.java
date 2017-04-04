@@ -11,17 +11,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
+import com.facebook.AccessToken;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import info.nexrave.nexrave.R;
 import info.nexrave.nexrave.feedparts.AppController;
+import info.nexrave.nexrave.feedparts.FeedListAdapter;
+import info.nexrave.nexrave.models.Event;
+import info.nexrave.nexrave.systemtools.ArrayListEvents;
 import info.nexrave.nexrave.systemtools.FireDatabase;
 import info.nexrave.nexrave.systemtools.RoundedNetworkImageView;
 
@@ -50,6 +59,8 @@ public class EventUserFragment extends Fragment {
     private static NetworkImageView largeIV;
     private static RelativeLayout largeIVContainer;
     private static String pic_uri;
+    private static FeedListAdapter adapter;
+    private static ArrayListEvents<Event> listOfEvents;
     private static ImageButton facebookIB, instagramIB, twitterIB, snapchatIB;
 
     private OnFragmentInteractionListener mListener;
@@ -128,6 +139,10 @@ public class EventUserFragment extends Fragment {
         twitterIB = (ImageButton) v.findViewById(R.id.eventUser_twitter);
         snapchatIB = (ImageButton) v.findViewById(R.id.eventUser_snapchat);
         usernameTV = (TextView) v.findViewById(R.id.eventUser_username);
+        ListView listView = (ListView) v.findViewById(R.id.eventUser_history);
+        listOfEvents = new ArrayListEvents<>();
+        adapter = new FeedListAdapter(getActivity(), listOfEvents);
+        listView.setAdapter(adapter);
         return v;
     }
 
@@ -174,7 +189,7 @@ public class EventUserFragment extends Fragment {
 
     }
 
-    public static void loadUser(String user_id) {
+    public static void loadUser(final String user_id) {
         DatabaseReference userRef = FireDatabase.getRoot().child("users").child(user_id);
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -184,6 +199,7 @@ public class EventUserFragment extends Fragment {
                 backgroundIV.setImageUrl(pic_uri, AppController.getInstance().getImageLoader());
                 usernameTV.setText((String) dataSnapshot.child("name").getValue());
                 largeIVContainer.setVisibility(View.GONE);
+                loadHistory(user_id, String.valueOf(dataSnapshot.child("facebook_id").getValue(Long.class)));
             }
 
             @Override
@@ -208,6 +224,10 @@ public class EventUserFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private static void loadHistory(String userId, String accessToken) {
+        FireDatabase.loadFeedEvents(userId, accessToken, listOfEvents, adapter);
     }
 
     /**

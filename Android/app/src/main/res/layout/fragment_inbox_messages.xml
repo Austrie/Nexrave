@@ -1,8 +1,8 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorPrimaryDark"
     android:fitsSystemWindows="true"
     tools:context="info.nexrave.nexrave.fragments.inbox.InboxMessagesFragment">
@@ -22,8 +22,37 @@
                 android:id="@+id/InboxMessages_listView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_weight="10"
                 android:paddingTop="64dp"
                 android:stackFromBottom="true" />
+
+            <RelativeLayout
+                android:id="@+id/InboxMessages_attachedImageContainer"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="20"
+                android:visibility="gone"
+                android:background="#20ffffff">
+
+                <ImageView
+                    android:clickable="true"
+                    android:layout_centerInParent="true"
+                    android:id="@+id/InboxMessages_editText_image"
+                    android:layout_width="100dp"
+                    android:layout_height="300dp"
+                    android:scaleType="centerCrop" />
+
+                <ImageView
+                    android:onClick="removePic"
+                    android:clickable="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@+id/InboxMessages_editText_image"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/x_icon"/>
+            </RelativeLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -90,6 +119,14 @@
         </LinearLayout>
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/InboxMessages_enlarge_IV"
+        android:scaleType="fitXY"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="64dp"
+        android:visibility="gone"/>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -137,4 +174,4 @@
 
         </android.support.design.widget.AppBarLayout>
     </RelativeLayout>
-</FrameLayout>
+</android.support.design.widget.CoordinatorLayout>

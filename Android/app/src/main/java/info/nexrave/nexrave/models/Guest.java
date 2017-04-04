@@ -15,13 +15,10 @@ import java.util.ArrayList;
  * Created by yoyor on 12/21/2016.
  */
 
-public class Guest implements Serializable {
+public class Guest extends BaseUser implements Serializable {
 
     //TODO pull profile picture and name
-    public String firebase_id;
-    public String guest_name;
     public Integer can_invite = 0;
-    public Long facebook_id;
     public Long phone_number;
     public Long guest_id;
     public String invited_by;

@@ -51,7 +51,7 @@ public class DiscoverActivity extends AppCompatActivity {
 
     private void loadFeed() {
         //TODO: Change this to only load accepted events
-        FireDatabase.loadPendingEvents(FireDatabase.backupFirebaseUser, FireDatabase.backupAccessToken,
+        FireDatabase.loadPendingEvents(FireDatabase.backupFirebaseUser.getUid(), FireDatabase.backupAccessToken.getUserId(),
                 feedItems, listAdapter);
     }
 }

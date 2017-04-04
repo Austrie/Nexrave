@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -24,8 +24,37 @@
                 android:id="@+id/eventChat_listView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_weight="70"
                 android:paddingTop="64dp"
                 android:stackFromBottom="true" />
+
+            <RelativeLayout
+                android:id="@+id/eventChat_attachedImageContainer"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="20"
+                android:visibility="gone"
+                android:background="#20ffffff">
+
+                <ImageView
+                    android:clickable="true"
+                    android:layout_centerInParent="true"
+                    android:id="@+id/eventChat_editText_image"
+                    android:layout_width="100dp"
+                    android:layout_height="300dp"
+                    android:scaleType="centerCrop" />
+
+                <ImageView
+                    android:onClick="removePic"
+                    android:clickable="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@+id/InboxMessages_editText_image"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/x_icon"/>
+            </RelativeLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -92,53 +121,62 @@
         </LinearLayout>
     </LinearLayout>
 
-        <android.support.design.widget.AppBarLayout
-            android:id="@+id/eventChat_appBarLayout"
+    <ImageView
+        android:id="@+id/eventChat_enlarge_IV"
+        android:scaleType="fitXY"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="64dp"
+        android:visibility="gone" />
+
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/eventChat_appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/eventChat_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimaryDark"
-            android:theme="@style/AppTheme.AppBarOverlay">
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/transparent"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/eventChat_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="@color/transparent"
-                app:popupTheme="@style/AppTheme.PopupOverlay">
+            <ImageView
+                android:id="@+id/eventChat_backButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="backButton"
+                android:rotation="180"
+                android:src="@drawable/next" />
 
-                <ImageView
-                    android:id="@+id/eventChat_backButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="backButton"
-                    android:rotation="180"
-                    android:src="@drawable/next" />
+            <ImageView
+                android:id="@+id/abs_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/logo"
+                android:textAppearance="@style/TextAppearance.AppCompat" />
 
-                <ImageView
-                    android:id="@+id/abs_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:src="@drawable/logo"
-                    android:textAppearance="@style/TextAppearance.AppCompat" />
+            <ImageView
+                android:id="@+id/eventChat_users_icon"
+                android:layout_width="35dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginRight="13dp"
+                android:layout_marginTop="1dp"
+                android:clickable="true"
+                android:src="@drawable/users_icon"
+                android:tint="@color/white"
+                android:visibility="visible" />
+        </android.support.v7.widget.Toolbar>
 
-                <ImageView
-                    android:clickable="true"
-                    android:id="@+id/eventChat_users_icon"
-                    android:layout_width="35dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:layout_marginRight="13dp"
-                    android:layout_marginTop="1dp"
-                    android:tint="@color/white"
-                    android:src="@drawable/users_icon"
-                    android:visibility="visible" />
-            </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
 
-        </android.support.design.widget.AppBarLayout>
-
-        <include
-            android:id="@+id/eventChat_user_list_container"
-            android:visibility="gone"
-            layout="@layout/event_chat_user_list" />
-</FrameLayout>
+    <include
+        android:id="@+id/eventChat_user_list_container"
+        layout="@layout/event_chat_user_list"
+        android:visibility="gone" />
+</android.support.design.widget.CoordinatorLayout>

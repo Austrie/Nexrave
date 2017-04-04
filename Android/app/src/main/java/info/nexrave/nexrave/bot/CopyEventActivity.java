@@ -1,9 +1,15 @@
 package info.nexrave.nexrave.bot;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsResult;
 import android.webkit.ValueCallback;
@@ -11,6 +17,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,6 +27,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import info.nexrave.nexrave.HostListViewActivity;
+import info.nexrave.nexrave.R;
+import info.nexrave.nexrave.SplashActivity;
 import info.nexrave.nexrave.models.Event;
 import info.nexrave.nexrave.models.Host;
 import info.nexrave.nexrave.models.InviteList;
@@ -32,7 +41,7 @@ public class CopyEventActivity {
     private String js;
     private Event event;
     private String eventName;
-    private String defaultFlyer = "http://freepsdflyer.com/wp-content/uploads/2015/06/Free-Elegant-Flyer-Template-Download.jpg";
+    private String defaultFlyer = "https://thumbs.dreamstime.com/x/red-party-flyer-9182126.jpg";
     private String eventLink;
     private String ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
                     + "Chrome/55.0.2883.87 Safari/537.36";
@@ -64,7 +73,7 @@ public class CopyEventActivity {
 
         //Get list of custom friends lists
         webView.loadUrl(eventLink);
-        Log.d("CopyEventActivity", "started" + eventLink);
+        Log.d("CopyEventActivity", "started " + eventLink);
     }
 
 
@@ -97,7 +106,7 @@ public class CopyEventActivity {
                 activity.setEventInfo(event);
             }
         });
-        if(killed == false) {
+        if(!killed) {
             KillWebView.kill(webView, activity);
             killed = true;
         }
@@ -105,6 +114,92 @@ public class CopyEventActivity {
 
 
     final class MyWebChromeClient extends WebChromeClient {
+
+//        @Override
+//        public void onConsoleMessage(final String message, int lineNumber, String sourceID) {
+//            super.onConsoleMessage(message, lineNumber, sourceID);
+//            if (message.contains("Uncaught ")) {
+//                final AlertDialog dialog;
+//                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+//
+//                builder.setMessage("Your Facebook event can't be copied at the moment. Do you want" +
+//                        " to send us an autofilled email so we can look into it?")
+//                        .setTitle("Facebook Event Denied");
+//                // Add the buttons
+//                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        // User clicked OK button
+//                        Intent i = new Intent(android.content.Intent.ACTION_SEND);
+//                        i.setType("text/plain");
+//                        i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"nexravecorp@gmail.com",
+//                                "austrieshane@gmail.com"});
+//                        i.putExtra(Intent.EXTRA_SUBJECT, "Nexrave: Facebook Copy Event Error");
+//                        i.putExtra(Intent.EXTRA_TEXT   , message);
+//                        activity.startActivity(Intent.createChooser(i, "Email:"));
+//                    }
+//                });
+//                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        // User cancelled the dialog
+//                        dialog.dismiss();
+//                    }
+//                });
+//                // Create the AlertDialog
+//                dialog = builder.create();
+//                dialog.setOnShowListener( new DialogInterface.OnShowListener() {
+//                    @Override
+//                    public void onShow(DialogInterface arg0) {
+//                        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(activity.getResources().getColor(R.color.colorPrimaryDark));
+//                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.getResources().getColor(R.color.colorPrimaryDark));
+//                    }
+//                });
+//                dialog.show();
+//            }
+//        }
+//
+//        @Override
+//        public boolean onConsoleMessage(final ConsoleMessage consoleMessage) {
+//            if (consoleMessage.message().contains("Uncaught ")) {
+//                final AlertDialog dialog;
+//                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+//
+//                builder.setMessage("Your Facebook event can't be copied at the moment. Do you want" +
+//                        " to send us an autofilled email so we can look into it?")
+//                        .setTitle("Facebook Event Denied");
+//                // Add the buttons
+//                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        // User clicked OK button
+//                        Intent i = new Intent(android.content.Intent.ACTION_SEND);
+//                        i.setType("text/plain");
+//                        i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"nexravecorp@gmail.com",
+//                                "austrieshane@gmail.com"});
+//                        i.putExtra(Intent.EXTRA_SUBJECT, "Nexrave: Facebook Copy Event Error");
+//                        i.putExtra(Intent.EXTRA_TEXT   , consoleMessage.message());
+//                        activity.startActivity(Intent.createChooser(i, "Email:"));
+//                    }
+//                });
+//                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        // User cancelled the dialog
+//                        dialog.dismiss();
+//                    }
+//                });
+//                // Create the AlertDialog
+//                dialog = builder.create();
+//                dialog.setOnShowListener( new DialogInterface.OnShowListener() {
+//                    @Override
+//                    public void onShow(DialogInterface arg0) {
+//                        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(activity.getResources().getColor(R.color.colorPrimaryDark));
+//                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.getResources().getColor(R.color.colorPrimaryDark));
+//                    }
+//                });
+//                dialog.show();
+//            }
+//            return super.onConsoleMessage(consoleMessage);
+//
+//        }
+
         @Override
         public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
 
@@ -140,17 +235,25 @@ public class CopyEventActivity {
         js = "javascript: function windowExist() { if ((document.querySelector('span[class=\"_5xhk\"]') == null) && (document.querySelector('a[class=\"_5xhk\"]') == null)) { "
                 + "setTimeout(windowExist, 100);} else {  " +
 
-                "if (document.querySelector('span[class=\"_5xhk\"]') == null) {"
-                + " android.setEventLocation(document.querySelector('a[class=\"_5xhk\"]').innerHTML);"
-                + "} else { android.setEventLocation(document.querySelectorAll('span[class=\"_5xhk\"]')[1].innerHTML); } "
+                "if (document.querySelector('span[class=\"_5xhk\"]') == null) {" +
+                    " android.setEventLocation(document.querySelector('a[class=\"_5xhk\"]').innerHTML);"
+                + "} else { " +
+                    "if (document.querySelectorAll('span[class=\"_5xhk\"]')[1] != null) {" +
+                            "android.setEventLocation(document.querySelectorAll('span[class=\"_5xhk\"]')[1].innerHTML); " +
+                    "} else { android.setEventLocation(document.querySelectorAll('span[class=\"_5xhk\"]')[0].innerHTML); }" +
+                " } "
 
                 + "if (document.querySelector('div[class=\"_1w2q\"]').children[0] != null) {"
                 + "android.setEventDescription(document.querySelector('div[class=\"_1w2q\"]').children[0].innerHTML); }"
                 + "else { android.setEventDescription('No Description'); }"
 
                 + "if (document.querySelector('img[class=\"coverPhotoImg photo img\"]') != null) { "
-                + "android.setEventCoverPic(document.querySelector('img[class=\"coverPhotoImg photo img\"]').src); }"
-                + "else { android.setEventCoverPic('"+ defaultFlyer +"') }"
+                    + "android.setEventCoverPic(document.querySelector('img[class=\"coverPhotoImg photo img\"]').src); }"
+                + "else if (document.querySelector('img[class=\"scaledImageFitWidth img\"]') != null) {"
+                    + "android.setEventCoverPic(document.querySelector('img[class=\"scaledImageFitWidth img\"]').src); } "
+                + "else if(document.querySelector('img[class=\"_46-i img\"]') != null) {"
+                    + "android.setEventCoverPic(document.querySelector('img[class=\"_46-i img\"]').src); }"
+                + "else { android.setEventCoverPic('"+ defaultFlyer +"'); }"
 //                + "if (dateTime.innerHTML.includes(' PM') || dateTime.innerHTML.includes(' AM')) {"
 //                + " checkDT(); "
 //                + "} else { alert('not in it'); }"+

@@ -34,6 +34,7 @@ public class Event implements Serializable {
     public String main_host_id;
     public Integer number_checked_in = 0;
     public String city_state = "Atlanta, Georgia";
+    public Map<String, String> checked_in = new LinkedHashMap<>();
     public Map<String, String> users_in = new LinkedHashMap<>();
     public Map<String, Host> hosts = new LinkedHashMap<>();
     public Map<String, Guest> guests = new LinkedHashMap<>();

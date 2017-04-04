@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -35,7 +35,7 @@
             android:id="@+id/inboxThreads_appBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
+            android:background="@color/colorPrimaryDark"
             android:theme="@style/AppTheme.AppBarOverlay">
 
             <android.support.v7.widget.Toolbar
@@ -62,6 +62,7 @@
                     android:textAppearance="@style/TextAppearance.AppCompat" />
             </android.support.v7.widget.Toolbar>
             <View
+                android:layout_marginTop="1dp"
                 android:layout_alignParentBottom="true"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -69,4 +70,4 @@
 
         </android.support.design.widget.AppBarLayout>
     </RelativeLayout>
-</FrameLayout>
+</android.support.design.widget.CoordinatorLayout>

@@ -53,6 +53,10 @@ public class InboxActivity extends AppCompatActivity
 //        }
 //    }
 
+    public void removePic(View v) {
+        InboxMessagesFragment.removePic();
+    }
+
     public void toChat(View v) {
         mViewPager.setCurrentItem(1, true);
     }
@@ -63,30 +67,14 @@ public class InboxActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-//        int position = mViewPager.getCurrentItem();
-//        if (position > 0) {
-//            if (position == 1) {
-//                if (!VerticalViewPagerFragment.backToChat()) {
-//                    mViewPager.setCurrentItem(position - 1, true);
-//                }
-//            } else {
-//                if(EventUserFragment.isLargeIVisible()) {
-//                    EventUserFragment.hideLargeIV();
-//                } else {
-//                    mViewPager.setCurrentItem(position - 1, true);
-//                }
-//            }
-//        } else if (position == 0) {
-//            if (EventInfoFragment.isQRVisible()) {
-//                EventInfoFragment.hideQR();
-//            } else {
-//                Log.i("MainActivity", "nothing on backstack, calling super");
-//                super.onBackPressed();
-//            }
-//        } else {
-//            Log.i("MainActivity", "nothing on backstack, calling super");
+        int position = mViewPager.getCurrentItem();
+        if (position == 0) {
             super.onBackPressed();
-//        }
+        } else if (position == 1) {
+            mViewPager.setCurrentItem(0, true);
+        } else {
+            super.onBackPressed();
+        }
     }
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -125,7 +113,6 @@ public class InboxActivity extends AppCompatActivity
                 case 1:
                     return "Chat";
             }
-
             return "Event Info";
         }
     }

@@ -1,6 +1,13 @@
 package info.nexrave.nexrave.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,6 +28,11 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.backends.pipeline.PipelineDraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -28,6 +40,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import org.apache.commons.io.IOUtils;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -35,6 +53,8 @@ import java.util.Map;
 import info.nexrave.nexrave.EventInfoActivity;
 import info.nexrave.nexrave.R;
 import info.nexrave.nexrave.adapters.EventUsersListAdapter;
+import info.nexrave.nexrave.fragments.inbox.InboxMessagesFragment;
+import info.nexrave.nexrave.models.Event;
 import info.nexrave.nexrave.models.Guest;
 import info.nexrave.nexrave.models.Message;
 import info.nexrave.nexrave.feedparts.AppController;
@@ -49,14 +69,6 @@ import info.nexrave.nexrave.systemtools.FireDatabase;
  * create an instance of this fragment.
  */
 public class EventChatFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private static FirebaseUser user;
     private static View userList_Container;
@@ -66,6 +78,10 @@ public class EventChatFragment extends Fragment {
     private static boolean isUserListShowing = false;
     private ListView userList;
     private EventUsersListAdapter userListAdapter;
+    private int numberNotRegistered;
+    private static ImageView attachedImage;
+    private static View attachedImageContainer;
+    private static File tempFile;
 
     private OnFragmentInteractionListener mListener;
 
@@ -88,15 +104,36 @@ public class EventChatFragment extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
+        final EventInfoActivity activity = (EventInfoActivity) getActivity();
         DatabaseReference mRootReference = FireDatabase.getInstance().getReference();
         final DatabaseReference usersRef = mRootReference.child("users");
         final DatabaseReference eventRef = mRootReference.child("event_messages")
-                .child(((EventInfoActivity) getActivity()).getEvent().event_id);
+                .child(activity.getEvent().event_id);
 
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_event_chat, container, false);
         final EditText typedMessageET = (EditText) view.findViewById(R.id.eventChat_editText);
         final ImageView sendButton = (ImageView) view.findViewById(R.id.eventChat_sendButton);
+        attachedImage = (ImageView) view.findViewById(R.id.eventChat_editText_image);
+        attachedImageContainer = view.findViewById(R.id.eventChat_attachedImageContainer);
+
+        attachedImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v2) {
+                ((ImageView) view.findViewById(R.id.eventChat_enlarge_IV)).setImageDrawable(
+                        attachedImage.getDrawable()
+                );
+                view.findViewById(R.id.eventChat_enlarge_IV).setVisibility(View.VISIBLE);
+            }
+        });
+
+        view.findViewById(R.id.eventChat_enlarge_IV).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v2) {
+                ((ImageView) view.findViewById(R.id.eventChat_enlarge_IV)).setImageDrawable(null);
+                view.findViewById(R.id.eventChat_enlarge_IV).setVisibility(View.GONE);
+            }
+        });
 
         typedMessageET.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -113,14 +150,27 @@ public class EventChatFragment extends Fragment {
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!typedMessageET.getText().toString().isEmpty()) {
+                if (!typedMessageET.getText().toString().isEmpty()
+                        || !(attachedImageContainer.getVisibility() == View.GONE)) {
                     Long time = System.currentTimeMillis();
-                    Message message = new Message(
-                            user.getUid(), typedMessageET.getText().toString(), time);
+                    Message message;
+                    if (!typedMessageET.getText().toString().isEmpty()) {
+                        message = new Message(
+                                FireDatabase.backupFirebaseUser.getUid(), typedMessageET.getText().toString(), time);
+                    } else {
+                        message = new Message(
+                                FireDatabase.backupFirebaseUser.getUid(), "*Image Attached*", time);
+                    }
+//                    message.image_link = "wait";
                     Map<String, Object> map = new HashMap<String, Object>();
                     map.put(String.valueOf(time), message);
                     eventRef.updateChildren(map);
                     typedMessageET.setText("");
+                    if (tempFile != null) {
+                        FireDatabase.uploadEventMessagePic(activity, activity.getEvent().event_id,
+                                String.valueOf(message.time_stamp), tempFile);
+                    }
+                    removePic();
                 }
             }
         });
@@ -130,13 +180,28 @@ public class EventChatFragment extends Fragment {
         shutterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                VerticalViewPagerFragment.toCamera();
+//                VerticalViewPagerFragment.toCamera();
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                EventChatFragment.this.startActivityForResult(intent, 1);
             }
         });
 
-        ListView listView = (ListView) view.findViewById(R.id.eventChat_listView);
-        listAdapter = new FirebaseListAdapter<Message>(getActivity(), Message.class,
+        final ListView listView = (ListView) view.findViewById(R.id.eventChat_listView);
+        listAdapter = new FirebaseListAdapter<Message>(activity, Message.class,
                 R.layout.message, eventRef) {
+
+            @Override
+            public View getView(int position, View view, ViewGroup viewGroup) {
+                view = mActivity.getLayoutInflater().inflate(mLayout, viewGroup, false);
+
+                Message model = getItem(position);
+
+                // Call out to subclass to marshall this model into the provided view
+                populateView(view, model, position);
+                return view;
+            }
+
             @Override
             protected void populateView(final View v, final Message model, final int position) {
                 DatabaseReference userRef = usersRef.child(model.user_id);
@@ -150,8 +215,12 @@ public class EventChatFragment extends Fragment {
                                     @Override
                                     public void onClick(View view) {
                                         EventUserFragment.loadUser(model.user_id);
-                                        ViewPager vp = (ViewPager) getActivity().findViewById(R.id.eventInfoContainer);
-                                        vp.setCurrentItem(2, true);
+                                        ViewPager vp = (ViewPager) activity.findViewById(R.id.eventInfoContainer);
+                                        if (activity.getIsHost()) {
+                                            vp.setCurrentItem(3, true);
+                                        } else {
+                                            vp.setCurrentItem(2, true);
+                                        }
                                     }
                                 }
                         );
@@ -162,7 +231,7 @@ public class EventChatFragment extends Fragment {
                             @Override
                             public void onClick(View view) {
                                 EventUserFragment.loadUser(model.user_id);
-                                ViewPager vp = (ViewPager) getActivity().findViewById(R.id.eventInfoContainer);
+                                ViewPager vp = (ViewPager) activity.findViewById(R.id.eventInfoContainer);
                                 vp.setCurrentItem(2, true);
                             }
                         });
@@ -173,6 +242,36 @@ public class EventChatFragment extends Fragment {
 //                                || currentEvent.hosts.containsKey(model.user_id)) {
 //                            username.setTextColor(Color.RED);
 //                        }
+
+                        if (model.image_link != null) {
+                            try {
+                                final SimpleDraweeView messageImageIV = ((SimpleDraweeView) v.findViewById(R.id.eventChat_user_message_attached_image));
+                                ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(model.image_link))
+                                        .setProgressiveRenderingEnabled(true)
+                                        .build();
+
+                                PipelineDraweeController controller = (PipelineDraweeController)
+                                        Fresco.newDraweeControllerBuilder()
+                                                .setImageRequest(request)
+                                                .setOldController(messageImageIV.getController())
+                                                // other setters as you need
+                                                .build();
+                                messageImageIV.setController(controller);
+                                messageImageIV.setVisibility(View.VISIBLE);
+
+                                messageImageIV.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view2) {
+                                        ((ImageView) view.findViewById(R.id.eventChat_enlarge_IV)).setImageDrawable(
+                                                messageImageIV.getDrawable()
+                                        );
+                                        view.findViewById(R.id.eventChat_enlarge_IV).setVisibility(View.VISIBLE);
+                                    }
+                                });
+                            } catch (Exception e) {
+                                Log.d("EventChatFragment", e.toString());
+                            }
+                        }
                     }
 
                     @Override
@@ -224,20 +323,34 @@ public class EventChatFragment extends Fragment {
             @Override
             public void onClick(View mView) {
                 if (!isUserListShowing) {
-                    userListAdapter = new EventUsersListAdapter((EventInfoActivity) getActivity(), false);
-//                    TextView tv = new TextView(getActivity());
-//                    tv.setText("500");
-//                    userList.addView(tv);
-//                    userList.addFooterView(tv);
+                    userListAdapter = new EventUsersListAdapter(activity, false);
+                    View footerView = ((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                            .inflate(R.layout.event_chat_user_list_footer_view, null, false);
+                    final TextView footerTV = (TextView) footerView.findViewById(R.id.eventChat_user_list_footer_view_text_view);
+//                    userList.addFooterView(footerView);
                     userList.setAdapter(userListAdapter);
                     userListAdapter.notifyDataSetChanged();
                     userList_Container.setVisibility(View.VISIBLE);
                     searchView.setIconified(false);
+//                    searchView.setTex
                     searchView.setQueryHint("Enter guest name here...");
-//                    Log.d("EventUsersList", String.valueOf(userListAdapter.getCount()));
-//                    Log.d("EventUsersList", String.valueOf(userListAdapter.getItemId(0)));
-//                    Log.d("EventUsersList", String.valueOf(userList.getChildCount()));
-                    //TODO Remove AP and Kunal
+//                    searchView.setBackgroundColor(Color.WHITE);
+//                    int searchFrameId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
+//                    View searchFrame = searchView.findViewById(searchFrameId);
+//                    searchFrame.bringToFront();
+//                    searchFrame.setBackgroundResource(R.drawable.bg_parent_rounded_corner_white);
+//
+////                    int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_badge", null, null);
+////                    View searchPlate = searchView.findViewById(searchPlateId);
+//
+//                    int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
+//                    View searchPlate = searchView.findViewById(searchPlateId);
+//                    searchPlate.setBackgroundResource(R.drawable.bg_parent_rounded_corner_white);
+
+//                    int searchBarId = searchView.getContext().getResources().getIdentifier("android:id/search_bar", null, null);
+//                    View searchBar = searchView.findViewById(searchBarId);
+//                    searchBar.setBackgroundResource(R.drawable.bg_parent_rounded_corner_white);
+
                     long l = 100002510856637L;
                     final Guest AP = new Guest(l, FireDatabase.backupFirebaseUser.getUid());
                     AP.firebase_id = "geDSG6TDxTXWsWr8UjV6j7gI3232";
@@ -248,22 +361,6 @@ public class EventChatFragment extends Fragment {
                     KS.firebase_id = "ePKPFosz3KeVs39MdVndueQnLVN2";
                     ((EventInfoActivity) getActivity()).getEvent().guests.put("791117281041660", KS);
                     userListAdapter.setNewList(false);
-//                    Log.d("EventUsersList", String.valueOf(userListAdapter.getCount()));
-////                    for (int i = 0; i < userListAdapter.getCount(); i++) {
-////                        listAdapter.getItem(i).
-////                    }
-//                    Log.d("EventUsersList", String.valueOf(userListAdapter.getItemId(0)));
-//                    Log.d("EventUsersList", String.valueOf(userList.getChildCount()));
-//                    userListAdapter.setNewList(false);
-//
-//                    Log.d("EventUsersList", String.valueOf(userListAdapter.getCount()));
-////                    for (int i = 0; i < userListAdapter.getCount(); i++) {
-////                        listAdapter.getItem(i).
-////                    }
-//                    Log.d("EventUsersList", String.valueOf(userListAdapter.getItemId(0)));
-//                    Log.d("EventUsersList", String.valueOf(userList.getChildCount()));
-//                    userList.invalidate();
-//                    userList.requestLayout();
                     isUserListShowing = true;
 
                 } else {
@@ -388,7 +485,45 @@ public class EventChatFragment extends Fragment {
         }
     }
 
+    public static void removePic() {
+        attachedImage.setImageDrawable(null);
+        attachedImageContainer.setVisibility(View.GONE);
+    }
+
     public static void setUser(@NonNull FirebaseUser firebaseUser) {
         user = firebaseUser;
     }
+
+    @SuppressLint("NewApi")
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        //Copy Uri contents into temp File.
+        if ((data != null) && (requestCode == 1)) {
+            tempFile = new File(getActivity().getFilesDir().getAbsolutePath(), "temp_image");
+            try {
+                tempFile.createNewFile();
+                IOUtils.copy(getActivity().getContentResolver().openInputStream(data.getData())
+                        , new FileOutputStream(tempFile));
+                Bitmap bitmap = BitmapFactory.decodeFile(tempFile.getPath());
+
+                Drawable bitmapDrawable = new BitmapDrawable(bitmap);
+                attachedImage.setImageDrawable(bitmapDrawable);
+                attachedImageContainer.setVisibility(View.VISIBLE);
+
+            } catch (IOException e) {
+                //Log Error
+                Log.d("InboxMessageFragment", e.toString());
+            }
+        }
+    }
+
+//    private void cleanMessageView(View v) {
+//
+//    }
+//
+//    static class ViewHolder {
+//        NetworkImageView userPicIV;
+//    }
+
 }

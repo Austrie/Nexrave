@@ -59,12 +59,15 @@
                     android:textStyle="normal|bold" />
 
 
-                <ImageView
-                    android:id="@+id/eventChat_message_attached_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:maxHeight="250dp"
-                    android:maxWidth="250dp" />
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:clickable="true"
+                    android:background="@drawable/bg_parent_rounded_corner_white2"
+                    android:id="@+id/eventChat_user_message_attached_image"
+                    android:layout_marginTop="10dp"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:scaleType="centerCrop" />
             </LinearLayout>
 
             <RelativeLayout

@@ -9,12 +9,8 @@ import java.util.Set;
  * Created by yoyor on 12/21/2016.
  */
 
-public class User implements Comparable<User> {
-
-    public String firebase_id;
-    public Long facebook_id;
+public class User extends BaseUser implements Comparable<User> {
     public String facebook_link;
-    public String name;
     //public String at_name;
     public String email;
     public String gender;

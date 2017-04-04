@@ -23,6 +23,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -31,20 +33,24 @@ import info.nexrave.nexrave.R;
 import info.nexrave.nexrave.UserProfileActivity;
 import info.nexrave.nexrave.feedparts.AppController;
 import info.nexrave.nexrave.models.InboxThread;
+import info.nexrave.nexrave.models.Message;
+import info.nexrave.nexrave.systemtools.ArrayListInboxThreads;
 import info.nexrave.nexrave.systemtools.FireDatabase;
 import info.nexrave.nexrave.systemtools.TimeConversion;
 
 public class InboxThreadsAdapter extends BaseAdapter {
     private Activity activity;
     private LayoutInflater inflater;
-    private List<InboxThread> threads;
+    private ArrayListInboxThreads<InboxThread> threads;
+    private List<ListOfMessages<String>> messageKeys;
     private ImageLoader imageLoader = AppController.getInstance().getImageLoader();
     //In case the other user was deleted from chat or something, just show the current user's pic
     private String otherUserId = FireDatabase.backupFirebaseUser.getUid();
 
-    public InboxThreadsAdapter(Activity activity, List<InboxThread> threads) {
+    public InboxThreadsAdapter(Activity activity, ArrayListInboxThreads<InboxThread> threads) {
         this.activity = activity;
         this.threads = threads;
+        this.messageKeys = new ArrayList<>();
     }
 
     @Override
@@ -54,14 +60,18 @@ public class InboxThreadsAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int location) {
-        return threads.get(location);
+
+        return threads.getByThreadId(messageKeys.get(location).thread_id);
     }
 
     @Override
     public long getItemId(int position) {
-        //TODO
-        ArrayList<String> messagesAL = new ArrayList<>(threads.get(position).messages.keySet());
-        return threads.get(position).messages.get(messagesAL.get(messagesAL.size() - 1)).time_stamp;
+        ListOfMessages<String> m = messageKeys.get(position);
+        return Long.valueOf(m.get(m.size() - 1));
+//        //TODO set up inbox by latest message
+//        ArrayList<String> messagesAL = new ArrayList<>(threads.get(position).messages.keySet());
+//        sortMessages(messagesAL);
+//        return threads.get(position).messages.get(messagesAL.get(messagesAL.size() - 1)).time_stamp;
     }
 
     @Override
@@ -74,22 +84,30 @@ public class InboxThreadsAdapter extends BaseAdapter {
         if (imageLoader == null)
             imageLoader = AppController.getInstance().getImageLoader();
 
-        final InboxThread thread = threads.get(position);
+        final InboxThread thread = threads.getByThreadId(messageKeys.get(position).thread_id);
         final NetworkImageView profilePic = ((NetworkImageView) convertView.findViewById(R.id.InboxThreads_user_profile_pic));
         final TextView username = ((TextView) convertView.findViewById(R.id.InboxThreads_user_name));
         final TextView messageTV = ((TextView) convertView.findViewById(R.id.InboxThreads_user_message));
         final TextView timestampTV = ((TextView) convertView.findViewById(R.id.InboxThreads_user_message_timestamp));
-        messageTV.setOnClickListener(new View.OnClickListener() {
+//        messageTV.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                InboxActivity.setInboxThread(thread);
+//            }
+//        });
+
+        convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 InboxActivity.setInboxThread(thread);
             }
         });
 
-        ArrayList<String> messagesAL = new ArrayList<>(thread.messages.keySet());
+//        ArrayList<String> messagesAL = new ArrayList<>(thread.messages.keySet());
+//        sortMessages(messagesAL);
         if (!thread.group_chat) {
             Object[] array = thread.members.keySet().toArray();
-            for (int i = 0; i < 2; i ++) {
+            for (int i = 0; i < 2; i++) {
                 if (!array[i].equals(FireDatabase.backupFirebaseUser.getUid())) {
                     otherUserId = array[i].toString();
                     break;
@@ -140,18 +158,102 @@ public class InboxThreadsAdapter extends BaseAdapter {
         } else {
             //TODO: Handle group chats
         }
-
-        if (thread.messages.get(messagesAL.get(messagesAL.size() - 1)).message.length() > 40) {
-            String s = thread.messages.get(messagesAL.get(messagesAL.size() - 1)).message.substring(0, 40) + "...";
+        ListOfMessages m = messageKeys.get(position);
+        if (thread.messages.get(m.get(m.size() - 1)).message.length() > 40) {
+            String s = thread.messages.get(m.get(m.size() - 1)).message.substring(0, 40) + "...";
             Log.d("Inbox", s);
             messageTV.setText(s);
         } else {
-            String s = thread.messages.get(messagesAL.get(messagesAL.size() - 1)).message;
+            String s = thread.messages.get(m.get(m.size() - 1)).message;
             Log.d("Inbox", s);
             messageTV.setText(s);
         }
         timestampTV.setText(TimeConversion
-                .messageTime(thread.messages.get(messagesAL.get(messagesAL.size() - 1)).time_stamp));
+                .messageTime(thread.messages.get(messageKeys.get(position).get(messageKeys.size() - 1)).time_stamp));
         return convertView;
+    }
+
+    private ListOfMessages<String> sortMessages(ListOfMessages<String> timestamps) {
+        Collections.sort(timestamps, new Comparator() {
+            @Override
+            public int compare(Object o, Object t1) {
+                Long one = Long.valueOf(o.toString());
+                Long two = Long.valueOf(t1.toString());
+
+                if (one > two) {
+                    return 1;
+                }
+
+                if (one < two) {
+                    return -1;
+                }
+                return 0;
+            }
+        });
+
+        return timestamps;
+    }
+
+//    private void sortThreads() {
+//        Collections.sort(threads, new Comparator() {
+//            @Override
+//            public int compare(Object o, Object t1) {
+//                InboxThread one = ((InboxThread) o);
+//                InboxThread two = ((InboxThread) t1);
+//
+//                Object[] oneKeys = one.messages.keySet().toArray();
+//                Object[] twoKeys = two.messages.keySet().toArray();
+//
+//                if (one.messages.get(oneKeys[oneKeys.length - 1]).time_stamp
+//                        > two.messages.get(twoKeys[twoKeys.length - 1]).time_stamp) {
+//                    return 1;
+//                }
+//
+//                if (one.messages.get(oneKeys[oneKeys.length - 1]).time_stamp
+//                        < two.messages.get(twoKeys[twoKeys.length - 1]).time_stamp) {
+//                    return -1;
+//                }
+//                return 0;
+//            }
+//        });
+//    }
+
+    private void sortMessagesList() {
+        Collections.sort(messageKeys, new Comparator() {
+            @Override
+            public int compare(Object o, Object t1) {
+                List<String> one = ((List<String>) o);
+                List<String> two = ((List<String>) t1);
+
+                if (Long.valueOf(one.get(one.size() - 1))
+                        > Long.valueOf(two.get(two.size() - 1))) {
+                    return -1;
+                }
+
+                if (Long.valueOf(one.get(one.size() - 1))
+                        < Long.valueOf(two.get(two.size() - 1))) {
+                    return 1;
+                }
+                return 0;
+            }
+        });
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        messageKeys.clear();
+        for (int i = 0; i < threads.size(); i++) {
+            ListOfMessages<String> messagesAL = new ListOfMessages<>();
+            messagesAL.addAll(threads.get(i).messages.keySet());
+            ListOfMessages<String> messages = sortMessages(messagesAL);
+            messages.thread_id = threads.get(i).thread_id;
+            messageKeys.add(messages);
+        }
+        sortMessagesList();
+        super.notifyDataSetChanged();
+    }
+
+    private class ListOfMessages<E> extends ArrayList<E> {
+        public String thread_id;
     }
 }

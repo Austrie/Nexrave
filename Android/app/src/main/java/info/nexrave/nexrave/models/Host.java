@@ -16,12 +16,10 @@ import java.util.ArrayList;
  * Created by yoyor on 12/21/2016.
  */
 
-public class Host implements Serializable{
+public class Host extends BaseUser implements Serializable {
 
     //TODO pull profile picture and name
-    public String firebase_id;
-    public Long facebook_id;
-    public String host_name;
+
     public ArrayList<Host> invited_hosts = new ArrayList<>();
     public ArrayList<Guest> invited_guests = new ArrayList<>();
 
@@ -30,7 +28,7 @@ public class Host implements Serializable{
     }
 
     public Host(String name, Long id) {
-        host_name = name;
+        this.name = name;
         facebook_id = id;
     }
 

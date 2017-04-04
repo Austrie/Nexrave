@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/eventChat_appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/eventChat_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/transparent"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <ImageView
+                android:id="@+id/eventChat_backButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="backButton"
+                android:rotation="180"
+                android:src="@drawable/next" />
+
+            <TextView
+                android:id="@+id/abs_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Settings"
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="64dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/addSocialButton"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/transparent"
+                android:text="Add Social Media"
+                android:gravity="center_vertical"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textSize="16sp" />
+
+            <RelativeLayout android:layout_height="wrap_content"
+                android:layout_width="match_parent">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#C4C4C4C4"
+                    android:layout_centerVertical="true" />
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/createOrgButton"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/transparent"
+                android:text="Create Organization"
+                android:gravity="center_vertical"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textSize="16sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_centerInParent="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#C4C4C4C4" />
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/tcButton"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/transparent"
+                android:text="Terms &amp; Conditions"
+                android:gravity="center_vertical"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textSize="16sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_centerInParent="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#C4C4C4C4" />
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/logoutButton"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/transparent"
+                android:text="Logout"
+                android:gravity="center_vertical"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textSize="16sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_centerInParent="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#C4C4C4C4" />
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/shareButton"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/transparent"
+                android:text="Share"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:gravity="center_vertical"
+                android:textSize="16sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_centerInParent="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#C4C4C4C4" />
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+</android.support.design.widget.CoordinatorLayout>

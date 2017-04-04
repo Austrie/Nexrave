@@ -342,7 +342,7 @@ public class HostListViewActivity extends AppCompatActivity {
                 public void run() {
                     try {
                         wait(5000);
-                    }catch(Exception e) {
+                    } catch (Exception e) {
                         Log.d("HostListViewActivity", e.toString());
                     }
                     getActivity().runOnUiThread(new Runnable() {
@@ -430,14 +430,5 @@ public class HostListViewActivity extends AppCompatActivity {
             return true;
         }
         return super.onKeyDown(keyCode, event);
-    }
-
-    public static void kill(WebView webView) {
-        webView.loadUrl("about:blank");
-        webView.stopLoading();
-        webView.setWebChromeClient(null);
-        webView.setWebViewClient(null);
-        webView.destroy();
-        webView = null;
     }
 }

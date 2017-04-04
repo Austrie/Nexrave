@@ -133,9 +133,9 @@ public class VerticalViewPagerFragment extends Fragment {
                 case (0):
                     Log.d("EventInfo", "Chat");
                     return EventChatFragment.newInstance();
-                case (1):
-                    Log.d("EventInfo", "Camera");
-                    return CameraFragment.newInstance();
+//                case (1):
+//                    Log.d("EventInfo", "Camera");
+//                    return CameraFragment.newInstance();
             }
             Log.d("EventInfo", "Non-selected");
             return EventChatFragment.newInstance();
@@ -144,7 +144,7 @@ public class VerticalViewPagerFragment extends Fragment {
         @Override
         public int getCount() {
             // Show 2 total pages.
-            return 2;
+            return 1;
         }
 
         @Override
@@ -152,8 +152,8 @@ public class VerticalViewPagerFragment extends Fragment {
             switch (position) {
                 case 0:
                     return "Event Chat";
-                case 1:
-                    return "Event Camera";
+//                case 1:
+//                    return "Event Camera";
             }
 //
 //                case (1):

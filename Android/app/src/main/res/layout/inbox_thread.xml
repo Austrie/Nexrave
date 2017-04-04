@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/colorPrimaryDark"
@@ -29,7 +30,7 @@
             android:layout_height="wrap_content">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
@@ -39,9 +40,10 @@
                     android:weightSum="1">
 
                     <LinearLayout
-                        android:layout_width="210dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:layout_weight="0.25">
 
                         <RelativeLayout
                             android:layout_width="match_parent"
@@ -86,13 +88,15 @@
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.75">
 
                         <TextView
                             android:id="@+id/InboxThreads_user_message_timestamp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Jan 1, 2017"
+                            android:layout_alignParentRight="true"
                             android:textColor="#90ffffff"
                             android:textSize="12sp" />
 

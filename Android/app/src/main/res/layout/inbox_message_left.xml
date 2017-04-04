@@ -39,20 +39,24 @@
                     android:id="@+id/InboxMessages_user_message"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:maxWidth="200dp"
                     android:background="@drawable/inbox_message_outline_left"
                     android:text="Hidden Message"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="14sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal|bold"
+                    android:padding="5dp" />
 
 
-                <ImageView
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:clickable="true"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/bg_parent_rounded_corner_white2"
+                    android:visibility="gone"
                     android:id="@+id/InboxMessages_message_attached_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:maxHeight="250dp"
-                    android:maxWidth="250dp" />
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:scaleType="centerCrop" />
             </LinearLayout>
 
             <RelativeLayout

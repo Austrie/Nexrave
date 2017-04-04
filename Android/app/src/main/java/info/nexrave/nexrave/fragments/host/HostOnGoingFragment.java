@@ -70,6 +70,6 @@ public class HostOnGoingFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        FireDatabase.pullHostingEvents(FireDatabase.backupFirebaseUser, feedItems, listAdapter);
+        FireDatabase.pullHostingEvents(FireDatabase.backupFirebaseUser.getUid(), feedItems, listAdapter);
     }
 }

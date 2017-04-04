@@ -2,9 +2,10 @@ package info.nexrave.nexrave.systemtools;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
+import com.android.volley.toolbox.NetworkImageView;
 import com.facebook.AccessToken;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -18,15 +19,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import info.nexrave.nexrave.feedparts.AppController;
 import info.nexrave.nexrave.models.Event;
 import info.nexrave.nexrave.models.Guest;
 import info.nexrave.nexrave.models.Host;
 import info.nexrave.nexrave.models.InviteList;
 import info.nexrave.nexrave.feedparts.FeedListAdapter;
+import info.nexrave.nexrave.services.PendingFacebookUserService;
 import info.nexrave.nexrave.services.UploadImageService;
 
 /**
@@ -42,6 +46,8 @@ public class FireDatabase {
     private static LinkedHashSet<Guest> usersToAddToFacebook = new LinkedHashSet<>();
     private static DatabaseReference mRootReference;
     private static long phoneNumber = 0;
+    public static Event currentEvent;
+    public static Event lastEvent;
 
     public FireDatabase() {
     }
@@ -60,10 +66,32 @@ public class FireDatabase {
         return mRootReference;
     }
 
+    public static void uploadEventMessagePic(Activity activity, String event_id,
+                                             String timestamp, File file) {
+        Log.d("FireDatabase", "method called");
+        Intent intent = new Intent(activity, UploadImageService.class);
+        intent.putExtra("TASK", UploadImageService.STORAGE_UPLOAD_EVENT_MESSAGE_PIC);
+        intent.putExtra("TIMESTAMP", timestamp);
+        intent.putExtra("ID", event_id);
+        intent.putExtra("PIC", file);
+        activity.startService(intent);
+    }
+
+    public static void uploadInboxMessagePic(Activity activity, String direct_message_id,
+                                             String timestamp, File file) {
+        Log.d("FireDatabase", "method called");
+        Intent intent = new Intent(activity, UploadImageService.class);
+        intent.putExtra("TASK", UploadImageService.STORAGE_UPLOAD_INBOX_MESSAGE_PIC);
+        intent.putExtra("TIMESTAMP", timestamp);
+        intent.putExtra("ID", direct_message_id);
+        intent.putExtra("PIC", file);
+        activity.startService(intent);
+    }
+
     /**
      * Method to create an event without using Facebook Event
      **/
-    public static void createEvent(Activity activity, final FirebaseUser user, final String event_name, final String description
+    public static void createEvent(final Activity activity, final FirebaseUser user, final String event_name, final String description
             , final String time, final String date, final String location, final File file) {
 
         //First we must get how many events the user has hosted. This number will help us create
@@ -78,34 +106,28 @@ public class FireDatabase {
                     eventNumber = dataSnapshot.getValue(Integer.class);
                     Log.d("FireDatabase: event ", String.valueOf(eventNumber));
                 } else {
+
                     userRef.setValue(0);
                     eventNumber = 0;
                     Log.d("FireDatabase: event ", userRef.toString());
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.d("FireDatabase: ", "onCancelled from createEvent.user");
-            }
-        });
+                //Increment the event number in order to create a unique event id, we make an event id by
+                // combining the user's unique id with the event number
+                eventNumber = (eventNumber + 1);
 
-        //Increment the event number in order to create a unique event id, we make an event id by
-        // combining the user's unique id with the event number
-        eventNumber = (eventNumber + 1);
+                userRef.setValue(eventNumber);
+                //ToDo fix timedate
+                final Event event = new Event(event_name, description, "_null_", time + date, location);
+                event.setEventId(user.getUid() + "event" + eventNumber);
+                final DatabaseReference ref = mRootReference.child("events").child(event.event_id);
+                ref.setValue(event);
 
-        userRef.setValue(eventNumber);
-        //ToDo fix timedate
-        final Event event = new Event(event_name, description, "_null_", time + date, location);
-        event.setEventId(user.getUid() + "event" + eventNumber);
-        final DatabaseReference ref = mRootReference.child("events").child(event.event_id);
-        ref.setValue(event);
-
-        Intent intent = new Intent(activity, UploadImageService.class);
-        intent.putExtra("TASK", UploadImageService.STORAGE_UPLOAD_EVENT_COVER);
-        intent.putExtra("ID", event.event_id);
-        intent.putExtra("PIC", file);
-        activity.startService(intent);
+                Intent intent = new Intent(activity, UploadImageService.class);
+                intent.putExtra("TASK", UploadImageService.STORAGE_UPLOAD_EVENT_COVER);
+                intent.putExtra("ID", event.event_id);
+                intent.putExtra("PIC", file);
+                activity.startService(intent);
 
 //        FireStorage.uploadEventCoverPic(event.event_id, file);
 //        ref.addValueEventListener(new ValueEventListener() {
@@ -125,13 +147,20 @@ public class FireDatabase {
 //                Log.d("FireDatabase: ", "onCancelled from createEvent.creatingEvent");
 //            }
 //        });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("FireDatabase: ", "onCancelled from createEvent.user");
+            }
+        });
 
     }
 
     /**
      * Method to create an event using Facebook Event
      **/
-    public static void uploadFBEvent(Activity activity, final FirebaseUser user, final Event event) {
+    public static void uploadFBEvent(final Activity activity, final FirebaseUser user, final Event event) {
 
         //First we must get how many events the user has hosted. This number will help us create
         //a unique id for the event
@@ -145,10 +174,35 @@ public class FireDatabase {
                     eventNumber = dataSnapshot.getValue(Integer.class);
                     Log.d("FireDatabase: event ", String.valueOf(eventNumber));
                 } else {
+
                     userRef.setValue(0);
                     eventNumber = 0;
                     Log.d("FireDatabase: event ", userRef.toString());
                 }
+
+                //Increment the event number in order to create a unique event id, we make an event id by
+                // combining the user's unique id with the event number
+                eventNumber = (eventNumber + 1);
+                userRef.setValue(eventNumber);
+                event.setEventId(user.getUid() + "event" + String.valueOf(eventNumber));
+                final DatabaseReference ref = mRootReference.child("events").child(event.event_id);
+                ref.setValue(event);
+
+                Intent intent = new Intent(activity, UploadImageService.class);
+                intent.putExtra("TASK", UploadImageService.STORAGE_UPLOAD_FACEBOOK_EVENT_COVER);
+                intent.putExtra("ID", event.event_id);
+                intent.putExtra("PIC", event.facebook_cover_pic);
+                activity.startService(intent);
+
+                ArrayList<Guest> list = new ArrayList<Guest>(event.guests.values());
+                Intent intent2 = new Intent(activity, PendingFacebookUserService.class);
+                intent2.putExtra("TASK", PendingFacebookUserService.DATABASE_ADD_PENDING_FACEBOOK_USER);
+                intent2.putExtra("ID", event.event_id);
+                intent2.putExtra("LIST", list);
+                activity.startService(intent2);
+
+                FireDatabase.addHostingEventToUserAccount(user, event.event_id);
+
             }
 
             @Override
@@ -156,27 +210,6 @@ public class FireDatabase {
                 Log.d("FireDatabase: ", "onCancelled from createEvent.user");
             }
         });
-
-        //Increment the event number in order to create a unique event id, we make an event id by
-        // combining the user's unique id with the event number
-        eventNumber = (eventNumber + 1);
-        userRef.setValue(eventNumber);
-        event.setEventId(user.getUid() + "event" + String.valueOf(eventNumber));
-        final DatabaseReference ref = mRootReference.child("events").child(event.event_id);
-        ref.setValue(event);
-
-        Intent intent = new Intent(activity, UploadImageService.class);
-        intent.putExtra("TASK", UploadImageService.STORAGE_UPLOAD_FACEBOOK_EVENT_COVER);
-        intent.putExtra("ID", event.event_id);
-        intent.putExtra("PIC", event.facebook_cover_pic);
-        activity.startService(intent);
-
-        ArrayList<Guest> list = new ArrayList<Guest>(event.guests.values());
-        addHostingEventToUserAccount(user, event.event_id);
-        for (int i = 0; i > event.guests.size(); i++) {
-//                        addEventToUserAccount(, event, event.event_id);
-            addToPendingFacebookUser(list.get(i).facebook_id, event.event_id);
-        }
     }
 
     /**
@@ -237,7 +270,10 @@ public class FireDatabase {
         final DatabaseReference hostRef = mRootReference.child("events").child(event_id).child("hosts")
                 .child(user.getUid());
         if (backupAccessToken != null) {
-            hostRef.child("facebook_id").setValue(backupAccessToken.getUserId());
+            //TODO: Do the same for non-current user host
+            hostRef.child("invited_by").setValue(user);
+            hostRef.child("facebook_id").setValue(Long.valueOf(backupAccessToken.getUserId()));
+            hostRef.child("firebase_id").setValue(user.getUid());
         } else {
             hostRef.child("firebase_id").setValue(user.getUid());
         }
@@ -264,7 +300,7 @@ public class FireDatabase {
         userRef.updateChildren(map);
     }
 
-    private static void addToPendingFacebookUser(Long facebook_id, String event_id) {
+    public static void addToPendingFacebookUser(Long facebook_id, String event_id) {
         final DatabaseReference userRef = mRootReference.child("pending_invites").child("facebook")
                 .child(facebook_id.toString());
         Map<String, Object> map = new HashMap<>();
@@ -295,16 +331,108 @@ public class FireDatabase {
         return null;
     }
 
+    public static void loadQrTicketResults(final Activity activity, final String event_id, final String fireId, final String fbId,
+                                           boolean isGuest, final TextView guestNameTV, final RoundedNetworkImageView guestPicIV,
+                                           final TextView hostNameTV, final RoundedNetworkImageView hostPicIV) {
+        final DatabaseReference mRootReference = FireDatabase.getInstance().getReference();
+        final DatabaseReference eventRef;
+
+        if (isGuest) {
+            eventRef = mRootReference.child("events").child(event_id).child("guests");
+        } else {
+            eventRef = mRootReference.child("events").child(event_id).child("hosts");
+        }
+
+        eventRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final String hostId;
+                if (dataSnapshot.child(fbId).exists()) {
+                    hostId = dataSnapshot.child(fbId).child("invited_by").getValue(String.class);
+                } else {
+                    hostId = dataSnapshot.child(fireId).child("invited_by").getValue(String.class);
+                }
+
+                mRootReference.child("users").child(hostId).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(final DataSnapshot dataSnapshot) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                hostNameTV.setText(dataSnapshot.child("name").getValue(String.class));
+                                hostPicIV.setImageUrl(dataSnapshot.child("pic_uri").getValue(String.class), AppController.getInstance().getImageLoader());
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+                mRootReference.child("users").child(fireId).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(final DataSnapshot dataSnapshot) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                guestNameTV.setText(dataSnapshot.child("name").getValue(String.class));
+                                guestPicIV.setImageUrl(dataSnapshot.child("pic_uri").getValue(String.class), AppController.getInstance().getImageLoader());
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        checkUserIn(event_id, fireId);
+    }
+
+    private static void checkUserIn(String event_id, String fireId) {
+        final DatabaseReference mRootReference = FireDatabase.getInstance().getReference();
+        final DatabaseReference eventRef = mRootReference.child("events").child(event_id);
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put(fireId, fireId);
+        eventRef.child("checked_in").updateChildren(map);
+        eventRef.child("number_checked_in").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    eventRef.child("number_checked_in").setValue((dataSnapshot.getValue(Integer.class) + 1));
+                } else {
+                    eventRef.child("number_checked_in").setValue(+1);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
     //TODO: Load nonfacebook events too
-    public static void loadPendingEvents(final FirebaseUser user, final AccessToken accessToken,
+    public static void loadPendingEvents(final String userId, final String accessToken,
                                          final ArrayListEvents<Event> feedItems,
                                          final FeedListAdapter listAdapter) {
 
         final DatabaseReference mRootReference = FireDatabase.getInstance().getReference();
         final DatabaseReference userRef = mRootReference.child("pending_invites").child("facebook")
-                .child(String.valueOf(accessToken.getUserId()));
-        final DatabaseReference phoneRef = mRootReference.child("users").child(user.getUid()).child("phone_number");
-        phoneRef.addValueEventListener(new ValueEventListener() {
+                .child(accessToken);
+        final DatabaseReference phoneRef = mRootReference.child("users").child(userId).child("phone_number");
+        phoneRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -314,7 +442,7 @@ public class FireDatabase {
 
                     final DatabaseReference phoneRef2 = mRootReference.child("pending_invites")
                             .child("phone_number").child(String.valueOf(phoneNumber));
-                    phoneRef2.addValueEventListener(new ValueEventListener() {
+                    phoneRef2.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
@@ -341,9 +469,9 @@ public class FireDatabase {
 
             }
         });
-        Log.d("FireDatabase", "about to call " + accessToken.getUserId());
+        Log.d("FireDatabase", "about to call " + accessToken);
 
-        userRef.addValueEventListener(new ValueEventListener() {
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -366,19 +494,19 @@ public class FireDatabase {
         });
     }
 
-    public static void loadFeedEvents(final FirebaseUser user, final AccessToken accessToken,
+    public static void loadFeedEvents(final String userId, final String accessToken,
                                       final ArrayListEvents<Event> feedItems,
                                       final FeedListAdapter listAdapter) {
 
-        //TODO pull organization events too
         DatabaseReference mRootReference = FireDatabase.getInstance().getReference();
-        final DatabaseReference userRef = mRootReference.child("users").child(user.getUid())
+        final DatabaseReference userRef = mRootReference.child("users").child(userId)
                 .child("accepted_invites");
-        pullHostingEvents(user, feedItems, listAdapter);
-        pullOrganizationEvents(user, feedItems, listAdapter);
-        Log.d("FireDatabase", "about to call " + accessToken.getUserId());
+        pullHostingEvents(userId, feedItems, listAdapter);
+        pullSubscribedOrganizationEvents(userId, feedItems, listAdapter);
+        Log.d("FireDatabase", "about to call " + accessToken);
+        userRef.keepSynced(true);
 
-        userRef.addValueEventListener(new ValueEventListener() {
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -400,47 +528,60 @@ public class FireDatabase {
         });
     }
 
-    public static void pullHostingEvents(final FirebaseUser user,
+    public static void pullHostingEvents(final String userId,
                                          final ArrayListEvents<Event> feedItems,
                                          final FeedListAdapter listAdapter) {
-        final DatabaseReference userRef2 = mRootReference.child("users").child(user.getUid())
-                .child("hosting_events");
-        userRef2.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-//                    JSONArray feedArray = response.getJSONArray("feed");
+        final DatabaseReference userRef2 = mRootReference.child("users").child(userId);
+        userRef2.addListenerForSingleValueEvent(new ValueEventListener() {
+                                           @Override
+                                           public void onDataChange(DataSnapshot dataSnapshot) {
+                                               if (dataSnapshot.exists()) {
+                                                   if (dataSnapshot.child("hosting_events").exists()) {
+                                                       Map<String, Object> map = (Map<String, Object>) dataSnapshot
+                                                               .child("hosting_events").getValue();
 
-                    Log.d("FireDatabase", "Hosting Events: " + map.toString());
-                    final ArrayList<Object> invitedEventsList = new ArrayList<Object>(map.keySet());
-                    search(feedItems, listAdapter, invitedEventsList, userRef2);
-                } else {
-                    Log.d("FireDatabase", "User has no events");
-                }
-            }
+                                                       Log.d("FireDatabase", "Hosting Events: " + map.toString());
+                                                       final ArrayList<Object> invitedEventsList = new ArrayList<Object>(map.keySet());
+                                                       search(feedItems, listAdapter, invitedEventsList, userRef2.child("hosting_events"));
+                                                       userRef2.child("hosting_events").keepSynced(true);
+                                                   }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+                                                   if (dataSnapshot.child("organization").exists()) {
+                                                       pullOrganizationEvents(true, dataSnapshot.child("organization").getValue(String.class),
+                                                               feedItems, listAdapter);
+                                                   }
+                                               } else {
+                                                   Log.d("FireDatabase", "User has no events");
+                                               }
+                                           }
+
+                                           @Override
+                                           public void onCancelled(DatabaseError databaseError) {
+                                           }
+                                       }
+
+        );
     }
 
-    public static void pullHostedEvents(final FirebaseUser user,
+    public static void pullHostedEvents(final String userId,
                                         final ArrayListEvents<Event> feedItems,
                                         final FeedListAdapter listAdapter) {
-        final DatabaseReference userRef2 = mRootReference.child("users").child(user.getUid())
-                .child("hosted_events");
-        userRef2.addValueEventListener(new ValueEventListener() {
+        final DatabaseReference userRef2 = mRootReference.child("users").child(userId);
+        userRef2.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                    if (dataSnapshot.child("hosted_events").exists()) {
+                        Map<String, Object> map = (Map<String, Object>) dataSnapshot.child("hosted_events").getValue();
 
-                    Log.d("FireDatabase", "Phone Number Events: " + map.toString());
-                    final ArrayList<Object> invitedEventsList = new ArrayList<Object>(map.keySet());
-                    Log.d("FireDatabase", invitedEventsList.toString());
-                    search(feedItems, listAdapter, invitedEventsList, userRef2);
+                        Log.d("FireDatabase", "Phone Number Events: " + map.toString());
+                        final ArrayList<Object> invitedEventsList = new ArrayList<Object>(map.keySet());
+                        Log.d("FireDatabase", invitedEventsList.toString());
+                        search(feedItems, listAdapter, invitedEventsList, userRef2.child("hosted_events"));
+                    }
+                    if (dataSnapshot.child("organization").exists()) {
+                        pullOrganizationEvents(false, userId, feedItems, listAdapter);
+                    }
 
                 } else {
                     Log.d("FireDatabase", "User has no events");
@@ -453,12 +594,13 @@ public class FireDatabase {
         });
     }
 
-    public static void pullOrganizationEvents(final FirebaseUser user,
-                                              final ArrayListEvents<Event> feedItems,
-                                              final FeedListAdapter listAdapter) {
-        final DatabaseReference userRef2 = mRootReference.child("users").child(user.getUid())
+    public static void pullSubscribedOrganizationEvents(final String userId,
+                                                        final ArrayListEvents<Event> feedItems,
+                                                        final FeedListAdapter listAdapter) {
+        final DatabaseReference userRef2 = mRootReference.child("users").child(userId)
                 .child("subscribed").child("organizations");
-        userRef2.addValueEventListener(new ValueEventListener() {
+        userRef2.keepSynced(true);
+        userRef2.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -469,14 +611,15 @@ public class FireDatabase {
                     Log.d("FireDatabase", orgsList.toString());
                     for (int i = 0; i < orgsList.size(); i++) {
                         final DatabaseReference orgEventsList = mRootReference.child("organizations").child((String) orgsList.get(i))
-                                .child("events");
-                        orgEventsList.addValueEventListener(new ValueEventListener() {
+                                .child("current_events");
+                        orgEventsList.keepSynced(true);
+                        orgEventsList.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.exists()) {
                                     Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
                                     final ArrayList<Object> eventsList = new ArrayList<Object>(map.values());
-                                    search(feedItems, listAdapter, eventsList, userRef2);
+                                    search(feedItems, listAdapter, eventsList, orgEventsList);
                                 }
                             }
 
@@ -485,6 +628,40 @@ public class FireDatabase {
 
                             }
                         });
+                    }
+
+                } else {
+                    Log.d("FireDatabase", "User has no events");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    public static void pullOrganizationEvents(final boolean current, final String orgId,
+                                              final ArrayListEvents<Event> feedItems,
+                                              final FeedListAdapter listAdapter) {
+        final DatabaseReference orgRef = mRootReference.child("organizations").child(orgId);
+        orgRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    if (current) {
+                        Map<String, Object> map = (Map<String, Object>) dataSnapshot
+                                .child("current_events").getValue();
+                        final ArrayList<Object> eventsList = new ArrayList<Object>(map.values());
+                        search(feedItems, listAdapter, eventsList, orgRef.child("current_events"));
+                        orgRef.child("current_events").keepSynced(true);
+                        Log.d("FireDatabase", eventsList.toString());
+                    } else {
+                        Map<String, Object> map = (Map<String, Object>) dataSnapshot
+                                .child("past_events").getValue();
+                        final ArrayList<Object> eventsList = new ArrayList<Object>(map.values());
+                        search(feedItems, listAdapter, eventsList, orgRef.child("past_events"));
+                        Log.d("FireDatabase", eventsList.toString());
                     }
 
                 } else {
@@ -507,7 +684,7 @@ public class FireDatabase {
             eventRef.keepSynced(true);
 
             final String event_id = (String) invitedEventsList.get(i);
-            eventRef.addValueEventListener(new ValueEventListener() {
+            eventRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
@@ -515,8 +692,39 @@ public class FireDatabase {
                         item.event_id = event_id;
                         Log.d("FireDatabase", item.toString());
                         //Adds the firebase id in case the user was added via facebook
-                        eventRef.child("guests").child(backupAccessToken.getUserId())
-                                .child("firebase_id").setValue(backupFirebaseUser.getUid());
+                        if (dataSnapshot.child("guests").child(backupAccessToken.getUserId()).exists()) {
+                            DataSnapshot fireIdShot = dataSnapshot.child("guests").child(backupAccessToken.getUserId())
+                                    .child("firebase_id");
+
+                            DataSnapshot fbIdShot = dataSnapshot.child("guests").child(backupAccessToken.getUserId())
+                                    .child("facebook_id");
+
+                            if (!(fireIdShot.exists()) || (!(fireIdShot.getValue(String.class).equals(backupFirebaseUser.getUid())))) {
+                                eventRef.child("guests").child(backupAccessToken.getUserId())
+                                        .child("firebase_id").setValue(backupFirebaseUser.getUid());
+                            }
+
+                            if (!(fbIdShot.exists()) || (!(fireIdShot.getValue(String.class).equals(backupAccessToken.getUserId())))) {
+                                eventRef.child("guests").child(backupAccessToken.getUserId())
+                                        .child("facebook_id").setValue(Long.valueOf(backupAccessToken.getUserId()));
+                            }
+                        } else {
+                            DataSnapshot fireIdShot = dataSnapshot.child("guests").child(backupFirebaseUser.getUid())
+                                    .child("firebase_id");
+
+                            DataSnapshot fbIdShot = dataSnapshot.child("guests").child(backupFirebaseUser.getUid())
+                                    .child("facebook_id");
+
+                            if (!(fireIdShot.exists()) || (!(fireIdShot.getValue(String.class).equals(backupFirebaseUser.getUid())))) {
+                                eventRef.child("guests").child(backupFirebaseUser.getUid())
+                                        .child("firebase_id").setValue(backupFirebaseUser.getUid());
+                            }
+
+                            if (!(fbIdShot.exists()) || (!(fireIdShot.getValue(String.class).equals(backupAccessToken.getUserId())))) {
+                                eventRef.child("guests").child(backupFirebaseUser.getUid())
+                                        .child("facebook_id").setValue(Long.valueOf(backupAccessToken.getUserId()));
+                            }
+                        }
 
                         sort(feedItems, item, listAdapter);
                     } else {

@@ -29,10 +29,12 @@ import java.util.Map;
 import java.util.Set;
 
 import info.nexrave.nexrave.R;
+import info.nexrave.nexrave.adapters.InboxMessagesAdapter;
 import info.nexrave.nexrave.adapters.InboxThreadsAdapter;
 import info.nexrave.nexrave.models.InboxThread;
 import info.nexrave.nexrave.feedparts.AppController;
 import info.nexrave.nexrave.models.Message;
+import info.nexrave.nexrave.systemtools.ArrayListInboxThreads;
 import info.nexrave.nexrave.systemtools.FireDatabase;
 
 public class InboxThreadsFragment extends Fragment {
@@ -110,14 +112,15 @@ public class InboxThreadsFragment extends Fragment {
     private void setupInbox(final View v) {
         Log.d("Inbox", "Setup 1");
         final ListView listView = (ListView) v.findViewById(R.id.inboxThreads_listView);
-        final List<InboxThread> listOfMessages = new LinkedList<>();
+        final ArrayListInboxThreads<InboxThread> listOfMessages = new ArrayListInboxThreads<>();
         final InboxThreadsAdapter adapter = new InboxThreadsAdapter(getActivity(), listOfMessages);
         listView.setAdapter(adapter);
 
-        final DatabaseReference mRootReference = FireDatabase.getRoot();
-        final DatabaseReference userRef = mRootReference.child("users").child(FireDatabase.backupFirebaseUser.getUid())
-                .child("direct_messages");
-        userRef.child("threads").addValueEventListener(new ValueEventListener() {
+        //TODO Remove listeners
+        final DatabaseReference userRef = FireDatabase.getRoot().child("users").child(FireDatabase.backupFirebaseUser.getUid())
+                .child("direct_messages").child("threads");
+
+        userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -147,6 +150,10 @@ public class InboxThreadsFragment extends Fragment {
                                             }
                                             listOfMessages.add(thread);
                                             adapter.notifyDataSetChanged();
+//                                            InboxMessagesAdapter messagesAdapter = InboxMessagesFragment.getAdapter();
+//                                            if (messagesAdapter != null) {
+//                                                messagesAdapter.notifyDataSetChanged();
+//                                            }
                                         }
 
                                         @Override

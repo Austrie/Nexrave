@@ -24,17 +24,24 @@
         android:name=".feedparts.AppController"
         android:icon="@mipmap/nexraveappicon"
         android:label="@string/app_name"
-        android:noHistory="false"
         android:screenOrientation="portrait">
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"
             tools:replace="android:value" />
 
+        <service
+            android:name=".services.UploadImageService"
+            android:label="Nexrave Image Uploader"></service>
+        <service
+            android:name=".services.PendingFacebookUserService"
+            android:label="Nexrave Guest Inviter"></service>
+
         <activity
             android:name=".SplashActivity"
+            android:noHistory="false"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppThemeAccentRed">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -123,8 +130,21 @@
             android:name=".InboxActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".UserProfileActivity"
-            android:theme="@style/AppTheme"/>
+        <activity
+            android:name=".UserProfileActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".OldSettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:theme="@style/AppTheme" />
+        .
+        <activity
+            android:name=".SettingsActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".QrScannerActivity"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".OrganizationProfileActivity"></activity>
     </application>
 
 </manifest>

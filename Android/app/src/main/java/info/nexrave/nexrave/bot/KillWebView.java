@@ -20,9 +20,7 @@ public class KillWebView {
                 webView.loadUrl("about:blank");
                 webView.setWebChromeClient(null);
                 webView.setWebViewClient(null);
-                webView.freeMemory();
                 webView.destroyDrawingCache();
-                webView.destroy();
                 webView = null;
             }
         });

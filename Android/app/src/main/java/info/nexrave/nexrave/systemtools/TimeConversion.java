@@ -36,13 +36,13 @@ public class TimeConversion {
     }
 
     public static String messageTime(long l) {
-        int timeDifference = Long.valueOf((System.currentTimeMillis() - l) / 1000).intValue();
-        if (timeDifference >= 0 && timeDifference <= 60) {
-            return timeDifference + " min";
+        int timeDifference = (Long.valueOf(((System.currentTimeMillis() - l) / 1000)).intValue() / 60);
+        if ((timeDifference >= 0) && (timeDifference < 60)) {
+            return timeDifference + " mins ago";
         } else {
-            timeDifference = timeDifference / 60;
+            timeDifference = (timeDifference / 60);
             if (timeDifference < 24) {
-                return timeDifference + " hour";
+                return timeDifference + " hours ago";
             } else {
                 Date date = new Date(l);
                 SimpleDateFormat sourceFormat = new SimpleDateFormat("MMM dd, yyyy");

@@ -16,6 +16,7 @@ public class Message {
     public String message;
     public Long time_stamp;
     public String image_link;
+    public String video_link;
     public Integer numberOfLikes = 0;
     //Read status: sent, delivered, read
     public Map<String, String> status = new LinkedHashMap<>();

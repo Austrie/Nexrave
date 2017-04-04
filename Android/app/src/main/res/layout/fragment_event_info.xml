@@ -156,6 +156,7 @@
         android:layout_height="match_parent">
 
         <ImageView
+            android:background="@color/white"
             android:id="@+id/eventInfo_qr_code_IV"
             android:layout_width="500dp"
             android:layout_height="500dp"

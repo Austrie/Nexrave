@@ -3,27 +3,28 @@ package info.nexrave.nexrave.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.view.ViewPager;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
-import com.firebase.ui.database.FirebaseListAdapter;
-import com.google.firebase.auth.FirebaseUser;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.backends.pipeline.PipelineDraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +32,6 @@ import java.util.Map;
 import info.nexrave.nexrave.R;
 import info.nexrave.nexrave.UserProfileActivity;
 import info.nexrave.nexrave.feedparts.AppController;
-import info.nexrave.nexrave.fragments.EventUserFragment;
-import info.nexrave.nexrave.fragments.VerticalViewPagerFragment;
 import info.nexrave.nexrave.models.Message;
 import info.nexrave.nexrave.systemtools.FireDatabase;
 
@@ -46,15 +45,32 @@ public class InboxMessagesAdapter extends BaseAdapter {
     private Activity activity;
     private LayoutInflater inflater;
     private String thread_id;
-    private TextView numLikesTV;
     private int numOfLikes;
-    private ImageView heartIV;
+
+
+    static class ViewHolder {
+        NetworkImageView profilePic;
+        TextView numLikesTV;
+        ImageView heartIV;
+        TextView messageTV;
+        ImageView heartIcon;
+        SimpleDraweeView messageImageIV;
+        ImageView enlargeIV;
+    }
+
 
     public InboxMessagesAdapter(Activity activity, List<Message> messages, String thread_id) {
         this.messages = messages;
         this.activity = activity;
         this.thread_id = thread_id;
+        sort();
         Log.d("Messages", "Initiated");
+    }
+
+    public void setNewList(List<Message> messages) {
+        this.messages = messages;
+        sort();
+        notifyDataSetChanged();
     }
 
     @Override
@@ -77,19 +93,44 @@ public class InboxMessagesAdapter extends BaseAdapter {
         final Message message = messages.get(i);
         final View v;
         boolean isUser;
+        final ViewHolder holder;
 
         Log.d("Messages", "getView called");
+
+        if (message.user_id.equals(FireDatabase.backupFirebaseUser.getUid())) {
+            isUser = true;
+        } else {
+            isUser = false;
+        }
 
         if (inflater == null)
             inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        if (message.user_id.equals(FireDatabase.backupFirebaseUser.getUid())) {
+        View v0 = inflater.inflate(R.layout.fragment_inbox_messages, null);
+        if (isUser) {
             v = inflater.inflate(R.layout.inbox_message_right, null);
-            isUser = true;
+            holder = new ViewHolder();
+            holder.enlargeIV = ((ImageView) v0.findViewById(R.id.InboxMessages_enlarge_IV));
+            holder.heartIcon = ((ImageView) v.findViewById(R.id.InboxMessages_message_heart_icon));
+            holder.heartIV = (ImageView) v.findViewById(R.id.InboxMessages_message_heart_icon);
+            holder.messageTV = ((TextView) v.findViewById(R.id.InboxMessages_user_message));
+            holder.numLikesTV = (TextView) v.findViewById(R.id.InboxMessages_numberOfLikes);
+            holder.messageImageIV = ((SimpleDraweeView) v.findViewById(R.id.InboxMessages_message_attached_image));
+            v.setTag(R.layout.inbox_message_right, holder);
+
         } else {
             v = inflater.inflate(R.layout.inbox_message_left, null);
-            isUser = false;
+            holder = new ViewHolder();
+            holder.enlargeIV = ((ImageView) v0.findViewById(R.id.InboxMessages_enlarge_IV));
+            holder.heartIcon = ((ImageView) v.findViewById(R.id.InboxMessages_message_heart_icon));
+            holder.profilePic = (NetworkImageView) v.findViewById(R.id.InboxMessages_user_profile_pic);
+            holder.heartIV = (ImageView) v.findViewById(R.id.InboxMessages_message_heart_icon);
+            holder.messageTV = ((TextView) v.findViewById(R.id.InboxMessages_user_message));
+            holder.numLikesTV = (TextView) v.findViewById(R.id.InboxMessages_numberOfLikes);
+            holder.messageImageIV = ((SimpleDraweeView) v.findViewById(R.id.InboxMessages_message_attached_image));
+            v.setTag(R.layout.inbox_message_left, holder);
         }
+
 
         if (!isUser) {
             final DatabaseReference mRootReference = FireDatabase.getInstance().getReference();
@@ -97,7 +138,7 @@ public class InboxMessagesAdapter extends BaseAdapter {
             usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    NetworkImageView profilePic = (NetworkImageView) v.findViewById(R.id.InboxMessages_user_profile_pic);
+                    NetworkImageView profilePic = holder.profilePic;
 
                     profilePic.setImageUrl(dataSnapshot.child("pic_uri").getValue(String.class),
                             AppController.getInstance().getImageLoader());
@@ -119,24 +160,24 @@ public class InboxMessagesAdapter extends BaseAdapter {
             });
         }
 
-        heartIV = (ImageView) v.findViewById(R.id.InboxMessages_message_heart_icon);
-        final TextView messageTV = ((TextView) v.findViewById(R.id.InboxMessages_user_message));
+        final ImageView heartIV = holder.heartIV;
+        TextView messageTV = holder.messageTV;
         messageTV.setText(message.message);
-        messageTV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //If it's invisible (because it has no likes) then make it visible
-                if (heartIV.getVisibility() == View.INVISIBLE) {
-                    heartIV.setVisibility(View.VISIBLE);
-                    //Else if it's visible, and it has zero likes, then make it invisible
-                } else if (numOfLikes == 0) {
-                    numLikesTV.setVisibility(View.INVISIBLE);
-                    heartIV.setVisibility(View.INVISIBLE);
-                }
-            }
-        });
+//        messageTV.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                //If it's invisible (because it has no likes) then make it visible
+//                if (heartIV.getVisibility() == View.INVISIBLE) {
+//                    heartIV.setVisibility(View.VISIBLE);
+//                    //Else if it's visible, and it has zero likes, then make it invisible
+//                } else if (numOfLikes == 0) {
+//                    numLikesTV.setVisibility(View.INVISIBLE);
+//                    heartIV.setVisibility(View.INVISIBLE);
+//                }
+//            }
+//        });
 
-        numLikesTV = (TextView) v.findViewById(R.id.InboxMessages_numberOfLikes);
+        TextView numLikesTV = holder.numLikesTV;
         if ((message.numberOfLikes != 0)) {
             numLikesTV.setText(String.valueOf(message.numberOfLikes));
         } else {
@@ -150,25 +191,53 @@ public class InboxMessagesAdapter extends BaseAdapter {
             heartIV.setImageResource(R.drawable.empty_heart_icon);
         }
 
-        ((ImageView) v.findViewById(R.id.InboxMessages_message_heart_icon)).setOnClickListener(
+        holder.heartIcon.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         if (message.whoLiked.containsKey(FireDatabase.backupFirebaseUser.getUid())) {
                             heartIV.setImageResource(R.drawable.empty_heart_icon);
-                            userLiked(false, String.valueOf(message.time_stamp));
+                            userLiked(false, String.valueOf(message.time_stamp), holder);
                         } else {
                             heartIV.setImageResource(R.drawable.heart_icon);
-                            userLiked(true, String.valueOf(message.time_stamp));
+                            userLiked(true, String.valueOf(message.time_stamp), holder);
                         }
                     }
                 }
         );
 
+        if (message.image_link != null) {
+            try {
+                final SimpleDraweeView messageImageIV = holder.messageImageIV;
+                ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(message.image_link))
+                        .setProgressiveRenderingEnabled(true)
+                        .build();
+
+                PipelineDraweeController controller = (PipelineDraweeController)
+                        Fresco.newDraweeControllerBuilder()
+                                .setImageRequest(request)
+                                .setOldController(messageImageIV.getController())
+                                // other setters as you need
+                                .build();
+                messageImageIV.setController(controller);
+                messageImageIV.setVisibility(View.VISIBLE);
+                messageImageIV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view2) {
+                        ImageView enlargeIV = holder.enlargeIV;
+                        enlargeIV.setImageDrawable(messageImageIV.getDrawable());
+                        enlargeIV.setVisibility(View.VISIBLE);
+                    }
+                });
+            } catch (Exception e) {
+                Log.d("Messages", e.toString());
+            }
+        }
+
         return v;
     }
 
-    public void userLiked(final boolean choice, String timeStamp) {
+    public void userLiked(final boolean choice, String timeStamp, final ViewHolder holder) {
         final DatabaseReference messageRef = FireDatabase.getRoot().child("direct_messages")
                 .child(thread_id).child("messages").child(timeStamp);
 
@@ -182,12 +251,12 @@ public class InboxMessagesAdapter extends BaseAdapter {
                     if (dataSnapshot.exists()) {
                         int numOfLikes = dataSnapshot.getValue(Integer.class);
                         messageRef.child("numberOfLikes").setValue(++numOfLikes);
-                        numLikesTV.setText(String.valueOf(++numOfLikes));
-                        numLikesTV.setVisibility(View.VISIBLE);
+                        holder.numLikesTV.setText(String.valueOf(++numOfLikes));
+                        holder.numLikesTV.setVisibility(View.VISIBLE);
                     } else {
                         messageRef.child("numberOfLikes").setValue(1);
-                        numLikesTV.setText(String.valueOf(1));
-                        numLikesTV.setVisibility(View.VISIBLE);
+                        holder.numLikesTV.setText(String.valueOf(1));
+                        holder.numLikesTV.setVisibility(View.VISIBLE);
                     }
                 }
 
@@ -206,11 +275,11 @@ public class InboxMessagesAdapter extends BaseAdapter {
                         numOfLikes = dataSnapshot.getValue(Integer.class);
                         numOfLikes = (numOfLikes - 1);
                         if (numOfLikes == 0) {
-                            numLikesTV.setVisibility(View.INVISIBLE);
-                            heartIV.setVisibility(View.INVISIBLE);
+                            holder.numLikesTV.setVisibility(View.INVISIBLE);
+                            holder.heartIV.setVisibility(View.INVISIBLE);
                         }
                         messageRef.child("numberOfLikes").setValue(numOfLikes);
-                        numLikesTV.setText(String.valueOf(numOfLikes));
+                        holder.numLikesTV.setText(String.valueOf(numOfLikes));
                     }
                 }
 
@@ -221,5 +290,21 @@ public class InboxMessagesAdapter extends BaseAdapter {
             });
 
         }
+    }
+
+    private void sort() {
+        Collections.sort(messages, new Comparator() {
+            @Override
+            public int compare(Object o, Object t1) {
+                if (((Message) o).time_stamp > (((Message) t1).time_stamp)) {
+                    return 1;
+                }
+
+                if (((Message) o).time_stamp < (((Message) t1).time_stamp)) {
+                    return -1;
+                }
+                return 0;
+            }
+        });
     }
 }

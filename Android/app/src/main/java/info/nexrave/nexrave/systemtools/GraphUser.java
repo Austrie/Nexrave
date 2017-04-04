@@ -143,38 +143,68 @@ public class GraphUser {
         //TODO: Set using firebase realtime database
         //Setting navigation drawer header
         final DatabaseReference ref = mRootReference.child("users").child(user.getUid());
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                final Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-                Log.d("GraphUser", String.valueOf(dataSnapshot.exists()));
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        nav_displayName.setText((String) map.get("name"));
-                        nav_displayName.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Intent intent = new Intent(activity, UserProfileActivity.class);
-                                intent.putExtra("id", user.getUid());
-                                activity.startActivity(intent);
-                            }
-                        });
-                        iv.setImageUrl((String) map.get("pic_uri")
-                                , AppController.getInstance().getImageLoader());
-                        iv.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Intent intent = new Intent(activity, UserProfileActivity.class);
-                                intent.putExtra("id", user.getUid());
-                                activity.startActivity(intent);
-                            }
-                        });
-                        backgroundIV2.setImageUrl((String) map.get("pic_uri")
-                                , AppController.getInstance().getImageLoader());
+                if (dataSnapshot.exists()) {
+                    final Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                    Log.d("GraphUser", String.valueOf(dataSnapshot.exists()));
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            nav_displayName.setText((String) map.get("name"));
+                            nav_displayName.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Intent intent = new Intent(activity, UserProfileActivity.class);
+                                    intent.putExtra("id", user.getUid());
+                                    activity.startActivity(intent);
+                                }
+                            });
+                            iv.setImageUrl((String) map.get("pic_uri")
+                                    , AppController.getInstance().getImageLoader());
+                            iv.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Intent intent = new Intent(activity, UserProfileActivity.class);
+                                    intent.putExtra("id", user.getUid());
+                                    activity.startActivity(intent);
+                                }
+                            });
+                            backgroundIV2.setImageUrl((String) map.get("pic_uri")
+                                    , AppController.getInstance().getImageLoader());
 
-                    }
-                });
+                        }
+                    });
+                } else {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            nav_displayName.setText(firstName + " " + lastName);
+                            nav_displayName.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Intent intent = new Intent(activity, UserProfileActivity.class);
+                                    intent.putExtra("id", user.getUid());
+                                    activity.startActivity(intent);
+                                }
+                            });
+                            iv.setImageUrl(picURI.toString()
+                                    , AppController.getInstance().getImageLoader());
+                            iv.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Intent intent = new Intent(activity, UserProfileActivity.class);
+                                    intent.putExtra("id", user.getUid());
+                                    activity.startActivity(intent);
+                                }
+                            });
+                            backgroundIV2.setImageUrl(picURI.toString()
+                                    , AppController.getInstance().getImageLoader());
+
+                        }
+                    });
+                }
             }
 
             @Override
@@ -206,7 +236,7 @@ public class GraphUser {
 
         final Map<String, Object> map = new HashMap<String, Object>();
         final DatabaseReference ref = mRootReference.child("users");
-        ref.child(user.getUid()).addValueEventListener(new ValueEventListener() {
+        ref.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {

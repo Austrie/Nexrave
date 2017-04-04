@@ -178,11 +178,5 @@ public class CreateEventActivity extends AppCompatActivity {
 
         js3 = "javascript: ";
     }
-
-    protected void chooseList(int choice) {
-        choosenList = choice;
-        webView.loadUrl("https://www.facebook.com/lists/" + inviteLists.get(choice).getFBListId());
-
-    }
 }
 

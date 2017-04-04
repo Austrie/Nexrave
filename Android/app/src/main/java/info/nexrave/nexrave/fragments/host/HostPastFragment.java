@@ -63,6 +63,6 @@ public class HostPastFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        FireDatabase.pullHostedEvents(FireDatabase.backupFirebaseUser, feedItems, listAdapter);
+        FireDatabase.pullHostedEvents(FireDatabase.backupFirebaseUser.getUid(), feedItems, listAdapter);
     }
 }

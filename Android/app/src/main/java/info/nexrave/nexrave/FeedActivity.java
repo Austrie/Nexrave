@@ -21,9 +21,7 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.facebook.AccessToken;
-import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
-import com.facebook.ProfileTracker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -50,8 +48,6 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
     Intent intent;
 
     CallbackManager callbackManager;
-    AccessTokenTracker accessTokenTracker;
-    ProfileTracker profileTracker;
     AccessToken accessToken;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -175,15 +171,6 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
 
     public void onResume() {
         super.onResume();
-        if (mAuth == null) {
-            mAuth = FirebaseAuth.getInstance();
-        }
-        if (user == null) {
-            user = mAuth.getCurrentUser();
-        }
-        if (listView == null|| listAdapter == null || enlargeFlyer == null) {
-            setupVariables();
-        }
         loadFeed();
     }
 
@@ -208,7 +195,32 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
 
 
     private void loadFeed() {
-        FireDatabase.loadFeedEvents(user, accessToken, feedItems, listAdapter);
+        if (mAuth == null) {
+            mAuth = FirebaseAuth.getInstance();
+        }
+        if (user == null) {
+            user = mAuth.getCurrentUser();
+            //If firebase user is still null
+            if (user == null) {
+                intent = new Intent(FeedActivity.this, SplashActivity.class);
+                startActivity(intent);
+            }
+        } else if (accessToken == null) {
+            accessToken = AccessToken.getCurrentAccessToken();
+            //If you access token is still null
+            if (accessToken == null) {
+                AccessToken.refreshCurrentAccessTokenAsync();
+            }
+        }
+        if (listView == null|| listAdapter == null || enlargeFlyer == null) {
+            setupVariables();
+        }
+        if ((user != null) && (accessToken != null)) {
+            FireDatabase.loadFeedEvents(user.getUid(), accessToken.getUserId(), feedItems, listAdapter);
+        } else {
+            intent = new Intent(FeedActivity.this, SplashActivity.class);
+            startActivity(intent);
+        }
     }
 
 
@@ -267,7 +279,8 @@ public class FeedActivity extends AppCompatActivity implements NavigationView.On
             startActivity(intent);
 
         } else if (id == R.id.nav_menu_settings) {
-
+            intent = new Intent(FeedActivity.this, SettingsActivity.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout1);

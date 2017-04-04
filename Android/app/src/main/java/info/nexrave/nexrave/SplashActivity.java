@@ -52,18 +52,12 @@ import info.nexrave.nexrave.systemtools.FireDatabase;
 public class SplashActivity extends AppCompatActivity {
 
     private Intent intent;
-    private final long SPLASH_TIME = 3000;
-    private VideoView videoHolder;
     private LoginButton loginButton;
-    private ImageView iv;
     private static final String TAG = SplashActivity.class.getSimpleName();
 
     //Facebook Variables
-    private AccessTokenTracker accessTokenTracker;
     private AccessToken accessToken;
     CallbackManager mCallbackManager;
-    Profile profile;
-    private ProfileTracker mProfileTracker;
 
     //Firebase variables
     private FirebaseUser user;
@@ -75,25 +69,36 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        iv = (ImageView) findViewById(R.id.iv_splash_logo);
         loginButton = (LoginButton) findViewById(R.id.login_button);
 
-        //Video settings
-        Log.d(TAG, "Video about to be called");
-        videoHolder = (VideoView) findViewById(R.id.videoView);
-//        Uri video = Uri.parse("android.resource://" + getPackageName() + "/"
-//                + R.raw.video_footage);
-//        videoHolder.setVideoURI(video);
-//        videoHolder.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-//            @Override
-//            public void onPrepared(MediaPlayer mp) {
-//                mp.setLooping(true);
-//            }
-//        });
-//        videoHolder.start();
-
-
+        mCallbackManager = CallbackManager.Factory.create();
+        Fresco.initialize(SplashActivity.this);
         FireDatabase.getInstance();
+
+        LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                // App code
+                Log.d("SplashActivity", "Login button success");
+                accessToken = loginResult.getAccessToken();
+                System.out.println("Login Activity access token:" + loginResult.getAccessToken().getUserId());
+                handleFacebookAccessToken(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() {
+                // App code
+                Log.d("SplashActivity", "Login button cancel");
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                // App code
+                Log.d("SplashActivity", "Login button error");
+            }
+        });
+
+
         new PrefetchData().execute();
 
     }
@@ -102,14 +107,6 @@ public class SplashActivity extends AppCompatActivity {
      * Async Task to make http call
      */
     private class PrefetchData extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            // before making http calls
-            mCallbackManager = CallbackManager.Factory.create();
-            Fresco.initialize(SplashActivity.this);
-        }
 
         @Override
         protected Void doInBackground(Void... arg0) {
@@ -125,21 +122,25 @@ public class SplashActivity extends AppCompatActivity {
                 @Override
                 public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                     user = firebaseAuth.getCurrentUser();
-                    FireDatabase.backupFirebaseUser = user;
-                    FireDatabase.backupAccessToken = accessToken;
 //                    Log.d("SplashActivity", accessToken.getUserId());
                     if (user != null) {
-                        // User is signed in
-                        Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                        intent = new Intent(SplashActivity.this, FeedActivity.class);
-                        startActivity(intent);
+                        if (accessToken != null) {
+                            // User is signed in
+                            FireDatabase.backupFirebaseUser = user;
+                            FireDatabase.backupAccessToken = accessToken;
+                            Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                            intent = new Intent(SplashActivity.this, FeedActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            checkAccessToken();
+                        }
                     } else {
                         // User is signed out
                         Log.d(TAG, "onAuthStateChanged:signed_out");
                         //Initializing Variable
-//                        mCallbackManager = CallbackManager.Factory.create();
-//                        makeVisible();
-                        checkAccessToken();
+                        makeVisible();
+//                        checkAccessToken();
 
                     }
                     // ...
@@ -165,49 +166,49 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
+        if (mAuth == null) {
+            mAuth = FirebaseAuth.getInstance();
+            mAuth.addAuthStateListener(mAuthListener);
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
         if (mAuthListener != null) {
+            mAuth = FirebaseAuth.getInstance();
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        finish();
-    }
-
     private void makeVisible() {
+        LoginManager.getInstance().logOut();
         loginButton.setVisibility(View.VISIBLE);
         loginButton.bringToFront();
         loginButton.setReadPermissions("public_profile", "email");
-        loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                // App code
-                Log.d("SplashActivity", "Login button success");
-                System.out.println("Login Activity access token:" + loginResult.getAccessToken().getUserId());
-                handleFacebookAccessToken(loginResult.getAccessToken());
-            }
-
-            @Override
-            public void onCancel() {
-                // App code
-                Log.d("SplashActivity", "Login button cancel");
-            }
-
-            @Override
-            public void onError(FacebookException exception) {
-                // App code
-                Log.d("SplashActivity", "Login button error");
-            }
-        });
+//        loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+//            @Override
+//            public void onSuccess(LoginResult loginResult) {
+//                // App code
+//                Log.d("SplashActivity", "Login button success");
+//                System.out.println("Login Activity access token:" + loginResult.getAccessToken().getUserId());
+//                handleFacebookAccessToken(loginResult.getAccessToken());
+//            }
+//
+//            @Override
+//            public void onCancel() {
+//                // App code
+//                Log.d("SplashActivity", "Login button cancel");
+//            }
+//
+//            @Override
+//            public void onError(FacebookException exception) {
+//                // App code
+//                Log.d("SplashActivity", "Login button error");
+//            }
+//        });
     }
 
     //
@@ -259,7 +260,7 @@ public class SplashActivity extends AppCompatActivity {
                 .addOnCompleteListener(SplashActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d("SplashActivity", "hanle access token");
+                        Log.d("SplashActivity", "handle access token");
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
 
                         // If sign in fails, display a message to the user. If sign in succeeds
@@ -269,8 +270,11 @@ public class SplashActivity extends AppCompatActivity {
                             Log.w(TAG, "signInWithCredential", task.getException());
                             Toast.makeText(SplashActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
+                            LoginManager.getInstance().logOut();
                         } else {
-//
+                            intent = new Intent(SplashActivity.this, FeedActivity.class);
+                            startActivity(intent);
+                            finish();
                         }
                     }
                 });
@@ -279,7 +283,6 @@ public class SplashActivity extends AppCompatActivity {
     private void checkAccessToken() {
         if (accessToken == null) {
             Log.d("SplashActivity", "Check access token: null");
-            mCallbackManager = CallbackManager.Factory.create();
             (SplashActivity.this).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

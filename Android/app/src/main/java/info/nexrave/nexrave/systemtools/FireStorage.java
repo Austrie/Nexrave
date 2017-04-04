@@ -23,6 +23,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
+import info.nexrave.nexrave.services.UploadImageService;
+
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
@@ -32,13 +34,12 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 public class FireStorage {
 
     private static String fileType = ".jpg";
-    private static InputStream is = null;
     private static FirebaseStorage storage = FirebaseStorage.getInstance();
     private static StorageReference storageRef = storage.getReferenceFromUrl("gs://nexrave-e1c12.appspot.com");
 
     public static void uploadEventCoverPic(final String id, File file) {
         try {
-            is = new FileInputStream(file);
+            FileInputStream is = new FileInputStream(file);
             StorageReference eventCoverPicRef = storageRef.child("events/" + id
                     + "/cover" + fileType);
             UploadTask uploadTask = eventCoverPicRef.putStream(is);
@@ -47,6 +48,7 @@ public class FireStorage {
                 public void onFailure(Exception exception) {
                     // Handle unsuccessful uploads
                     Log.d("FireStorage:", exception.toString());
+                    UploadImageService.decrementsThreads();
                 }
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -58,8 +60,9 @@ public class FireStorage {
                     String downloadLink = downloadUrl.toString();
                     FireDatabase.getRoot().child("events").child(id).child("image_uri").setValue(downloadLink);
                     Log.d("FireStorage: ", downloadLink);
+                    UploadImageService.decrementsThreads();
                 }
-            });
+            }).wait();
         } catch (Exception e) {
             Log.d("FireStorage: ", e.toString());
         }
@@ -80,6 +83,7 @@ public class FireStorage {
                 public void onFailure(Exception exception) {
                     // Handle unsuccessful uploads
                     Log.d("FireStorage:", exception.toString());
+                    UploadImageService.decrementsThreads();
                 }
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -90,8 +94,74 @@ public class FireStorage {
                     String downloadLink = downloadUrl.toString();
                     FireDatabase.getRoot().child("events").child(id).child("image_uri").setValue(downloadLink);
                     Log.d("FireStorage: ", downloadLink);
+                    UploadImageService.decrementsThreads();
                 }
-            });
+            }).wait();
+        } catch (Exception e) {
+            Log.d("FireStorage: ", e.toString());
+        }
+    }
+
+    public static void uploadEventMessagePic(final String id, final String timestamp, File file) {
+        try {
+            Log.d("FireStorage:", "method called");
+            FileInputStream is = new FileInputStream(file);
+            StorageReference eventCoverPicRef = storageRef.child("event_messages/" + id + "/"
+                    + timestamp + "/pic" + fileType);
+            UploadTask uploadTask = eventCoverPicRef.putStream(is);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(Exception exception) {
+                    // Handle unsuccessful uploads
+                    Log.d("FireStorage:", exception.toString());
+                    UploadImageService.decrementsThreads();
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                    Log.d("FireStorage: C. Pic", taskSnapshot.getMetadata().toString());
+                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    //Where does this download link go
+                    String downloadLink = downloadUrl.toString();
+                    FireDatabase.getRoot().child("event_messages").child(id).child(timestamp).child("image_link").setValue(downloadLink);
+                    Log.d("FireStorage: ", downloadLink);
+                    UploadImageService.decrementsThreads();
+                }
+            }).wait();
+        } catch (Exception e) {
+            Log.d("FireStorage: ", e.toString());
+        }
+    }
+
+    public static void uploadInboxMessagePic(final String id, final String timestamp, File file) {
+        try {
+            Log.d("FireStorage:", "method called");
+            FileInputStream is = new FileInputStream(file);
+            StorageReference eventCoverPicRef = storageRef.child("direct_messages/" + id + "/messages/"
+                    + timestamp + "/pic" + fileType);
+            UploadTask uploadTask = eventCoverPicRef.putStream(is);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(Exception exception) {
+                    // Handle unsuccessful uploads
+                    Log.d("FireStorage:", exception.toString());
+                    UploadImageService.decrementsThreads();
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                    Log.d("FireStorage: C. Pic", taskSnapshot.getMetadata().toString());
+                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    //Where does this download link go
+                    String downloadLink = downloadUrl.toString();
+                    FireDatabase.getRoot().child("direct_messages").child(id).child("messages")
+                            .child(timestamp).child("image_link").setValue(downloadLink);
+                    Log.d("FireStorage: ", downloadLink);
+                    UploadImageService.decrementsThreads();
+                }
+            }).wait();
         } catch (Exception e) {
             Log.d("FireStorage: ", e.toString());
         }
