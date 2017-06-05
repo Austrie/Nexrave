@@ -15,19 +15,12 @@ import android.webkit.WebViewClient;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.LinkedHashSet;
 
-import info.nexrave.nexrave.FeedActivity;
 import info.nexrave.nexrave.R;
-import info.nexrave.nexrave.models.Guest;
 import info.nexrave.nexrave.models.Host;
 import info.nexrave.nexrave.models.InviteList;
-import info.nexrave.nexrave.systemtools.FireDatabase;
 
 /**
  * Created by yoyor on 2/14/2017.

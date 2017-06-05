@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import info.nexrave.nexrave.R;
 import info.nexrave.nexrave.SettingsActivity;
 import info.nexrave.nexrave.SplashActivity;
-import info.nexrave.nexrave.systemtools.FireDatabase;
+import info.nexrave.nexrave.systemtools.FireDatabaseTools.FireDatabase;
 
 /**
  * A simple {@link Fragment} subclass.

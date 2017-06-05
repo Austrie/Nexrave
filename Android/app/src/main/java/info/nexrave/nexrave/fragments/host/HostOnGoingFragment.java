@@ -14,7 +14,7 @@ import info.nexrave.nexrave.R;
 import info.nexrave.nexrave.models.Event;
 import info.nexrave.nexrave.feedparts.FeedListAdapter;
 import info.nexrave.nexrave.systemtools.ArrayListEvents;
-import info.nexrave.nexrave.systemtools.FireDatabase;
+import info.nexrave.nexrave.systemtools.FireDatabaseTools.FireDatabase;
 
 /**
  * Created by yoyor on 2/19/2017.

@@ -1,34 +1,18 @@
 package info.nexrave.nexrave;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.facebook.AccessToken;
-import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
-import com.facebook.Profile;
-import com.facebook.ProfileTracker;
-import com.facebook.appevents.AppEventsLogger;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
@@ -40,14 +24,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.gson.Gson;
 
-import java.security.MessageDigest;
-import java.util.Arrays;
-
-import info.nexrave.nexrave.security.EnterPhoneNumber;
-import info.nexrave.nexrave.systemtools.FireDatabase;
+import info.nexrave.nexrave.systemtools.FireDatabaseTools.FireDatabase;
 
 public class SplashActivity extends AppCompatActivity {
 

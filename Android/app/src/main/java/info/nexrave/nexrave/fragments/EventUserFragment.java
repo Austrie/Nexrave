@@ -16,22 +16,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
-import com.facebook.AccessToken;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.LinkedList;
-import java.util.List;
 
 import info.nexrave.nexrave.R;
 import info.nexrave.nexrave.feedparts.AppController;
 import info.nexrave.nexrave.feedparts.FeedListAdapter;
 import info.nexrave.nexrave.models.Event;
 import info.nexrave.nexrave.systemtools.ArrayListEvents;
-import info.nexrave.nexrave.systemtools.FireDatabase;
+import info.nexrave.nexrave.systemtools.FireDatabaseTools.FireDatabase;
 import info.nexrave.nexrave.systemtools.RoundedNetworkImageView;
 
 /**
@@ -165,6 +160,10 @@ public class EventUserFragment extends Fragment {
         }
     }
 
+    public void inboxUser(View v) {
+
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -229,6 +228,7 @@ public class EventUserFragment extends Fragment {
     private static void loadHistory(String userId, String accessToken) {
         FireDatabase.loadFeedEvents(userId, accessToken, listOfEvents, adapter);
     }
+
 
     /**
      * This interface must be implemented by activities that contain this

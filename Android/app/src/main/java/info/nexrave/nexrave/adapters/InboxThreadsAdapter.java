@@ -7,7 +7,6 @@ package info.nexrave.nexrave.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +24,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import info.nexrave.nexrave.InboxActivity;
@@ -33,9 +31,8 @@ import info.nexrave.nexrave.R;
 import info.nexrave.nexrave.UserProfileActivity;
 import info.nexrave.nexrave.feedparts.AppController;
 import info.nexrave.nexrave.models.InboxThread;
-import info.nexrave.nexrave.models.Message;
 import info.nexrave.nexrave.systemtools.ArrayListInboxThreads;
-import info.nexrave.nexrave.systemtools.FireDatabase;
+import info.nexrave.nexrave.systemtools.FireDatabaseTools.FireDatabase;
 import info.nexrave.nexrave.systemtools.TimeConversion;
 
 public class InboxThreadsAdapter extends BaseAdapter {

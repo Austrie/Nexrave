@@ -1,36 +1,29 @@
 package info.nexrave.nexrave;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-import info.nexrave.nexrave.fragments.CameraFragment;
 import info.nexrave.nexrave.fragments.EventChatFragment;
 import info.nexrave.nexrave.fragments.EventInfoFragment;
 import info.nexrave.nexrave.fragments.EventStatsFragment;
 import info.nexrave.nexrave.fragments.EventUserFragment;
 import info.nexrave.nexrave.fragments.VerticalViewPagerFragment;
 import info.nexrave.nexrave.models.Event;
-import info.nexrave.nexrave.systemtools.FireDatabase;
+import info.nexrave.nexrave.systemtools.FireDatabaseTools.FireDatabase;
 
 public class EventInfoActivity extends AppCompatActivity
         implements
@@ -139,6 +132,14 @@ public class EventInfoActivity extends AppCompatActivity
         } else {
             mViewPager.setCurrentItem(1, true);
         }
+    }
+
+    public void shareEvent(View v) {
+        //TODO
+    }
+
+    public void playEventFeed(View v) {
+        //TODO
     }
 
     public void toScanner(View v) {
@@ -333,6 +334,20 @@ public class EventInfoActivity extends AppCompatActivity
                     }
                     break;
             }
+        }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         }
     }
 

@@ -1,12 +1,8 @@
 package info.nexrave.nexrave.bot;
 
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Build;
 import android.support.test.espresso.core.deps.guava.base.Splitter;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsResult;
 import android.webkit.ValueCallback;
@@ -17,9 +13,8 @@ import android.webkit.WebViewClient;
 import com.google.firebase.auth.FirebaseUser;
 
 import info.nexrave.nexrave.HostListViewActivity;
-import info.nexrave.nexrave.R;
 import info.nexrave.nexrave.models.InviteList;
-import info.nexrave.nexrave.systemtools.FireDatabase;
+import info.nexrave.nexrave.systemtools.FireDatabaseTools.FireDatabase;
 
 public class GetFriendsActivity {
 

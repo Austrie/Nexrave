@@ -40,6 +40,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <View
+        android:layout_marginTop="2dp"
         android:layout_width="match_parent"
         android:background="@color/white"
         android:layout_height="1dp" />
@@ -65,20 +66,16 @@
 
 
             <DatePicker
-                android:headerBackground="@color/transparent"
-                android:yearListSelectorColor="@color/colorPrimary"
-                android:calendarTextColor="@color/colorPrimary"
-                android:headerYearTextAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:layout_marginTop="100dp"
+                android:theme="@style/AppThemeAccentRed"
+                android:spinnersShown="true"
+                android:calendarTextColor="@color/colorPrimaryDark"
                 android:background="@color/white"
-                android:theme="@style/android:Theme.Material"
                 android:id="@+id/hostDatePicker"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_marginTop="23dp"
-                android:yearListItemTextAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:headerMonthTextAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:headerDayOfMonthTextAppearance="@style/TextAppearance.AppCompat.Body1" />
+                android:layout_width="310dp"
+                android:layout_height="310dp"
+                android:calendarViewShown="false"
+                android:layout_centerHorizontal="true" />
         </RelativeLayout>
 
 

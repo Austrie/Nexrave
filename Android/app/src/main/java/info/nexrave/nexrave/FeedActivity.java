@@ -33,7 +33,7 @@ import info.nexrave.nexrave.feedparts.AppController;
 import info.nexrave.nexrave.feedparts.FeedImageView;
 import info.nexrave.nexrave.feedparts.FeedListAdapter;
 import info.nexrave.nexrave.systemtools.ArrayListEvents;
-import info.nexrave.nexrave.systemtools.FireDatabase;
+import info.nexrave.nexrave.systemtools.FireDatabaseTools.FireDatabase;
 import info.nexrave.nexrave.systemtools.GraphUser;
 import info.nexrave.nexrave.systemtools.RoundedNetworkImageView;
 

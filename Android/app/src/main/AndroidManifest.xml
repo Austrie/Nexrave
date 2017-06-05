@@ -30,6 +30,32 @@
             android:value="@string/facebook_app_id"
             tools:replace="android:value" />
 
+        <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
+             See README(https://goo.gl/l4GJaQ) for more. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@mipmap/app_icon" />
+        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
+
+
+        <!--<service-->
+            <!--android:name=".MyFirebaseInstanceIDService">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>-->
+            <!--</intent-filter>-->
+        <!--</service>-->
+
+        <!--<service-->
+            <!--android:name=".MyFirebaseMessagingService">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.google.firebase.MESSAGING_EVENT"/>-->
+            <!--</intent-filter>-->
+        <!--</service>-->
+
         <service
             android:name=".services.UploadImageService"
             android:label="Nexrave Image Uploader"></service>
@@ -41,7 +67,7 @@
             android:name=".SplashActivity"
             android:noHistory="false"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeAccentRed">
+            android:theme="@style/AppThemeAccentRed2">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -121,7 +147,7 @@
         <activity
             android:name=".DiscoverActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppThemeAccentRed">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="info.nexrave.nexrave.FeedActivity" />

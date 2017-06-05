@@ -35,6 +35,7 @@ import java.util.Map;
 import info.nexrave.nexrave.UserProfileActivity;
 import info.nexrave.nexrave.models.User;
 import info.nexrave.nexrave.feedparts.AppController;
+import info.nexrave.nexrave.systemtools.FireDatabaseTools.FireDatabase;
 
 /**
  * Created by yoyor on 12/19/2016.

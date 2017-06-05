@@ -24,7 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import info.nexrave.nexrave.R;
-import info.nexrave.nexrave.systemtools.FireDatabase;
+import info.nexrave.nexrave.systemtools.FireDatabaseTools.FireDatabase;
 
 /**
  * Created by yoyor on 2/19/2017.

@@ -3,39 +3,27 @@ package info.nexrave.nexrave.fragments.inbox;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Telephony;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import com.android.volley.toolbox.NetworkImageView;
-import com.facebook.drawee.view.DraweeView;
-import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import info.nexrave.nexrave.R;
-import info.nexrave.nexrave.adapters.InboxMessagesAdapter;
 import info.nexrave.nexrave.adapters.InboxThreadsAdapter;
 import info.nexrave.nexrave.models.InboxThread;
-import info.nexrave.nexrave.feedparts.AppController;
 import info.nexrave.nexrave.models.Message;
 import info.nexrave.nexrave.systemtools.ArrayListInboxThreads;
-import info.nexrave.nexrave.systemtools.FireDatabase;
+import info.nexrave.nexrave.systemtools.FireDatabaseTools.FireDatabase;
 
 public class InboxThreadsFragment extends Fragment {
 

@@ -1,16 +1,13 @@
 package info.nexrave.nexrave.bot;
 
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsResult;
 import android.webkit.ValueCallback;
@@ -21,17 +18,13 @@ import android.webkit.WebViewClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Set;
 
-import info.nexrave.nexrave.FeedActivity;
 import info.nexrave.nexrave.HostActivity;
 import info.nexrave.nexrave.HostListViewActivity;
 import info.nexrave.nexrave.R;
 import info.nexrave.nexrave.models.InviteList;
-import info.nexrave.nexrave.systemtools.FireDatabase;
+import info.nexrave.nexrave.systemtools.FireDatabaseTools.FireDatabase;
 
 public class GetListsActivity extends AppCompatActivity {
 

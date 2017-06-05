@@ -1,22 +1,15 @@
 package info.nexrave.nexrave.systemtools;
 
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import org.apache.commons.io.IOUtils;
-
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -24,8 +17,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import info.nexrave.nexrave.services.UploadImageService;
-
-import static com.facebook.FacebookSdk.getApplicationContext;
+import info.nexrave.nexrave.systemtools.FireDatabaseTools.FireDatabase;
 
 /**
  * Created by yoyor on 12/22/2016.

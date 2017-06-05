@@ -1,31 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:background="@color/colorPrimaryDark"
+    android:fitsSystemWindows="true"
     tools:context="info.nexrave.nexrave.DiscoverActivity">
 
-    <android.support.design.widget.AppBarLayout
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="54dp">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/searchToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/transparent"
+                app:popupTheme="@style/AppTheme.PopupOverlay">
+
+                <ImageView
+                    android:id="@+id/eventInfo_backButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:rotation="180"
+                    android:onClick="backButton"
+                    android:src="@drawable/next"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Discover"
+                    android:textSize="26sp"
+                    android:textColor="@color/white"
+                    android:textAppearance="@style/TextAppearance.AppCompat" />
+                <!--<include layout="@layout/search_layout" />-->
+            </android.support.v7.widget.Toolbar>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <include layout="@layout/content_discover" />
+    </android.support.design.widget.CoordinatorLayout>
+
+    <!--<View-->
+        <!--android:layout_marginBottom="52dp"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:background="@color/white"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1dp" />-->
+
+    <android.support.design.widget.BottomNavigationView
+        android:background="@color/white"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/discover_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/transparent"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_gravity="start"
+        app:menu="@menu/menu_discover" />
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/searchToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/transparent"
-            app:popupTheme="@style/AppTheme.PopupOverlay" >
-            <include layout="@layout/search_layout" />
-        </android.support.v7.widget.Toolbar>
-
-    </android.support.design.widget.AppBarLayout>
-
-    <include layout="@layout/content_discover" />
-
-</android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>
 

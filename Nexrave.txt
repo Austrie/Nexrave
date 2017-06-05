@@ -1,0 +1,15 @@
+Problems other event discovery services faced
+
+*Most users dont go out frequently, and the one's that do cant guarantee which event they'll actually end up at a certain event (canceling and going to another event)
+A: TODO
+
+*User generated content is not as abundant as we thought. (The random submissions of user generated content tends not to be enough to bring a constistant pleasurable event discovery experience for others)
+A: Use organization content too, especially scraping the content in order to give users a choice.
+
+*Most people (meaning people with lives) dont proactivly search out events, they unconsciously see that planning to go to an event is mentally taxing
+A: Make the idea of going to an event, even if you have a busy schedule, fun. Possibly by using social proof.
+
+*People procrastinate committing to an event, especially because they don't want to miss the opportunity of a better event (goes back to question one)
+A:TODO
+
+*

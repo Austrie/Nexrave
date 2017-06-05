@@ -1,6 +1,5 @@
 package info.nexrave.nexrave;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -18,8 +17,9 @@ import info.nexrave.nexrave.feedparts.AppController;
 import info.nexrave.nexrave.feedparts.FeedListAdapter;
 import info.nexrave.nexrave.models.Event;
 import info.nexrave.nexrave.systemtools.ArrayListEvents;
-import info.nexrave.nexrave.systemtools.FireDatabase;
+import info.nexrave.nexrave.systemtools.FireDatabaseTools.FireDatabase;
 import info.nexrave.nexrave.systemtools.RoundedNetworkImageView;
+
 
 public class UserProfileActivity extends AppCompatActivity {
     private String selectedUserFireId;

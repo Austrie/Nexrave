@@ -1,7 +1,6 @@
 package info.nexrave.nexrave;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,9 +16,7 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,7 +25,6 @@ import android.widget.TimePicker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -38,9 +34,8 @@ import info.nexrave.nexrave.bot.CopyEventActivity;
 import info.nexrave.nexrave.bot.GetEventsActivity;
 import info.nexrave.nexrave.bot.GetFriendsActivity;
 import info.nexrave.nexrave.models.Event;
-import info.nexrave.nexrave.models.Host;
 import info.nexrave.nexrave.models.InviteList;
-import info.nexrave.nexrave.systemtools.FireDatabase;
+import info.nexrave.nexrave.systemtools.FireDatabaseTools.FireDatabase;
 
 public class HostListViewActivity extends AppCompatActivity {
 

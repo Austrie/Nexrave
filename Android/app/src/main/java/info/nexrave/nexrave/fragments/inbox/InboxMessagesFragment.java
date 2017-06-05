@@ -11,7 +11,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -41,7 +40,7 @@ import info.nexrave.nexrave.R;
 import info.nexrave.nexrave.adapters.InboxMessagesAdapter;
 import info.nexrave.nexrave.models.InboxThread;
 import info.nexrave.nexrave.models.Message;
-import info.nexrave.nexrave.systemtools.FireDatabase;
+import info.nexrave.nexrave.systemtools.FireDatabaseTools.FireDatabase;
 import info.nexrave.nexrave.systemtools.LockableViewPager;
 
 /**
@@ -201,30 +200,10 @@ public class InboxMessagesFragment extends Fragment {
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!typedMessage.getText().toString().isEmpty()
-                        || !(attachedImageContainer.getVisibility() == View.GONE)) {
-                    Long time = System.currentTimeMillis();
-                    Message message;
-                    if (!typedMessage.getText().toString().isEmpty()) {
-                        message = new Message(
-                                FireDatabase.backupFirebaseUser.getUid(), typedMessage.getText().toString(), time);
-                    } else {
-                        message = new Message(
-                                FireDatabase.backupFirebaseUser.getUid(), "*Image Attached*", time);
-                    }
-//                    message.image_link = "wait";
-                    Map<String, Object> map = new HashMap<>();
-                    map.put(String.valueOf(time), message);
-                    messagesRef.child("messages").updateChildren(map);
-                    typedMessage.setText("");
-                    if (tempFile != null) {
-                        Log.d("Messages", "not empty");
-                        FireDatabase.uploadInboxMessagePic(activity, thread.thread_id, String.valueOf(message.time_stamp), tempFile);
-                    } else {
-                        Log.d("Messages", "empty");
-                    }
-                    removePic();
-                }
+                FireDatabase.checkForPreviousMessage(activity, thread.thread_id, typedMessage.getText().toString().isEmpty()
+                        , (attachedImageContainer.getVisibility() == View.GONE), System.currentTimeMillis()
+                        , typedMessage.getText().toString(), tempFile, messagesRef);
+                typedMessage.setText("");
             }
         });
 
@@ -251,7 +230,7 @@ public class InboxMessagesFragment extends Fragment {
         }
     }
 
-    public  static void removePic() {
+    public static void removePic() {
         attachedImage.setImageDrawable(null);
         attachedImageContainer.setVisibility(View.GONE);
     }

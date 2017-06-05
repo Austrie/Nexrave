@@ -5,13 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -45,7 +43,6 @@ import org.apache.commons.io.IOUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -53,12 +50,10 @@ import java.util.Map;
 import info.nexrave.nexrave.EventInfoActivity;
 import info.nexrave.nexrave.R;
 import info.nexrave.nexrave.adapters.EventUsersListAdapter;
-import info.nexrave.nexrave.fragments.inbox.InboxMessagesFragment;
-import info.nexrave.nexrave.models.Event;
 import info.nexrave.nexrave.models.Guest;
 import info.nexrave.nexrave.models.Message;
 import info.nexrave.nexrave.feedparts.AppController;
-import info.nexrave.nexrave.systemtools.FireDatabase;
+import info.nexrave.nexrave.systemtools.FireDatabaseTools.FireDatabase;
 
 /**
  * A simple {@link Fragment} subclass.

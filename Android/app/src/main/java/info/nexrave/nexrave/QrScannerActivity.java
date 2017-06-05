@@ -3,7 +3,6 @@ package info.nexrave.nexrave;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -12,7 +11,7 @@ import com.google.zxing.Result;
 import java.util.Map;
 
 import info.nexrave.nexrave.models.Event;
-import info.nexrave.nexrave.systemtools.FireDatabase;
+import info.nexrave.nexrave.systemtools.FireDatabaseTools.FireDatabase;
 import info.nexrave.nexrave.systemtools.RoundedNetworkImageView;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 

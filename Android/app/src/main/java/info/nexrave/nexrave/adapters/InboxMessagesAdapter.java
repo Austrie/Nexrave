@@ -33,7 +33,7 @@ import info.nexrave.nexrave.R;
 import info.nexrave.nexrave.UserProfileActivity;
 import info.nexrave.nexrave.feedparts.AppController;
 import info.nexrave.nexrave.models.Message;
-import info.nexrave.nexrave.systemtools.FireDatabase;
+import info.nexrave.nexrave.systemtools.FireDatabaseTools.FireDatabase;
 
 /**
  * Created by yoyor on 3/11/2017.

@@ -1,33 +1,14 @@
 package info.nexrave.nexrave.fragments.settings;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
-import com.android.volley.toolbox.NetworkImageView;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 
 import info.nexrave.nexrave.R;
-import info.nexrave.nexrave.feedparts.AppController;
-import info.nexrave.nexrave.feedparts.FeedListAdapter;
-import info.nexrave.nexrave.models.Event;
-import info.nexrave.nexrave.systemtools.ArrayListEvents;
-import info.nexrave.nexrave.systemtools.FireDatabase;
-import info.nexrave.nexrave.systemtools.RoundedNetworkImageView;
 
 /**
  * A simple {@link Fragment} subclass.

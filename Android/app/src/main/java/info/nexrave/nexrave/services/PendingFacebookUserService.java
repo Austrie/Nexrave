@@ -6,15 +6,10 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import info.nexrave.nexrave.models.Guest;
-import info.nexrave.nexrave.systemtools.FireDatabase;
-import info.nexrave.nexrave.systemtools.FireStorage;
-
-import static android.R.attr.id;
+import info.nexrave.nexrave.systemtools.FireDatabaseTools.FireDatabase;
 
 /**
  * Created by yoyor on 3/18/2017.

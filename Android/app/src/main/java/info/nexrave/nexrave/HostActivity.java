@@ -1,12 +1,7 @@
 package info.nexrave.nexrave;
 
-import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -18,31 +13,15 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.facebook.FacebookSdk;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import org.apache.commons.io.IOUtils;
 
 import info.nexrave.nexrave.bot.FBLoginActivity;
-import info.nexrave.nexrave.fragments.host.HostCreateEventFragment;
 import info.nexrave.nexrave.fragments.host.HostOnGoingFragment;
 import info.nexrave.nexrave.fragments.host.HostPastFragment;
-import info.nexrave.nexrave.systemtools.FireDatabase;
 
 public class HostActivity extends AppCompatActivity {
 

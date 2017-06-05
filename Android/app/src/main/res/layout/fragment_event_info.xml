@@ -212,5 +212,27 @@
             </android.support.v7.widget.Toolbar>
 
         </android.support.design.widget.AppBarLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@android:drawable/ic_menu_share"
+            android:layout_below="@+id/event_info_appBarLayout"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="12dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="22dp"
+            android:onClick="shareEvent"
+            android:id="@+id/eventInfo_share" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/play_circle_icon"
+            android:layout_below="@+id/eventInfo_share"
+            android:layout_centerHorizontal="true"
+            android:onClick="playEventFeed"
+            android:id="@+id/eventInfo_play_feed" />
     </RelativeLayout>
 </FrameLayout>

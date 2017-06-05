@@ -29,7 +29,7 @@ import info.nexrave.nexrave.EventInfoActivity;
 import info.nexrave.nexrave.R;
 import info.nexrave.nexrave.models.Event;
 import info.nexrave.nexrave.feedparts.AppController;
-import info.nexrave.nexrave.systemtools.FireDatabase;
+import info.nexrave.nexrave.systemtools.FireDatabaseTools.FireDatabase;
 import info.nexrave.nexrave.systemtools.QRCode;
 import info.nexrave.nexrave.systemtools.RoundedNetworkImageView;
 import info.nexrave.nexrave.systemtools.TimeConversion;

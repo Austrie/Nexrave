@@ -1,45 +1,32 @@
 package info.nexrave.nexrave.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AlphabetIndexer;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import info.nexrave.nexrave.EventInfoActivity;
 import info.nexrave.nexrave.R;
 import info.nexrave.nexrave.feedparts.AppController;
-import info.nexrave.nexrave.fragments.EventChatFragment;
 import info.nexrave.nexrave.fragments.EventUserFragment;
 import info.nexrave.nexrave.models.BaseUser;
-import info.nexrave.nexrave.models.Event;
-import info.nexrave.nexrave.models.Guest;
 import info.nexrave.nexrave.models.Host;
-import info.nexrave.nexrave.models.Message;
 import info.nexrave.nexrave.systemtools.ArrayListBaseUsers;
-import info.nexrave.nexrave.systemtools.FireDatabase;
+import info.nexrave.nexrave.systemtools.FireDatabaseTools.FireDatabase;
 
 /**
  * Created by yoyor on 3/17/2017.
